@@ -1,14 +1,12 @@
 ﻿public class Initialisation
 {
-    public void creationEntity()
+    public void creationEntity(EntityAbstrac entity)
     {
-        Marine marineUnit = new Marine();
-        marineUnit.Heal = 100;
-        marineUnit.Attack = 75;
-        marineUnit.Aki = 50;
-        marineUnit.Precision = 90;
-        marineUnit.Speed = 60;
-        marineUnit.Level = 5;
-        marineUnit.DisplayDetails();
+        entity.Heal = 100;
+        entity.Attack = 75;
+        entity.Aki = 50;
+        entity.Precision = 90;
+        entity.Speed = 60;
+        entity.Level = 5;
     }
 }
