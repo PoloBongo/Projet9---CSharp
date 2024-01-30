@@ -7,6 +7,13 @@ public class Program {
     static void Main()
     {
         Initialization init = new Initialization();
+        Marine marine = new Marine();
+        Jimbey jimbey = new Jimbey();
+        Fight fight = new Fight();
+        init.creationEntity(marine, jimbey);
+        // marine.DisplayDetails();
+        // jimbey.DisplayDetails();
+        fight.startCombat(jimbey, marine);
         /* charger toutes les entités dans le fichier */
         List<EntityAbstract> entities = init.LoadEntityStats("C:\\Users\\polob\\OneDrive\\Bureau\\projet\\Csharp\\Project\\entity.txt");
         /* initialization de "marine" avec les stats du fichier */

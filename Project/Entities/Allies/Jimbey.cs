@@ -34,4 +34,23 @@ public class Jimbey : EntityAbstract
     {
         _stamina -= less;
     }
+    public override void AddExperience(int add)
+    {
+        _experience += add;
+        AddLevel();
+    }
+
+    public override void AddLevel()
+    {
+        Console.WriteLine($"cc");
+        if (_experience >= _maxExerience)
+        {
+            int tmp = _experience - _maxExerience;
+            _experience = 0;
+            _experience = tmp;
+            _level++;
+            _maxExerience = 100 * _level;
+            Console.WriteLine($"Tu as monter de nv {_level} : {_experience}/{_maxExerience} ");
+        }
+    }
 }
