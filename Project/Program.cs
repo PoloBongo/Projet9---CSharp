@@ -2,10 +2,23 @@
 using PlayerGame;
 using System;
 
+<<<<<<< Updated upstream
 class Program
 {
     static void Main()
     {
+=======
+public class Program { 
+    static void Main()
+    {
+        Initialization init = new Initialization();
+        Marine marine = new Marine();
+        Jimbey jimbey = new Jimbey();
+        init.creationEntity(marine, jimbey);
+        // marine.DisplayDetails();
+        // jimbey.DisplayDetails();
+
+>>>>>>> Stashed changes
         const int mapRows = 20;
         const int mapColumns = 20;
 
@@ -36,7 +49,11 @@ class Program
                     newLocalY++;
                     break;
             }
+<<<<<<< Updated upstream
             
+=======
+
+>>>>>>> Stashed changes
             if (currentMap.CanMoveTo(newLocalX, newLocalY))
             {
                 // Déplacer le joueur localement
@@ -65,3 +82,11 @@ class Program
         }
     }
 }
+<<<<<<< Updated upstream
+=======
+
+
+
+
+
+>>>>>>> Stashed changes
