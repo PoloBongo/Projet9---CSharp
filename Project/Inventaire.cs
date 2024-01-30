@@ -20,6 +20,11 @@ public class Inventaire
         nbViade += _viande;
     }
 
+    public void RemoveViande(int _viande)
+    { 
+        nbViade -= _viande;
+    }
+
     public void SetAlcool(int _alcool)
     { 
         nbAlcool = _alcool; 
@@ -33,6 +38,16 @@ public class Inventaire
     public void AddAlcool(int _alcool) 
     { 
         nbAlcool += _alcool; 
+    }
+
+    public void RemoveAlcool(int _alcool)
+    {
+        nbAlcool -= _alcool;
+    }
+
+    public void DisplayDetails()
+    {
+        Console.WriteLine($"Alcool: {nbAlcool}, Viande: {nbViade}");
     }
 }
 
