@@ -9,11 +9,8 @@ public abstract class EntityAbstrac
     public int _level;
 
     public abstract void DisplayDetails();
-
     public abstract void AddHeal(int add);
-
     public abstract void AddStamina(int add);
-
     public abstract void lessStamina(int less);
     public abstract void TakeDamage(int less);
 }
