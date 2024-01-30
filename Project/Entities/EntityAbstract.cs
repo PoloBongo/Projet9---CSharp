@@ -16,7 +16,6 @@ public abstract class EntityAbstract
     public abstract void TakeDamage(int less);
     public abstract void AddLevel();
     public abstract void AddExperience(int add);
-}
 
     public abstract void SetStatsMarine(EntityAbstract entity);
 
