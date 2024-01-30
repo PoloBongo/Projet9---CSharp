@@ -11,7 +11,9 @@
         jimbey._name = "jimbey";
         jimbey._health = 100;
         jimbey._stamina = 50;
-        jimbey._speed = 60;
-        jimbey._level = 5;
+        jimbey._speed = 70;
+        jimbey._level = 1;
+        jimbey._experience = 99;
+        jimbey._maxExerience = 100;
     }
 }
