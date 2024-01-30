@@ -8,13 +8,17 @@ namespace PlayerGame
 {
     public class Player
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int LocalX { get; set; }
+        public int LocalY { get; set; }
+        public int WorldX { get; set; }
+        public int WorldY { get; set; }
 
-        public Player(int x, int y)
+        public Player(int worldX, int worldY, int localX, int localY)
         {
-            X = x;
-            Y = y;
+            WorldX = worldX;
+            WorldY = worldY;
+            LocalX = localX;
+            LocalY = localY;
         }
     }
 }
