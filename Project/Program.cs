@@ -9,9 +9,11 @@ public class Program {
         Initialization init = new Initialization();
         Marine marine = new Marine();
         Jimbey jimbey = new Jimbey();
+        Fight fight = new Fight();
         init.creationEntity(marine, jimbey);
         // marine.DisplayDetails();
         // jimbey.DisplayDetails();
+        fight.startCombat(jimbey, marine);
 
         const int mapRows = 20;
         const int mapColumns = 20;
