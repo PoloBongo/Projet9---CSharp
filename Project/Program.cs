@@ -7,11 +7,13 @@ public class Program {
     static void Main()
     {
         Initialization init = new Initialization();
-        Marine marine = new Marine();
-        Jimbey jimbey = new Jimbey();
-        init.creationEntity(marine, jimbey);
-        // marine.DisplayDetails();
-        // jimbey.DisplayDetails();
+        /* charger toutes les entités dans le fichier */
+        List<EntityAbstract> entities = init.LoadEntityStats("C:\\Users\\polob\\OneDrive\\Bureau\\projet\\Csharp\\Project\\entity.txt");
+        /* initialization de "marine" avec les stats du fichier */
+        Marine marine = (Marine)entities.FirstOrDefault(entity => entity._name.ToLower() == "marine");
+        /* Ré-Initialization de "marine2" avec une nouvelle instance puis le SetStats pour lui attribuer toutes ces propres stats */
+        Marine marine2 = new Marine();
+        marine2.SetStatsMarine(marine);
 
         const int mapRows = 20;
         const int mapColumns = 20;
@@ -21,6 +23,17 @@ public class Program {
 
         while (true)
         {
+            /* Clear la console ici pour pouvoir print en plus de la map */
+            Console.Clear();
+
+            Console.WriteLine("Stats marine :");
+            marine.DisplayDetails();
+            marine.TakeDamage(10);
+
+            Console.WriteLine("Stats marine2 :");
+            marine2.DisplayDetails();
+            marine2.AddHealth(10);
+
             Map currentMap = world.GetMapAt(player.WorldX, player.WorldY);
             currentMap.PrintMap();
             ConsoleKeyInfo keyInfo = Console.ReadKey();

@@ -38,7 +38,7 @@ namespace MapGame
 
         public void PrintMap()
         {
-            Console.Clear();
+
             for (int i = 0; i < rows; i++)
             {
                 for (int j = 0; j < columns; j++)
@@ -110,8 +110,6 @@ namespace MapGame
         {
             matrix[x, y] = IsWater(x, y) ? '~' : '.';
         }
-
-
 
         public void MovePlayer(int oldX, int oldY, int newX, int newY)
         {

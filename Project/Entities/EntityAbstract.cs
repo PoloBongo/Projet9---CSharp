@@ -12,5 +12,19 @@ public abstract class EntityAbstract
     public abstract void AddStamina(int add);
     public abstract void LessStamina(int less);
     public abstract void TakeDamage(int less);
-}
+    public abstract void SetStatsMarine(EntityAbstract entity);
 
+    public static EntityAbstract CreateEntity(string name)
+    {
+        /* Si l'entité existe dans le fichier alors il créer une instance de celle-ci sinon ça va pas */
+        switch (name.ToLower())
+        {
+            case "marine":
+                return new Marine();
+            case "jimbey":
+                return new Jimbey();
+            default:
+                throw new ArgumentException("l'entité n'existe pas : " + name);
+        }
+    }
+}
