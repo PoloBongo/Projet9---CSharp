@@ -1,13 +1,8 @@
-﻿using MapGame;
+using MapGame;
 using PlayerGame;
 using System;
 
-<<<<<<< Updated upstream
-class Program
-{
-    static void Main()
-    {
-=======
+
 public class Program { 
     static void Main()
     {
@@ -18,7 +13,6 @@ public class Program {
         // marine.DisplayDetails();
         // jimbey.DisplayDetails();
 
->>>>>>> Stashed changes
         const int mapRows = 20;
         const int mapColumns = 20;
 
@@ -49,11 +43,6 @@ public class Program {
                     newLocalY++;
                     break;
             }
-<<<<<<< Updated upstream
-            
-=======
-
->>>>>>> Stashed changes
             if (currentMap.CanMoveTo(newLocalX, newLocalY))
             {
                 // Déplacer le joueur localement
@@ -82,11 +71,3 @@ public class Program {
         }
     }
 }
-<<<<<<< Updated upstream
-=======
-
-
-
-
-
->>>>>>> Stashed changes
