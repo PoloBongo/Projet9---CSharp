@@ -1,12 +1,12 @@
 ﻿
 public abstract class EntityAbstrac
 {
-    public int Heal;
-    public int Attack;
-    public int Aki;
-    public int Precision;
-    public int Speed;
-    public int Level;
+    public int _heal;
+    public int _attack;
+    public int _stamina;
+    public int _precision;
+    public int _speed;
+    public int _level;
 
     public abstract void DisplayDetails();
 
@@ -14,7 +14,7 @@ public abstract class EntityAbstrac
 
     public abstract void AddStamina(int add);
 
-    public abstract void lessStamina(int add);
-    public abstract void TakeDamage(int add);
+    public abstract void lessStamina(int less);
+    public abstract void TakeDamage(int less);
 }
 

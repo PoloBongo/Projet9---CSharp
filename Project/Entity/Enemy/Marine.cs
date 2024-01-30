@@ -3,26 +3,26 @@ class Marine : EntityAbstrac
 {
     public override void DisplayDetails()
     {
-        Console.WriteLine($"Heal: {Heal}, Attack: {Attack}, Stamina: {Stamina}, Precision: {Precision}, Speed: {Speed}, Level: {Level}");
+        Console.WriteLine($"Heal: {_heal}, Attack: {_attack}, Stamina: {_stamina}, Precision: {_precision}, Speed: {_speed}, Level: {_level}");
     }
 
     public override void AddHeal(int add)
     {
-        Heal += add;
+        _heal += add;
     }
 
     public override void AddStamina(int add)
     {
-        Stamina += add;
+        _stamina += add;
     }
 
-    public override void lessStamina(int add)
+    public override void lessStamina(int less)
     {
-        Stamina -= add;
+        _stamina -= less;
     }
 
     public override void TakeDamage(int damage)
     {
-        Heal -= damage;
+        _heal -= damage;
     }
 }
