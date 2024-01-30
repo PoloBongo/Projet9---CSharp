@@ -13,6 +13,8 @@ public abstract class EntityAbstrac
     public abstract void AddHeal(int add);
 
     public abstract void AddStamina(int add);
+
+    public abstract void lessStamina(int add);
     public abstract void TakeDamage(int add);
 }
 
