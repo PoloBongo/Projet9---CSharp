@@ -1,5 +1,5 @@
 ﻿
-class Marine : EntityAbstrac
+public class Jimbey : EntityAbstrac
 {
     public override void DisplayDetails()
     {

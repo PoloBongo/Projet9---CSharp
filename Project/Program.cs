@@ -2,5 +2,7 @@
 Console.WriteLine("Hello, Bongo!");
 Initialisation init = new Initialisation();
 Marine marine = new Marine();
-init.creationEntity(marine);
+Jimbey jimbey = new Jimbey();
+init.creationEntity(marine, jimbey);
 marine.DisplayDetails();
+jimbey.DisplayDetails();
