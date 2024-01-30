@@ -14,4 +14,9 @@ class Marine : EntityAbstrac
     public override void AddStamina(int add)
     {
     }
+
+    public override void TakeDamage(int damage)
+    {
+        Heal -= damage;
+    }
 }
