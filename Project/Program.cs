@@ -7,14 +7,23 @@ public class Program {
     static void Main()
     {
         Initialization init = new Initialization();
-        Marine marine = new Marine();
-        Jimbey jimbey = new Jimbey();
         Fight fight = new Fight();
-        init.creationEntity(marine, jimbey);
         // marine.DisplayDetails();
         // jimbey.DisplayDetails();
-        fight.startCombat(jimbey, marine);
+        
+        /* charger toutes les entités dans le fichier */
+        List<EntityAbstract> entities = init.LoadEntityStats("../../../entity.txt");
+        /* initialization de "marine" avec les stats du fichier */
+        Marine marine = (Marine)entities.FirstOrDefault(entity => entity._name.ToLower() == "marine");
+        Jimbey jimbey = (Jimbey)entities.FirstOrDefault(entity => entity._name.ToLower() == "jimbey");
+        /* Ré-Initialization de "marine2" avec une nouvelle instance puis le SetStats pour lui attribuer toutes ces propres stats */
+        Marine marine2 = new Marine();
+        marine2.SetStatsEntity(marine);
 
+
+        fight.startCombat(jimbey, marine);
+        
+        
         const int mapRows = 20;
         const int mapColumns = 20;
 
@@ -23,6 +32,9 @@ public class Program {
 
         while (true)
         {
+            /* Clear la console ici pour pouvoir print en plus de la map */
+            Console.Clear();
+
             Map currentMap = world.GetMapAt(player.WorldX, player.WorldY);
             currentMap.PrintMap();
             ConsoleKeyInfo keyInfo = Console.ReadKey();
