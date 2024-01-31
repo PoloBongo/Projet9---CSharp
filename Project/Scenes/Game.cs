@@ -1,7 +1,7 @@
 ﻿using MapGame;
 using PlayerGame;
 using MenuPr;
-
+using ShopDemo;
 namespace InGame
 {
     class Game
@@ -28,7 +28,7 @@ namespace InGame
 
 
 Bienvenu chez les pirates ";
-            string[] options = { "Play", "Credit", "Exit" };
+            string[] options = { "Play", "Credit","Shop", "Exit" };
             Menu mainMenu = new Menu(prompt, options);
             int selectedIndex = mainMenu.Run();
 
@@ -41,6 +41,9 @@ Bienvenu chez les pirates ";
                     Credits();
                     break;
                 case 2:
+                    Shopping();
+                    break;
+                case 3:
                     ExitGame();
                     break;
             }
@@ -128,6 +131,14 @@ Bienvenu chez les pirates ";
             Console.WriteLine("\n Press any key to the menu");
             Console.ReadKey(true);
             RunMainMenu();
+        }
+
+
+
+       private void Shopping()
+        {
+            Shop myShop = new Shop();
+            myShop.Run();
         }
     }
 
