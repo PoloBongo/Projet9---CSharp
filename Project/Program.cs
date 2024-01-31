@@ -12,7 +12,7 @@ public class Program {
         // jimbey.DisplayDetails();
         
         /* charger toutes les entités dans le fichier */
-        List<EntityAbstract> entities = init.LoadEntityStats("../../../entity.txt");
+        List<EntityAbstract> entities = init.LoadEntityStats("../../../Entities/entity.txt");
         /* initialization de "marine" avec les stats du fichier */
         Marine marine = (Marine)entities.FirstOrDefault(entity => entity._name.ToLower() == "marine");
         Jimbey jimbey = (Jimbey)entities.FirstOrDefault(entity => entity._name.ToLower() == "jimbey");
