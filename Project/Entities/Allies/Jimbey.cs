@@ -6,7 +6,7 @@ public class Jimbey : EntityAbstract
         Console.WriteLine($"Name : {_name} Health: {_health}, Stamina: {_stamina}, Speed: {_speed}, Level: {_level}");
     }
 
-    public override void SetStatsMarine(EntityAbstract entity)
+    public override void SetStatsEntity(EntityAbstract entity)
     {
         _name = entity._name;
         _health = entity._health;

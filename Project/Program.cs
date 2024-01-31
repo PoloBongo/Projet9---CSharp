@@ -12,13 +12,13 @@ public class Program {
         // jimbey.DisplayDetails();
         
         /* charger toutes les entités dans le fichier */
-        List<EntityAbstract> entities = init.LoadEntityStats("C:\\Users\\polob\\OneDrive\\Bureau\\projet\\Csharp\\Project\\entity.txt");
+        List<EntityAbstract> entities = init.LoadEntityStats("../../../entity.txt");
         /* initialization de "marine" avec les stats du fichier */
         Marine marine = (Marine)entities.FirstOrDefault(entity => entity._name.ToLower() == "marine");
         Jimbey jimbey = (Jimbey)entities.FirstOrDefault(entity => entity._name.ToLower() == "jimbey");
         /* Ré-Initialization de "marine2" avec une nouvelle instance puis le SetStats pour lui attribuer toutes ces propres stats */
         Marine marine2 = new Marine();
-        marine2.SetStatsMarine(marine);
+        marine2.SetStatsEntity(marine);
 
 
         fight.startCombat(jimbey, marine);

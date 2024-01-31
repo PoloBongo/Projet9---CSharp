@@ -17,7 +17,7 @@ public abstract class EntityAbstract
     public abstract void AddLevel();
     public abstract void AddExperience(int add);
 
-    public abstract void SetStatsMarine(EntityAbstract entity);
+    public abstract void SetStatsEntity(EntityAbstract entity);
 
     public static EntityAbstract CreateEntity(string name)
     {
