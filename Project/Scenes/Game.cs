@@ -50,13 +50,17 @@ Bienvenu chez les pirates ";
         private void PlayGame()
         {
             Initialization init = new Initialization();
-            Marine marine = new Marine();
-            Jimbey jimbey = new Jimbey();
             Fight fight = new Fight();
-            init.creationEntity(marine, jimbey);
-            // marine.DisplayDetails();
-            // jimbey.DisplayDetails();
-            fight.startCombat(jimbey, marine);
+
+            /* charger toutes les entités dans le fichier */
+            List<EntityAbstract> entities = init.LoadEntityStats("../../../Entities/entity.txt");
+            /* initialization de "marine" avec les stats du fichier */
+            Marine marine = (Marine)entities.FirstOrDefault(entity => entity._name.ToLower() == "marine");
+            Jimbey jimbey = (Jimbey)entities.FirstOrDefault(entity => entity._name.ToLower() == "jimbey");
+            /* Ré-Initialization de "marine2" avec une nouvelle instance puis le SetStats pour lui attribuer toutes ces propres stats */
+            Marine marine2 = new Marine();
+            marine2.SetStatsEntity(marine);
+         
 
 
 
@@ -65,6 +69,8 @@ Bienvenu chez les pirates ";
 
             while (true)
             {
+                Console.Clear();
+                fight.startCombat(jimbey, marine);
                 Map currentMap = world.GetMapAt(player.WorldX, player.WorldY);
                 currentMap.PrintMap();
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
