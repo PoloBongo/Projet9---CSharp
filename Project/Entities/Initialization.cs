@@ -15,7 +15,7 @@
             jimbey._level = 5;
         }*/
 
-        public List<EntityAbstract> LoadEntityStats(string fileName)
+        /*public List<EntityAbstract> LoadEntityStats(string fileName)
         {
             List<EntityAbstract> entities = new List<EntityAbstract>();
 
@@ -44,5 +44,5 @@
             }
 
             return entities;
-        }
-    }
+        }*/
+}

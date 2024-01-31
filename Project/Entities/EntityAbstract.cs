@@ -16,12 +16,13 @@ public abstract class EntityAbstract
     public abstract void TakeDamage(int less);
     public abstract void AddLevel();
     public abstract void AddExperience(int add);
-
+    public abstract void CreateEntity(string path);
+    public abstract void GetInfoEntity(string path);
     public abstract void SetStatsEntity(EntityAbstract entity);
 
-    public static EntityAbstract CreateEntity(string name)
+    /*public static EntityAbstract CreateEntity(string name)
     {
-        /* Si l'entité existe dans le fichier alors il créer une instance de celle-ci sinon ça va pas */
+        *//* Si l'entité existe dans le fichier alors il créer une instance de celle-ci sinon ça va pas *//*
         switch (name.ToLower())
         {
             case "marine":
@@ -31,5 +32,5 @@ public abstract class EntityAbstract
             default:
                 throw new ArgumentException("l'entité n'existe pas : " + name);
         }
-    }
+    }*/
 }
