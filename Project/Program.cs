@@ -35,14 +35,6 @@ public class Program {
             /* Clear la console ici pour pouvoir print en plus de la map */
             Console.Clear();
 
-            Console.WriteLine("Stats marine :");
-            marine.DisplayDetails();
-            marine.TakeDamage(10);
-
-            Console.WriteLine("Stats marine2 :");
-            marine2.DisplayDetails();
-            marine2.AddHealth(10);
-
             Map currentMap = world.GetMapAt(player.WorldX, player.WorldY);
             currentMap.PrintMap();
             ConsoleKeyInfo keyInfo = Console.ReadKey();
