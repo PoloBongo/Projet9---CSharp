@@ -1,5 +1,5 @@
 ﻿
-namespace PlayerGame
+namespace MapEntities
 {
     public class Player
     {

@@ -1,5 +1,5 @@
 ﻿using MapGame;
-using PlayerGame;
+using MapEntities;
 using MenuPr;
 
 namespace InGame
@@ -53,6 +53,8 @@ Bienvenu chez les pirates ";
             Fight fight = new Fight();
             Enemy enemy = new Enemy();
             Allies allies = new Allies();
+            World world = new World();
+            Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
 
             string path = "../../../Entities/entity.json";
             enemy.CreateEntity(path);
@@ -60,16 +62,11 @@ Bienvenu chez les pirates ";
             allies.CreateEntity(path);
             allies.GetInfoEntity(path);
 
-            World world = new World();
-            Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
-
             while (true)
             {
                 Console.Clear();
-
-                fight.startCombat(allies.alliesContainer.Allies1, enemy.enemyContainer.Enemy1);
-
-                Map currentMap = world.GetMapAt(player.WorldX, player.WorldY);
+                // fight.startCombat(allies.alliesContainer.Allies1, enemy.enemyContainer.Enemy1);
+                Map? currentMap = world.GetMapAt(player.WorldX, player.WorldY);
                 currentMap.PrintMap();
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
 
@@ -91,31 +88,21 @@ Bienvenu chez les pirates ";
                         newLocalY++;
                         break;
                 }
-                if (currentMap.CanMoveTo(newLocalX, newLocalY))
-                {
-                    // Déplacer le joueur localement
-                    currentMap.MovePlayer(player.LocalX, player.LocalY, newLocalX, newLocalY);
-                    player.LocalX = newLocalX;
-                    player.LocalY = newLocalY;
-                }
-                else
-                {
-                    // Sinon, vérifier si le joueur doit changer de carte
-                    world.MovePlayerToNewMap(player);
-                }
-
-                // Déplace le joueur localement ou vers une nouvelle carte si nécessaire
+                // Gérer le changement de carte si le joueur atteint les bords de la carte actuelle
                 if (newLocalX < 0 || newLocalX >= mapRows || newLocalY < 0 || newLocalY >= mapColumns)
                 {
                     world.MovePlayerToNewMap(player);
                 }
                 else if (currentMap.CanMoveTo(newLocalX, newLocalY))
                 {
+                    // Déplacer le joueur localement
                     currentMap.MovePlayer(player.LocalX, player.LocalY, newLocalX, newLocalY);
                     player.LocalX = newLocalX;
                     player.LocalY = newLocalY;
                 }
-                currentMap = world.GetMapAt(player.WorldX, player.WorldY);
+
+                // Vérifiez si le joueur rencontre un ennemi après le déplacement
+                world.CheckForEncounter(player);
             }
         }
         private void ExitGame()
