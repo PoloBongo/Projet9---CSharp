@@ -137,8 +137,7 @@ Bienvenu chez les pirates ";
 
        private void Shopping()
         {
-            Shop myShop = new Shop();
-            myShop.Run();
+            Shop.Run();
         }
     }
 

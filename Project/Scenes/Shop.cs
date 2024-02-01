@@ -1,96 +1,52 @@
-﻿using MenuPr;
-using static System.Console;
+﻿using static System.Console;
 
 namespace ShopDemo
 {
     class Shop
     {
-        private decimal OrderTotal;
-        private Dictionary<string, decimal> ItemPrices = new Dictionary<string, decimal>
+        public static void Run()
         {
-            { "Heal", 10m },
-            { "jsp", 20m },
-            { "Exit", 0m }
+            Dictionary<string, double> produits = new Dictionary<string, double>()
+        {
+            { "Pommes", 1.50 },
+            { "Bananes", 0.75 },
+            { "Oranges", 2.00 },
+            { "Fraises", 3.50 },
+            { "Pêches", 2.25 }
         };
 
-        public Shop()
-        {
-            OrderTotal = 100;
-        }
+            WriteLine("Bienvenue dans notre magasin !");
+            WriteLine("Voici nos produits disponibles :");
 
-        public void Run()
-        {
-            DisplayIntro();
-            WriteLine();
-
-            string selectedItem;
-            do
+            foreach (var produit in produits)
             {
-                selectedItem = DisplayMenu();
-                if (selectedItem != "Exit")
-                {
-                    ProcessItemPurchase(selectedItem);
-                    DisplayOrderTotal();
-                    WriteLine();
-                }
-            } while (selectedItem != "Exit");
-
-            DisplayOutro();
-        }
-
-        private string DisplayMenu()
-        {
-            Menu menu = new Menu("Choisissez un article à acheter:", ItemPrices.Keys.ToArray());
-            int selectedIndex = menu.Run();
-            return ItemPrices.Keys.ElementAt(selectedIndex);
-        }
-
-        private void ProcessItemPurchase(string itemName)
-        {
-            WriteLine($"Tu veux acheter {itemName} pour {ItemPrices[itemName]}?");
-            WriteLine("Combien en veux-tu?");
-            int quantity = GetUserInputAsInteger();
-            decimal itemTotal = ItemPrices[itemName] * quantity;
-            OrderTotal += itemTotal;
-            WriteLine($"Okay, {quantity}x {itemName} te fait {itemTotal}");
-        }
-
-        private int GetUserInputAsInteger()
-        {
-            while (true)
-            {
-                if (int.TryParse(ReadLine(), out int quantity) && quantity >= 0)
-                {
-                    return quantity;
-                }
-                WriteLine("Erreur: Veuillez entrer un nombre entier positif.");
+                WriteLine($"{produit.Key}: {produit.Value:C}");
             }
-        }
 
-        private void DisplayOrderTotal()
-        {
-            SetConsoleColor(ConsoleColor.Green);
-            WriteLine($"Tu as {OrderTotal}");
-            SetConsoleColor(ConsoleColor.White);
-        }
+            Write("Entrez le nom de l'article que vous souhaitez acheter : ");
+            string articleChoisi = ReadLine();
 
-        private void SetConsoleColor(ConsoleColor color)
-        {
-            ForegroundColor = color;
-        }
+            if (produits.ContainsKey(articleChoisi))
+            {
+                Write($"Entrez la quantité que vous souhaitez acheter de {articleChoisi} : ");
+                int quantite = int.Parse(ReadLine());
 
-        private void DisplayIntro()
-        {
-            WriteLine("==============");
-            WriteLine("==Item 4 d'or==");
-            WriteLine("==============");
-        }
+                if (quantite > 0)
+                {
+                    double prixTotal = produits[articleChoisi] * quantite;
+                    WriteLine($"Le prix total pour {quantite} {articleChoisi} est : {prixTotal:C}");
+                }
+                else
+                {
+                    WriteLine("La quantité doit être supérieure à zéro.");
+                }
+            }
+            else
+            {
+                WriteLine("Article non trouvé.");
+            }
 
-        private void DisplayOutro()
-        {
-            WriteLine("Merci !");
-            WriteLine("Touche n'importe quel touche pour partir");
-            ReadKey();
+            WriteLine("Merci d'avoir magasiné avec nous !");
         }
     }
 }
