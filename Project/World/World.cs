@@ -13,6 +13,7 @@ namespace MapGame
         private List<int> positionX = new List<int>();
         private bool CombatStart = false;
         Fight fight = new Fight();
+        Random random = new Random();
 
         public World()
         {
@@ -182,8 +183,6 @@ namespace MapGame
 
         public void CheckForEncounter(Player player, Allies allies, Enemy enemy)
         {
-
-            Map? currentMap = GetMapAt(player.WorldX, player.WorldY);
             if (enemyMaps.Count != 0)
             {
                 for (int i = 0; i < enemyMaps.Count; i++)
@@ -197,10 +196,20 @@ namespace MapGame
                 }
             }
         }
+
+        public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
+        {
+            int randEnemy = random.Next(1, 19);
+            if(randEnemy == player.LocalX)
+            {
+                fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, true);
+            }
+        }
+
         private void HandleEncounter(Allies allies, Enemy enemy)
         {
             // Combat entre le joueur et l'ennemi
-            fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer);
+            fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, false);
         }
 
         private void EnsurePlayerOnLand(Map currentMap, Player player)
@@ -233,7 +242,6 @@ namespace MapGame
 
         private void InitializeEnemy()
         {
-            Random random = new Random();
             int enemyLocalX = random.Next(1, 19);
             int enemyLocalY = random.Next(1, 19);
 
