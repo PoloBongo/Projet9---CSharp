@@ -1,102 +1,202 @@
-﻿
-public class Fight
+﻿public class Fight
 {
-        private bool tourAlier = false;
-        Random random = new Random();
-        public void startCombat(EntityContainer entities)
+    private bool tourAlier = false;
+    Random random = new Random();
+
+    public void startCombat(EntityContainer entities)
+    {
+        EntityAbstract allie = entities.AlliesList[0];
+        EntityAbstract enemie = entities.EnemiesList[0];
+
+        AfficherEtatDesCombattants(allie, enemie);
+
+        while (allie._health > 0 && enemie._health > 0)
         {
-            Console.WriteLine(entities.AlliesList[0]._name);
-            EntityAbstract allie = entities.AlliesList[0];
-            EntityAbstract enemie = entities.EnemiesList[0];
-            List<string> displayedCapacities = new List<string>();
-            ConsoleKeyInfo keyInfo;
+            DetermineTour(allie, enemie);
 
-            while (allie._health >= 0 || enemie._health >= 0)
+            if (tourAlier)
             {
-                if (allie._speed > enemie._speed || tourAlier)
-                    {
-                        tourAlier = true;
-                    }
-                    else
-                    {
-                        tourAlier = false;
-                    }
+                HandleAllieTurn(entities, ref allie, enemie);
+            }
+            else
+            {
+                HandleEnemyTurn(allie, enemie);
+            }
 
-                    if (tourAlier)
-                    {
-                        Console.WriteLine($"Voulez-vous changer d'allier[A] ou attaquer[B] ?");
-                        keyInfo = Console.ReadKey();
-                        switch (keyInfo.Key)
-                        {
-                            case ConsoleKey.A:
-                                for (int i = 0; i < entities.AlliesList.Count(); i++)
-                                {
-                                    Console.WriteLine($"- {entities.AlliesList[i]._name}\n");
-                                }
-                                Console.Write("Entrez le nom de l'allié que vous voulez choisir : ");
-                                string chooseAllies = Console.ReadLine();
-                                Allies newAllies = entities.AlliesList.FirstOrDefault(a => a._name.Equals(chooseAllies, StringComparison.OrdinalIgnoreCase));
-                                if (newAllies != null)
-                                {
-                                    Console.WriteLine($"Vous avez choisi l'allié : {newAllies._name}");
-                                    allie = newAllies;
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Allié non trouvé. Veuillez choisir un allié valide.");
-                                }
-                            break;
-                            case ConsoleKey.B:
-                                Console.WriteLine($"Choisi la capacité que tu veux utilisé pour attaquer :\n ");
-                                for (int i = 0; i < entities.AlliesList.Count(); i++)
-                                {
-                                    for (int j = 0; j < entities.AlliesList[i]._ListCapacities.Count(); j++)
-                                    {
-                                        if (allie._level >= allie._ListCapacities[j]._level && !displayedCapacities.Contains(allie._ListCapacities[j]._name))
-                                        {
-                                            Console.WriteLine($"- {allie._ListCapacities[j]._name}");
-                                            displayedCapacities.Add(allie._ListCapacities[j]._name);
-                                        }
-                                    }
-                                }
-                                /* Dès que l'utilisateur à choisis sont attaque grâce à la tabulation, il faudra passé l'index de tabulation en paramètre de _ListCapacities[index] ( au lieu du 0 )*/
-                                enemie.TakeDamage(allie._ListCapacities[0]._damage);
+            AfficherEtatDesCombattants(allie, enemie);
+        }
+    }
+    private void DetermineTour(EntityAbstract allie, EntityAbstract enemie)
+    {
+        tourAlier = allie._speed > enemie._speed || tourAlier;
+    }
 
-                                Console.WriteLine($"vie {allie._name} : {allie._health} ");
-                                Console.WriteLine($"vie {enemie._name} : {enemie._health} ");
-                            break;
-                        default:
-                            break;
+    private void HandleAllieTurn(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie)
+    {
+        List<string> options = new List<string> { "Changer d'allié", "Attaquer" };
+        int selectedIndex = RunOptions(options, allie, enemie);
 
-                        }
+        switch (selectedIndex)
+        {
+            case 0:
+                ChangeAllie(entities, ref allie, enemie);
+                break;
+            case 1:
+                AttackEnemy(entities, allie, enemie);
+                break;
+        }
 
-                        if (enemie._health <= 0)
-                        {
-                            Console.WriteLine("Tu as gagner");
-                            int nombreAleatoire = random.Next(2, 10 * enemie._level);
-                            allie.AddExperience(nombreAleatoire);
-                            break;
-                        }
-                        tourAlier = false;
-                    }
-                    if (!tourAlier)
-                    {
+        CheckHealth(enemie, allie);
+        tourAlier = false;
+    }
 
-                        int nombreAleatoire = random.Next(1, 3);
-                        if (nombreAleatoire == 1) allie.TakeDamage(50);
-                        if (nombreAleatoire == 2) enemie.AddHealth(10);
-                        if (nombreAleatoire == 3) enemie.AddStamina(10);
-                        Console.WriteLine($"vie {allie._name} : {allie._health} ");
-                        Console.WriteLine($"vie {enemie._name} : {enemie._health} ");
-                        if (allie._health <= 0)
-                        {
-                            Console.WriteLine("Tu as perdu");
-                            break;
-                        }
-                        tourAlier = true;
-                    }
+    private void ChangeAllie(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie)
+    {
+        List<string> alliesNames = entities.AlliesList.Select(a => a._name).ToList();
+        int selectedIndex = RunOptions(alliesNames, allie, enemie);
+
+        allie = entities.AlliesList[selectedIndex];
+        Console.WriteLine($"Vous avez choisi l'allié : {allie._name}");
+    }
+
+
+    private void AttackEnemy(EntityContainer entities, EntityAbstract allie, EntityAbstract enemie)
+    {
+        Console.WriteLine($"Choisis la capacité que tu veux utiliser pour attaquer :\n");
+        List<string> displayedCapacities = new List<string>();
+
+        for (int i = 0; i < allie._ListCapacities.Count; i++)
+        {
+            if (allie._level >= allie._ListCapacities[i]._level && !displayedCapacities.Contains(allie._ListCapacities[i]._name))
+            {
+                Console.WriteLine($"- {allie._ListCapacities[i]._name}");
+                displayedCapacities.Add(allie._ListCapacities[i]._name);
             }
         }
 
- }
+        int selectedIndex = RunOptions(displayedCapacities, allie, enemie);
+        enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage);
 
+        AfficherEtatDesCombattants(allie, enemie);
+
+        Console.WriteLine($"vie {allie._name} : {allie._health}");
+        Console.WriteLine($"vie {enemie._name} : {enemie._health}");
+    }
+
+
+    private void HandleEnemyTurn(EntityAbstract allie, EntityAbstract enemie)
+    {
+
+        int nombreAleatoire = random.Next(1, 4);
+
+        switch (nombreAleatoire)
+        {
+            case 1:
+                int damage = 50;
+                allie.TakeDamage(damage);
+                Console.WriteLine($"{enemie._name} attaque {allie._name} et inflige {damage} dégâts!");
+                break;
+            case 2:
+                int healAmount = 10;
+                enemie.AddHealth(healAmount);
+                Console.WriteLine($"{enemie._name} se soigne et regagne {healAmount} points de vie!");
+                break;
+            case 3:
+                int staminaAmount = 10;
+                enemie.AddStamina(staminaAmount);
+                Console.WriteLine($"{enemie._name} regagne {staminaAmount} points d'endurance!");
+                break;
+        }
+
+        CheckHealth(enemie, allie);
+        tourAlier = true;
+    }
+
+
+    private void CheckHealth(EntityAbstract enemie, EntityAbstract allie)
+    {
+        if (enemie._health <= 0)
+        {
+            Console.WriteLine(@"Tu as gagné");
+            int nombreAleatoire = random.Next(2, 10 * enemie._level);
+            allie.AddExperience(nombreAleatoire);
+
+        }
+        else if (allie._health <= 0)
+        {
+            Console.WriteLine("Tu as perdu");
+
+        }
+    }
+
+    private int RunOptions(List<string> options, EntityAbstract allie, EntityAbstract enemie)
+    {
+        ConsoleKey keyPressed;
+        int selectedIndex = 0;
+        do
+        {
+
+            Console.Clear();
+            DisplayOptions(options, selectedIndex, allie, enemie);
+
+            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+            keyPressed = keyInfo.Key;
+
+            if (keyPressed == ConsoleKey.UpArrow)
+            {
+                selectedIndex = (selectedIndex > 0) ? selectedIndex - 1 : options.Count - 1;
+            }
+            else if (keyPressed == ConsoleKey.DownArrow)
+            {
+                selectedIndex = (selectedIndex < options.Count - 1) ? selectedIndex + 1 : 0;
+            }
+        } while (keyPressed != ConsoleKey.Enter);
+
+        return selectedIndex;
+    }
+
+
+    private void AfficherEtatDesCombattants(EntityAbstract allie, EntityAbstract enemie)
+    {
+        Console.WriteLine(@"
+ ██████╗ ██████╗ ███╗   ███╗██████╗  █████╗ ████████╗
+██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝
+██║     ██║   ██║██╔████╔██║██████╔╝███████║   ██║   
+██║     ██║   ██║██║╚██╔╝██║██╔══██╗██╔══██║   ██║   
+╚██████╗╚██████╔╝██║ ╚═╝ ██║██████╔╝██║  ██║   ██║   
+ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═════╝ ╚═╝  ╚═╝   ╚═╝   
+    
+
+");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write($"vie {allie._name} : {allie._health} ");
+
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.Write($"vie {enemie._name} : {enemie._health} ");
+
+        Console.ResetColor();
+    }
+
+    private void DisplayOptions(List<string> options, int selectedIndex, EntityAbstract allie, EntityAbstract enemie)
+    {
+        AfficherEtatDesCombattants(allie, enemie);
+
+        Console.WriteLine("Veuillez choisir une option :");
+        for (int i = 0; i < options.Count; i++)
+        {
+            if (i == selectedIndex)
+            {
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.WriteLine($"* {options[i]}");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine($"  {options[i]}");
+            }
+        }
+        Console.ResetColor();
+    }
+}
