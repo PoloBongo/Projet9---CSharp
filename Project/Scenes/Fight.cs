@@ -3,10 +3,10 @@
     private bool tourAlier = false;
     Random random = new Random();
 
-    public void startCombat(EntityContainer entities)
+    public void startCombat(EntityContainer entities1, EntityContainer entities2)
     {
-        EntityAbstract allie = entities.AlliesList[0];
-        EntityAbstract enemie = entities.EnemiesList[0];
+        EntityAbstract allie = entities1.AlliesList[0];
+        EntityAbstract enemie = entities2.EnemiesList[0];
 
         AfficherEtatDesCombattants(allie, enemie);
 
@@ -16,7 +16,7 @@
 
             if (tourAlier)
             {
-                HandleAllieTurn(entities, ref allie, enemie);
+                HandleAllieTurn(entities1, ref allie, enemie);
             }
             else
             {
@@ -42,7 +42,7 @@
                 ChangeAllie(entities, ref allie, enemie);
                 break;
             case 1:
-                AttackEnemy(entities, allie, enemie);
+                AttackEnemy(allie, enemie);
                 break;
         }
 
@@ -60,7 +60,7 @@
     }
 
 
-    private void AttackEnemy(EntityContainer entities, EntityAbstract allie, EntityAbstract enemie)
+    private void AttackEnemy(EntityAbstract allie, EntityAbstract enemie)
     {
         Console.WriteLine($"Choisis la capacité que tu veux utiliser pour attaquer :\n");
         List<string> displayedCapacities = new List<string>();
@@ -78,23 +78,19 @@
         enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage);
 
         AfficherEtatDesCombattants(allie, enemie);
-
-        Console.WriteLine($"vie {allie._name} : {allie._health}");
-        Console.WriteLine($"vie {enemie._name} : {enemie._health}");
     }
 
 
     private void HandleEnemyTurn(EntityAbstract allie, EntityAbstract enemie)
     {
-
         int nombreAleatoire = random.Next(1, 4);
+        int randomAttackEnemy = random.Next(0, 2);
 
         switch (nombreAleatoire)
         {
             case 1:
-                int damage = 50;
-                allie.TakeDamage(damage);
-                Console.WriteLine($"{enemie._name} attaque {allie._name} et inflige {damage} dégâts!");
+                allie.TakeDamage(enemie._ListCapacities[randomAttackEnemy]._damage);
+                Console.WriteLine($"{enemie._name} attaque {allie._name} et inflige {enemie._ListCapacities[0]._damage} dégâts!");
                 break;
             case 2:
                 int healAmount = 10;
@@ -111,7 +107,6 @@
         CheckHealth(enemie, allie);
         tourAlier = true;
     }
-
 
     private void CheckHealth(EntityAbstract enemie, EntityAbstract allie)
     {
@@ -135,7 +130,6 @@
         int selectedIndex = 0;
         do
         {
-
             Console.Clear();
             DisplayOptions(options, selectedIndex, allie, enemie);
 
