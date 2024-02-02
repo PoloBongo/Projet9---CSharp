@@ -168,14 +168,14 @@
     
 
 ");
-        Console.ForegroundColor = ConsoleColor.Blue;
-        Console.Write($"vie {allie._name} : {allie._health} ");
 
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.Write($"vie {enemie._name} : {enemie._health} \n");
 
         Console.ResetColor();
+
+        DisplayHealthBar(allie, enemie);
+
     }
+
 
     private void DisplayOptions(List<string> options, int selectedIndex, EntityAbstract allie, EntityAbstract enemie)
     {
@@ -199,4 +199,57 @@
         }
         Console.ResetColor();
     }
+
+    private void DisplayHealthBar(EntityAbstract allie, EntityAbstract enemie)
+    {
+      
+
+
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine(allie._name);
+        DrawHealthBar(allie._health, allie._maxhealth);
+        Console.WriteLine();
+
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine(enemie._name);
+        DrawHealthBar(enemie._health, enemie._maxhealth);
+        Console.WriteLine();
+    }
+
+    static void DrawHealthBar(int currentHealth, int maxHealth)
+    {
+        int maxHealthImplicit = maxHealth ; 
+        int barWidth = 40;
+
+        currentHealth = Math.Max(currentHealth, 0);
+
+        int currentWidth = (int)((double)currentHealth / maxHealthImplicit * barWidth);
+
+        ConsoleColor color;
+        double healthPercentage = (double)currentHealth / maxHealthImplicit;
+
+        if (healthPercentage > 0.75)
+            color = ConsoleColor.Green;
+        else if (healthPercentage > 0.5)
+            color = ConsoleColor.Yellow;
+        else if (healthPercentage > 0.25)
+            color = ConsoleColor.Red;
+        else
+            color = ConsoleColor.DarkRed;
+
+        Console.ForegroundColor = color;
+        Console.Write("[");
+        for (int i = 0; i < barWidth; i++)
+        {
+            if (i < currentWidth)
+                Console.Write("█");
+            else
+                Console.Write(" ");
+        }
+        Console.Write("]");
+        Console.ResetColor();
+        Console.WriteLine($" {currentHealth}/{maxHealthImplicit}");
+    }
+ 
+
 }
