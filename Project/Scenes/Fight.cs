@@ -172,7 +172,7 @@
         Console.Write($"vie {allie._name} : {allie._health} ");
 
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.Write($"vie {enemie._name} : {enemie._health} ");
+        Console.Write($"vie {enemie._name} : {enemie._health} \n");
 
         Console.ResetColor();
     }
