@@ -16,7 +16,7 @@ public abstract class EntityAbstract
     public bool gameReset = false;
 
     public List<EntitiesCapacities> _ListCapacities { get; set; }
-    public EntityContainer alliesContainer;
+    public EntityContainer entitiesContainer;
     public int _currentLevel { get; set; }
 
     public abstract void DisplayDetails();
@@ -26,7 +26,6 @@ public abstract class EntityAbstract
     public abstract void TakeDamage(int less);
     public abstract void AddLevel();
     public abstract void AddExperience(int add);
-    public abstract void SetStatsEntity(EntityAbstract entity);
 
     public void CreateEntity(string path)
     {
@@ -48,14 +47,18 @@ public abstract class EntityAbstract
                     _damage = 70,
                     _stamina = 10,
                     _speed = 5,
+                    _resistance = 1.0f,
+                    _boostDamage = 1.0f,
                     _level = 2
                 },
                 new EntitiesCapacities
                 {
                     _name = "Paladin",
                     _damage = 20,
-                    _stamina = 10,
+                     _stamina = 10,
                     _speed = 5,
+                    _resistance = 1.0f,
+                    _boostDamage = 1.0f,
                     _level = 0
                 }
             },
@@ -80,6 +83,8 @@ public abstract class EntityAbstract
                     _damage = 70,
                     _stamina = 20,
                     _speed = 20,
+                    _resistance = 1.0f,
+                    _boostDamage = 1.0f,
                     _level = 0
                 },
                 new EntitiesCapacities
@@ -88,6 +93,8 @@ public abstract class EntityAbstract
                     _damage = 100,
                     _stamina = 100,
                     _speed = 70,
+                    _resistance = 1.0f,
+                    _boostDamage = 1.0f,
                     _level = 5
                 }
             },
@@ -109,15 +116,21 @@ public abstract class EntityAbstract
                 new EntitiesCapacities
                 {
                     _name = "Haki",
+                    _damage = 20,
                     _stamina = 20,
                     _speed = 20,
+                    _resistance = 1.0f,
+                    _boostDamage = 1.0f,
                     _level = 2
                 },
                 new EntitiesCapacities
                 {
                     _name = "Gear 5",
+                    _damage = 30,
                     _stamina = 100,
                     _speed = 70,
+                    _resistance = 1.0f,
+                    _boostDamage = 1.0f,
                     _level = 5
                 }
             },
@@ -139,6 +152,7 @@ public abstract class EntityAbstract
                 new EntitiesCapacities
                 {
                     _name = "Haki",
+                    _damage = 20,
                     _stamina = 20,
                     _speed = 20,
                     _level = 2
@@ -146,6 +160,7 @@ public abstract class EntityAbstract
                 new EntitiesCapacities
                 {
                     _name = "Gear 5",
+                    _damage = 30,
                     _stamina = 100,
                     _speed = 70,
                     _level = 5
@@ -154,7 +169,7 @@ public abstract class EntityAbstract
             _currentLevel = 1,
         };
 
-        alliesContainer = new EntityContainer
+        entitiesContainer = new EntityContainer
         {
             AlliesList = new List<Allies> { allies, allies2 },
             EnemiesList = new List<Enemy> { enemy, enemy2 },
@@ -162,7 +177,7 @@ public abstract class EntityAbstract
 
         if (gameReset || !GetExistsJson(path) || GetEmptyJson(path))
         {
-            string json = JsonConvert.SerializeObject(alliesContainer);
+            string json = JsonConvert.SerializeObject(entitiesContainer);
             File.WriteAllText(path, json);
             Console.WriteLine("Données sauvegardées dans le fichier : " + path);
         }
@@ -191,7 +206,7 @@ public abstract class EntityAbstract
     public void GetInfoEntity(string path)
     {
         string json = File.ReadAllText(path);
-        alliesContainer = JsonConvert.DeserializeObject<EntityContainer>(json);
+        entitiesContainer = JsonConvert.DeserializeObject<EntityContainer>(json);
     }
 
     public EntityContainer GetInfoEntityUpdateLevel(string path)
