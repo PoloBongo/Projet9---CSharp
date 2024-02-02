@@ -177,8 +177,9 @@ public abstract class EntityAbstract
         Enemy enemy3 = new Enemy
         {
             _name = "Sanglier",
+            _type = "Humain",
             _maxhealth = 100,
-            _health = 100,
+            _health = 100.0f,
             _stamina = 300,
             _speed = 50,
             _resistance = 1.0f,
@@ -189,7 +190,7 @@ public abstract class EntityAbstract
                 new EntitiesCapacities
                 {
                     _name = "Morsure",
-                    _damage = 5,
+                    _damage = 5.0f,
                     _stamina = 20,
                     _speed = 20,
                     _level = 2
@@ -197,7 +198,7 @@ public abstract class EntityAbstract
                 new EntitiesCapacities
                 {
                     _name = "Charge",
-                    _damage = 10,
+                    _damage = 10.0f,
                     _stamina = 100,
                     _speed = 70,
                     _level = 5
