@@ -69,7 +69,7 @@ Bienvenu chez les pirates ";
             {
                 Console.Clear();
 
-                fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer);
+                world.CheckForEncounter(player, allies, enemy);
 
                 Map currentMap = world.GetMapAt(player.WorldX, player.WorldY);
                 currentMap.PrintMap();
@@ -105,9 +105,6 @@ Bienvenu chez les pirates ";
                     player.LocalX = newLocalX;
                     player.LocalY = newLocalY;
                 }
-
-                // Vérifiez si le joueur rencontre un ennemi après le déplacement
-                world.CheckForEncounter(player);
             }
         }
         private void ExitGame()
