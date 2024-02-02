@@ -1,9 +1,22 @@
 ﻿
-class Marine : EntityAbstract
+using Newtonsoft.Json;
+
+public class Enemy : EntityAbstract
 {
+    public List<EntitiesCapacities> _ListCapacities { get; set; }
+    public EntityContainer alliesContainer;
     public override void DisplayDetails()
     {
         Console.WriteLine($"Name : {_name} Health: {_health}, Stamina: {_stamina}, Speed: {_speed}, Level: {_level}");
+    }
+
+    public override void SetStatsEntity(EntityAbstract entity)
+    {
+        _name = entity._name;
+        _health = entity._health;
+        _stamina = entity._stamina;
+        _speed = entity._speed;
+        _level = entity._level;
     }
 
     public override void AddHealth(int add)

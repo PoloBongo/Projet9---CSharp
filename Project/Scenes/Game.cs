@@ -53,21 +53,25 @@ Bienvenu chez les pirates ";
         private void PlayGame()
         {
             Initialization init = new Initialization();
-            Marine marine = new Marine();
-            Jimbey jimbey = new Jimbey();
             Fight fight = new Fight();
-            init.creationEntity(marine, jimbey);
-            // marine.DisplayDetails();
-            // jimbey.DisplayDetails();
-            fight.startCombat(jimbey, marine);
+            Enemy enemy = new Enemy();
+            Allies allies = new Allies();
 
-
+            string path = "../../../Entities/entity.json";
+            enemy.CreateEntity(path);
+            enemy.GetInfoEntity(path);
+            allies.CreateEntity(path);
+            allies.GetInfoEntity(path);
 
             World world = new World();
             Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
 
             while (true)
             {
+                Console.Clear();
+
+                fight.startCombat(allies.alliesContainer);
+
                 Map currentMap = world.GetMapAt(player.WorldX, player.WorldY);
                 currentMap.PrintMap();
                 ConsoleKeyInfo keyInfo = Console.ReadKey();

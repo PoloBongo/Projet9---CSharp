@@ -1,9 +1,22 @@
 ﻿
-public class Jimbey : EntityAbstract
+using Newtonsoft.Json;
+using System;
+using System.IO;
+
+public class Allies : EntityAbstract
 {
     public override void DisplayDetails()
     {
         Console.WriteLine($"Name : {_name} Health: {_health}, Stamina: {_stamina}, Speed: {_speed}, Level: {_level}");
+    }
+
+    public override void SetStatsEntity(EntityAbstract entity)
+    {
+        _name = entity._name;
+        _health = entity._health;
+        _stamina = entity._stamina;
+        _speed = entity._speed;
+        _level = entity._level;
     }
 
     public override void AddHealth(int add)
@@ -33,7 +46,6 @@ public class Jimbey : EntityAbstract
 
     public override void AddLevel()
     {
-        Console.WriteLine($"cc");
         if (_experience >= _maxExerience)
         {
             int tmp = _experience - _maxExerience;
@@ -42,6 +54,16 @@ public class Jimbey : EntityAbstract
             _level++;
             _maxExerience = 100 * _level;
             Console.WriteLine($"Tu as monter de nv {_level} : {_experience}/{_maxExerience} ");
+
+            string path = "../../../Entities/entity.json";
+            var entities = GetInfoEntityUpdateLevel(path);
+            var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(this._name, StringComparison.OrdinalIgnoreCase));
+                
+            if (targetAlliesUpdate != null)
+            {
+                targetAlliesUpdate._level = _level;
+                UpdateJsonLevel(entities, path);
+            }
         }
     }
 }
