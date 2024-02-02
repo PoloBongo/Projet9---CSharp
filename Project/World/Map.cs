@@ -1,13 +1,17 @@
 ﻿
+using MapEntities;
+using MapGame;
+
 namespace MapGame
 {
     public class Map
     {
         private ConsoleColor grassColor = ConsoleColor.Green;
         private ConsoleColor waterColor = ConsoleColor.Blue;
-        private ConsoleColor playerColor = ConsoleColor.Red;
+        private ConsoleColor playerColor = ConsoleColor.Magenta;
+        private ConsoleColor enemyColor = ConsoleColor.Red;
 
-        private char[,] matrix;
+        public char[,] matrix;
         private int rows;
         private int columns;
 
@@ -38,23 +42,26 @@ namespace MapGame
 
         public void PrintMap()
         {
-
             for (int i = 0; i < rows; i++)
             {
                 for (int j = 0; j < columns; j++)
                 {
                     ConsoleColor currentColor;
-                    if (matrix[i, j] == '@')
+                    if (matrix[i, j] == '@') // Joueur
                     {
                         currentColor = playerColor;
                     }
-                    else if (matrix[i, j] == '~')
+                    else if (matrix[i, j] == '~') // Eau
                     {
                         currentColor = waterColor;
                     }
-                    else if (matrix[i, j] == '.')
+                    else if (matrix[i, j] == '.') // Herbe
                     {
                         currentColor = grassColor;
+                    }
+                    else if (matrix[i, j] == 'O') // Ennemi
+                    {
+                        currentColor = enemyColor;
                     }
                     else
                     {
@@ -82,7 +89,6 @@ namespace MapGame
             }
         }
 
-
         public bool IsWater(int x, int y)
         {
             return matrix[x, y] == '~';
@@ -91,6 +97,11 @@ namespace MapGame
         public bool IsPlayer(int x, int y)
         {
             return matrix[x, y] == '@';
+        }
+
+        public bool IsEnemy(int x, int y)
+        {
+            return matrix[x, y] == 'O';
         }
 
         public bool CanMoveTo(int x, int y)
@@ -106,9 +117,28 @@ namespace MapGame
             }
         }
 
+        public void PlaceEnemy(int x, int y)
+        {
+            if (CanMoveTo(x, y) && matrix[x, y] != '@')
+            {
+                matrix[x, y] = 'O';
+            }
+        }
+
         public void ClearPlayerPosition(int x, int y)
         {
-            matrix[x, y] = IsWater(x, y) ? '~' : '.';
+            if (matrix[x, y] == '@')
+            {
+                matrix[x, y] = IsWater(x, y) ? '~' : '.'; // Remettre de l'eau ou de l'herbe selon le cas
+            }
+        }
+
+        public void ClearEnemyPosition(int x, int y)
+        {
+            if (matrix[x, y] == 'O')
+            {
+                matrix[x, y] = IsWater(x, y) ? '~' : '.'; // Remettre de l'eau ou de l'herbe selon le cas
+            }
         }
 
         public void MovePlayer(int oldX, int oldY, int newX, int newY)
