@@ -68,8 +68,10 @@ Bienvenu chez les pirates ";
             while (true)
             {
                 Console.Clear();
-                // fight.startCombat(allies.alliesContainer.Allies1, enemy.enemyContainer.Enemy1);
-                Map? currentMap = world.GetMapAt(player.WorldX, player.WorldY);
+
+                fight.startCombat(allies.alliesContainer);
+
+                Map currentMap = world.GetMapAt(player.WorldX, player.WorldY);
                 currentMap.PrintMap();
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
 
