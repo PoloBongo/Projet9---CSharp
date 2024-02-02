@@ -70,6 +70,7 @@ Bienvenu chez les pirates ";
                 Console.Clear();
 
                 world.CheckForEncounter(player, allies, enemy);
+                world.CheckRandEnemy(player, allies, enemy);
 
                 Map currentMap = world.GetMapAt(player.WorldX, player.WorldY);
                 currentMap.PrintMap();

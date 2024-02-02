@@ -3,10 +3,14 @@
     private bool tourAlier = false;
     Random random = new Random();
 
-    public void startCombat(EntityContainer entities1, EntityContainer entities2)
+    public void startCombat(EntityContainer entities1, EntityContainer entities2, bool sanglier)
     {
         EntityAbstract allie = entities1.AlliesList[0];
         EntityAbstract enemie = entities2.EnemiesList[0];
+        if (sanglier)
+        {
+            enemie = entities2.EnemiesList[2];
+        }
 
         AfficherEtatDesCombattants(allie, enemie);
 
