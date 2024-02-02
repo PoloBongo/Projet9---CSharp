@@ -13,7 +13,7 @@ public class Enemy : EntityAbstract
         _health += add;
     }
 
-    public override void TakeDamage(int damage)
+    public override void TakeDamage(float damage)
     {
         _health -= damage;
     }
