@@ -79,11 +79,45 @@
         }
 
         int selectedIndex = RunOptions(displayedCapacities, allie, enemie);
-        enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage);
+        ManageDamageByType(selectedIndex, allie, enemie);
+
 
         AfficherEtatDesCombattants(allie, enemie);
     }
 
+    private void ManageDamageByType(int selectedIndex, EntityAbstract allie, EntityAbstract enemie)
+    {
+        /* Si l'enemy est de type Humain alors je lui fait 50% de dégâts en plus*/
+        if (allie._type == "Logia" && enemie._type == "Humain")
+        {
+            enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 1.50f);
+        }
+        /* Si l'enemy est de type Paramecia alors je lui fait 25% de dégâts en plus*/
+        else if (allie._type == "Logia" && enemie._type == "Paramecia")
+        {
+            enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 1.25f);
+        }
+        /* Si l'enemy est de type Zoan alors je lui fait 10% de dégâts en moins*/
+        else if (allie._type == "Logia" && enemie._type == "Zoan")
+        {
+            enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 0.90f);
+        }
+        /* Si l'enemy est de type Humain alors je lui fait 25% de dégâts en plus*/
+        else if (allie._type == "Paramecia" && enemie._type == "Humain")
+        {
+            enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 1.25f);
+        }
+        /* Si l'enemy est de type Logia alors je lui fait 60% de dégâts en moins*/
+        else if (allie._type == "Paramecia" && enemie._type == "Logia")
+        {
+            enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 0.40f);
+        }
+        /* Si l'enemy est de type Humain alors je lui fait 10% de dégâts en moins*/
+        else if (allie._type == "Paramecia" && enemie._type == "Humain")
+        {
+            enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 0.90f);
+        }
+    }
 
     private void HandleEnemyTurn(EntityAbstract allie, EntityAbstract enemie)
     {
@@ -214,7 +248,7 @@
         Console.WriteLine();
     }
 
-    static void DrawHealthBar(int currentHealth, int maxHealth)
+    static void DrawHealthBar(float currentHealth, int maxHealth)
     {
         int maxHealthImplicit = maxHealth ; 
         int barWidth = 40;

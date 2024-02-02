@@ -52,8 +52,6 @@ Bienvenu chez les pirates ";
 
         private void PlayGame()
         {
-            Initialization init = new Initialization();
-            Fight fight = new Fight();
             Enemy enemy = new Enemy();
             Allies allies = new Allies();
             World world = new World();
