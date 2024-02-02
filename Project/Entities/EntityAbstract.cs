@@ -4,12 +4,16 @@ using Newtonsoft.Json;
 public abstract class EntityAbstract
 {
     public string _name;
+    public int _maxhealth;
     public int _health;
     public int _stamina;
     public int _speed;
+    public float _resistance;
+    public float _boostDamage;
     public int _level;
     public int _experience;
     public int _maxExerience;
+    public bool gameReset = false;
 
     public List<EntitiesCapacities> _ListCapacities { get; set; }
     public EntityContainer alliesContainer;
@@ -24,28 +28,17 @@ public abstract class EntityAbstract
     public abstract void AddExperience(int add);
     public abstract void SetStatsEntity(EntityAbstract entity);
 
-    /*public static EntityAbstract CreateEntity(string name)
-    {
-        *//* Si l'entité existe dans le fichier alors il créer une instance de celle-ci sinon ça va pas *//*
-        switch (name.ToLower())
-        {
-            case "marine":
-                return new Marine();
-            case "jimbey":
-                return new Jimbey();
-            default:
-                throw new ArgumentException("l'entité n'existe pas : " + name);
-        }
-    }*/
-
     public void CreateEntity(string path)
     {
         Allies allies = new Allies
         {
-            _name = "Jimbey",
+            _name = "Ace", // Type Logia
+            _maxhealth = 300,
             _health = 300,
             _stamina = 200,
             _speed = 40,
+            _resistance = 1.0f,
+            _boostDamage = 1.0f,
             _level = 1,
             _ListCapacities = new List<EntitiesCapacities>
             {
@@ -72,9 +65,12 @@ public abstract class EntityAbstract
         Allies allies2 = new Allies
         {
             _name = "Luffy",
+            _maxhealth = 500,
             _health = 500,
             _stamina = 300,
             _speed = 50,
+            _resistance = 1.0f,
+            _boostDamage = 1.0f,
             _level = 1,
             _ListCapacities = new List<EntitiesCapacities>
             {
@@ -101,9 +97,12 @@ public abstract class EntityAbstract
         Enemy enemy = new Enemy
         {
             _name = "Amirale",
+            _maxhealth = 500,
             _health = 500,
             _stamina = 300,
             _speed = 50,
+            _resistance = 1.0f,
+            _boostDamage = 1.0f,
             _level = 1,
             _ListCapacities = new List<EntitiesCapacities>
             {
@@ -128,9 +127,12 @@ public abstract class EntityAbstract
         Enemy enemy2 = new Enemy
         {
             _name = "Toby",
+            _maxhealth = 500,
             _health = 500,
             _stamina = 300,
             _speed = 50,
+            _resistance = 1.0f,
+            _boostDamage = 1.0f,
             _level = 1,
             _ListCapacities = new List<EntitiesCapacities>
             {
@@ -158,9 +160,32 @@ public abstract class EntityAbstract
             EnemiesList = new List<Enemy> { enemy, enemy2 },
         };
 
-        string json = JsonConvert.SerializeObject(alliesContainer);
-        File.WriteAllText(path, json);
-        Console.WriteLine("Données sauvegardées dans le fichier : " + path);
+        if (gameReset || !GetExistsJson(path) || GetEmptyJson(path))
+        {
+            string json = JsonConvert.SerializeObject(alliesContainer);
+            File.WriteAllText(path, json);
+            Console.WriteLine("Données sauvegardées dans le fichier : " + path);
+        }
+
+    }
+
+    private bool GetExistsJson(string path)
+    {
+        return File.Exists(path);
+    }
+
+    private bool GetEmptyJson(string path)
+    {
+        try
+        {
+            string json = File.ReadAllText(path);
+            return string.IsNullOrEmpty(json);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error reading JSON file: " + ex.Message);
+            return true; 
+        }
     }
 
     public void GetInfoEntity(string path)
