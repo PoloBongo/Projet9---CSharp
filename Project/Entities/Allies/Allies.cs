@@ -25,9 +25,17 @@ public class Allies : EntityAbstract
         _stamina += add;
     }
 
-    public override void LessStamina(int less)
+    public override void LessStamina(float less)
     {
         _stamina -= less;
+        var entities = GetInfoEntityUpdateLevel(path);
+        var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(this._name, StringComparison.OrdinalIgnoreCase));
+
+        if (targetAlliesUpdate != null)
+        {
+            targetAlliesUpdate._stamina = _stamina;
+            UpdateJsonStamina(entities, path);
+        }
     }
     public override void AddExperience(int add)
     {
@@ -46,7 +54,6 @@ public class Allies : EntityAbstract
             _maxExerience = 100 * _level;
             Console.WriteLine($"Tu as monter de nv {_level} : {_experience}/{_maxExerience} ");
 
-            string path = "../../../Entities/entity.json";
             var entities = GetInfoEntityUpdateLevel(path);
             var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(this._name, StringComparison.OrdinalIgnoreCase));
                 

@@ -23,7 +23,7 @@ public class Enemy : EntityAbstract
         _stamina += add;
     }
 
-    public override void LessStamina(int less)
+    public override void LessStamina(float less)
     {
         _stamina -= less;
     }
