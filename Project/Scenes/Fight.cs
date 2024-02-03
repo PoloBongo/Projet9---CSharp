@@ -1,7 +1,10 @@
-﻿public class Fight
+﻿using System.IO;
+
+public class Fight
 {
     private bool tourAlier = false;
     Random random = new Random();
+    List<string> alliesNames;
 
     public void startCombat(EntityContainer entities1, EntityContainer entities2, bool sanglier)
     {
@@ -37,17 +40,36 @@
 
     private void HandleAllieTurn(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie)
     {
-        List<string> options = new List<string> { "Changer d'allié", "Attaquer" };
-        int selectedIndex = RunOptions(options, allie, enemie);
+        List<string> options;
+        int selectedIndex;
 
-        switch (selectedIndex)
+        if (CheckStaminaAllie(allie, entities))
         {
-            case 0:
-                ChangeAllie(entities, ref allie, enemie);
-                break;
-            case 1:
-                AttackEnemy(allie, enemie);
-                break;
+            options = new List<string> { "Changer d'allié", "Attaquer" };
+            selectedIndex = RunOptions(options, allie, enemie);
+            switch (selectedIndex)
+            {
+                case 0:
+                    ChangeAllie(entities, ref allie, enemie);
+                    break;
+                case 1:
+                    AttackEnemy(allie, enemie, entities);
+                    break;
+            }
+        }
+        else
+        {
+            options = new List<string> { "Changer d'allié", "Utiliser potion de stamina" };
+            selectedIndex = RunOptions(options, allie, enemie);
+            switch (selectedIndex)
+            {
+                case 0:
+                    ChangeAllie(entities, ref allie, enemie);
+                    break;
+                case 1:
+                    /* Faire en sorte de use la potion ou d'ouvrir l'inventaire pour la use */
+                    break;
+            }
         }
 
         CheckHealth(enemie, allie);
@@ -56,15 +78,26 @@
 
     private void ChangeAllie(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie)
     {
-        List<string> alliesNames = entities.AlliesList.Select(a => a._name).ToList();
-        int selectedIndex = RunOptions(alliesNames, allie, enemie);
+        alliesNames = entities.AlliesList
+            .Where(a => a._currentBlocked != 1)
+            .Select(a => a._name)
+            .ToList();
 
-        allie = entities.AlliesList[selectedIndex];
+        EntityAbstract newAllie = null;
+        do
+        {
+            int selectedIndex = RunOptions(alliesNames, allie, enemie);
+            string selectedName = alliesNames[selectedIndex];
+            newAllie = entities.AlliesList.FirstOrDefault(a => a._name == selectedName);
+        } while (newAllie == null);
+
+        allie = newAllie;
         Console.WriteLine($"Vous avez choisi l'allié : {allie._name}");
+        AfficherEtatDesCombattants(allie, enemie);
     }
 
 
-    private void AttackEnemy(EntityAbstract allie, EntityAbstract enemie)
+    private void AttackEnemy(EntityAbstract allie, EntityAbstract enemie, EntityContainer entities)
     {
         Console.WriteLine($"Choisis la capacité que tu veux utiliser pour attaquer :\n");
         List<string> displayedCapacities = new List<string>();
@@ -79,9 +112,12 @@
         }
 
         int selectedIndex = RunOptions(displayedCapacities, allie, enemie);
-        ManageDamageByType(selectedIndex, allie, enemie);
 
-
+        if (allie._stamina >= allie._ListCapacities[selectedIndex]._stamina)
+        {
+            ManageDamageByType(selectedIndex, allie, enemie);
+        }
+        
         AfficherEtatDesCombattants(allie, enemie);
     }
 
@@ -91,31 +127,37 @@
         if (allie._type == "Logia" && enemie._type == "Humain")
         {
             enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 1.50f);
+            allie.LessStamina(allie._ListCapacities[selectedIndex]._stamina);
         }
         /* Si l'enemy est de type Paramecia alors je lui fait 25% de dégâts en plus*/
         else if (allie._type == "Logia" && enemie._type == "Paramecia")
         {
             enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 1.25f);
+            allie.LessStamina(allie._ListCapacities[selectedIndex]._stamina);
         }
         /* Si l'enemy est de type Zoan alors je lui fait 10% de dégâts en moins*/
         else if (allie._type == "Logia" && enemie._type == "Zoan")
         {
             enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 0.90f);
+            allie.LessStamina(allie._ListCapacities[selectedIndex]._stamina);
         }
         /* Si l'enemy est de type Humain alors je lui fait 25% de dégâts en plus*/
         else if (allie._type == "Paramecia" && enemie._type == "Humain")
         {
             enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 1.25f);
+            allie.LessStamina(allie._ListCapacities[selectedIndex]._stamina);
         }
         /* Si l'enemy est de type Logia alors je lui fait 60% de dégâts en moins*/
         else if (allie._type == "Paramecia" && enemie._type == "Logia")
         {
             enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 0.40f);
+            allie.LessStamina(allie._ListCapacities[selectedIndex]._stamina);
         }
         /* Si l'enemy est de type Humain alors je lui fait 10% de dégâts en moins*/
         else if (allie._type == "Paramecia" && enemie._type == "Humain")
         {
             enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 0.90f);
+            allie.LessStamina(allie._ListCapacities[selectedIndex]._stamina);
         }
     }
 
@@ -146,6 +188,29 @@
         tourAlier = true;
     }
 
+    private bool CheckStaminaAllie(EntityAbstract allie, EntityContainer entities)
+    {
+        for (int i = 0; i < allie._ListCapacities.Count(); i++)
+        {
+            if (allie._stamina >= allie._ListCapacities[i]._stamina)
+            {
+                return true;
+            }
+        }
+        /* A LAISSER SI VOUS VOULEZ QUE QUAND IL L ALLIE N'A PLUS DE STAMINA QU'IL SOIT REMVOE DE LA LISTE DE SELECTION DES ALLIES*/
+        var entitie = allie.GetInfoEntityUpdateBlocked("../../../Entities/entity.json");
+        var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(allie._name, StringComparison.OrdinalIgnoreCase));
+
+        if (targetAlliesUpdate != null)
+        {
+            targetAlliesUpdate._blocked = allie._blocked;
+            allie.UpdateJsonBlocked(entities, "../../../Entities/entity.json", 1);
+        }
+        /* FIN */
+
+        return false;
+    }
+
     private void CheckHealth(EntityAbstract enemie, EntityAbstract allie)
     {
         if (enemie._health <= 0)
@@ -164,11 +229,11 @@
 
     private int RunOptions(List<string> options, EntityAbstract allie, EntityAbstract enemie)
     {
+
         ConsoleKey keyPressed;
         int selectedIndex = 0;
         do
         {
-            Console.Clear();
             DisplayOptions(options, selectedIndex, allie, enemie);
 
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
@@ -190,6 +255,7 @@
 
     private void AfficherEtatDesCombattants(EntityAbstract allie, EntityAbstract enemie)
     {
+        Console.Clear();
         Console.WriteLine(@"
  ██████╗ ██████╗ ███╗   ███╗██████╗  █████╗ ████████╗
 ██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝
@@ -234,8 +300,10 @@
 
     private void DisplayHealthBar(EntityAbstract allie, EntityAbstract enemie)
     {
-      
-
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine($"Stamina de {allie._name}");
+        DrawStaminaBar(allie._stamina, allie._maxStamina);
+        Console.WriteLine();
 
         Console.ForegroundColor = ConsoleColor.Blue;
         Console.WriteLine(allie._name);
@@ -282,6 +350,29 @@
         Console.ResetColor();
         Console.WriteLine($" {currentHealth}/{maxHealthImplicit}");
     }
- 
 
+    static void DrawStaminaBar(float currentHealth, int maxHealth)
+    {
+        int maxHealthImplicit = maxHealth;
+        int barWidth = 40;
+
+        currentHealth = Math.Max(currentHealth, 0);
+
+        int currentWidth = (int)((double)currentHealth / maxHealthImplicit * barWidth);
+
+        ConsoleColor color = ConsoleColor.Magenta;
+
+        Console.ForegroundColor = color;
+        Console.Write("[");
+        for (int i = 0; i < barWidth; i++)
+        {
+            if (i < currentWidth)
+                Console.Write("█");
+            else
+                Console.Write(" ");
+        }
+        Console.Write("]");
+        Console.ResetColor();
+        Console.WriteLine($" {currentHealth}/{maxHealthImplicit}");
+    }
 }
