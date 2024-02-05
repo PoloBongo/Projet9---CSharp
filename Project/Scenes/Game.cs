@@ -66,16 +66,16 @@ Bienvenu chez les pirates ";
             while (true)
             {
                 Console.Clear();
-
+                Console.WriteLine($"{player.NBViande}");
                 world.CheckForEncounter(player, allies, enemy);
                 world.CheckRandEnemy(player, allies, enemy);
 
-                Map currentMap = world.GetMapAt(player.WorldX, player.WorldY);
+                Map currentMap = world.GetMapAt(player.WORLDX, player.WORLDY);
                 currentMap.PrintMap();
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
 
-                int newLocalX = player.LocalX;
-                int newLocalY = player.LocalY;
+                int newLocalX = player.LOCALY;
+                int newLocalY = player.LOCALY;
 
                 switch (keyInfo.Key)
                 {
@@ -100,9 +100,9 @@ Bienvenu chez les pirates ";
                 else if (currentMap.CanMoveTo(newLocalX, newLocalY))
                 {
                     // Déplacer le joueur localement
-                    currentMap.MovePlayer(player.LocalX, player.LocalY, newLocalX, newLocalY);
-                    player.LocalX = newLocalX;
-                    player.LocalY = newLocalY;
+                    currentMap.MovePlayer(player.LOCALX, player.LOCALY, newLocalX, newLocalY);
+                    player.LOCALX = newLocalX;
+                    player.LOCALY = newLocalY;
                 }
             }
         }
