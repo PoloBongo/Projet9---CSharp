@@ -10,7 +10,7 @@ namespace Project.Quest
         public int PositionY { get; private set; }
         public string QuestText { get; private set; }
         public bool QuestAccepted { get; set; }
-        public int WoodCollected { get; set; }
+        public int WoodCollected { get; private set; }
 
         public bool IsNear(Player player)
         {
@@ -25,7 +25,18 @@ namespace Project.Quest
             QuestAccepted = false;
             WoodCollected = 0;
         }
-
+        public void CollectWood()
+        {
+            if (WoodCollected < 5) // Supposons que le joueur ne peut ramasser que 5 morceaux de bois
+            {
+                WoodCollected++;
+                Console.WriteLine($"Morceau de bois ramassé. Vous avez maintenant {WoodCollected}/5.");
+            }
+            else
+            {
+                Console.WriteLine("Vous avez déjà ramassé suffisamment de bois.");
+            }
+        }
         public void Interact()
         {
 
@@ -96,14 +107,7 @@ Ils seraient parfaits pour réparer les dégâts.
                 }
             }
         }
-        public void CollectWood()
-        {
-            if (QuestAccepted && WoodCollected < 5)
-            {
-                WoodCollected++;
-                Console.WriteLine($"Morceau de bois ramassé. Vous avez maintenant {WoodCollected}/5.");
-            }
-        }
+
 
         public class WoodPiece
         {

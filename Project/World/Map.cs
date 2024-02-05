@@ -1,4 +1,5 @@
-﻿using Project.Quest;
+﻿using MapEntities;
+using Project.Quest;
 using static Project.Quest.QuestNPC;
 
 namespace MapGame
@@ -25,6 +26,48 @@ namespace MapGame
             CreateQuestNPCs();
             WoodPieces = new List<WoodPiece>();
             PlaceWoodPieces();
+        }
+
+        public void UpdatePlayerActions(Player player)
+        {
+            CheckForWoodPickup(player);
+        }
+
+        private void CheckForWoodPickup(Player player)
+        {
+            foreach (var woodPiece in WoodPieces.ToList())
+            {
+                if (IsPlayerNearWood(player, woodPiece))
+                {
+                    var questNpc = questNPCs.FirstOrDefault(npc => npc.QuestAccepted && npc.QuestText == "Ramasser 5 morceaux de bois");
+                    if (questNpc != null)
+                    {
+                        questNpc.CollectWood();
+                        WoodPieces.Remove(woodPiece);
+                        ClearWoodPiecePosition(woodPiece.PositionX, woodPiece.PositionY);
+                        break;
+                    }
+                }
+            }
+        }
+
+
+
+
+        private bool IsPlayerNearWood(Player player, WoodPiece woodPiece)
+        {
+            Console.WriteLine("Le joueur est proche d'un morceau de bois.");
+            return Math.Abs(woodPiece.PositionX - player.LocalX) <= 1 && Math.Abs(woodPiece.PositionY - player.LocalY) <= 1;
+          
+        }
+
+
+        private void ClearWoodPiecePosition(int x, int y)
+        {
+            if (matrix[x, y] == '!')
+            {
+                matrix[x, y] = IsWater(x, y) ? '~' : '.'; // Remplacer par de l'eau ou de l'herbe
+            }
         }
         private void PlaceWoodPieces()
         {
@@ -219,12 +262,5 @@ namespace MapGame
                 PlacePlayer(oldX, oldY);
             }
         }
-
-
-
-
-
-
-
     }
 }
