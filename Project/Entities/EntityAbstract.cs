@@ -1,4 +1,5 @@
 ﻿
+using MapEntities;
 using Newtonsoft.Json;
 
 public abstract class EntityAbstract
@@ -32,6 +33,7 @@ public abstract class EntityAbstract
     public abstract void TakeDamage(float less);
     public abstract void AddLevel();
     public abstract void AddExperience(int add);
+    public abstract void Loot(Player p);
 
     public void CreateEntity(string path)
     {

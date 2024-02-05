@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using MapEntities;
+using System.IO;
 
 public class Fight
 {
@@ -6,7 +7,7 @@ public class Fight
     Random random = new Random();
     List<string> alliesNames;
 
-    public void startCombat(EntityContainer entities1, EntityContainer entities2, bool sanglier)
+    public void startCombat(EntityContainer entities1, EntityContainer entities2, bool sanglier, Player player)
     {
         EntityAbstract allie = entities1.AlliesList[0];
         EntityAbstract enemie = entities2.EnemiesList[0];
@@ -23,11 +24,11 @@ public class Fight
 
             if (tourAlier)
             {
-                HandleAllieTurn(entities1, ref allie, enemie);
+                HandleAllieTurn(entities1, ref allie, enemie, player);
             }
             else
             {
-                HandleEnemyTurn(allie, enemie);
+                HandleEnemyTurn(allie, enemie, player);
             }
 
             AfficherEtatDesCombattants(allie, enemie);
@@ -38,14 +39,14 @@ public class Fight
         tourAlier = allie._speed > enemie._speed || tourAlier;
     }
 
-    private void HandleAllieTurn(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie)
+    private void HandleAllieTurn(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie, Player p)
     {
         List<string> options;
         int selectedIndex;
 
         if (CheckStaminaAllie(allie, entities))
         {
-            options = new List<string> { "Changer d'allié", "Attaquer" };
+            options = new List<string> { "Changer d'allié", "Attaquer", "Inventory" };
             selectedIndex = RunOptions(options, allie, enemie);
             switch (selectedIndex)
             {
@@ -54,6 +55,9 @@ public class Fight
                     break;
                 case 1:
                     AttackEnemy(allie, enemie, entities);
+                    break;
+                case 2:
+                    playerInventory(p, allie, enemie);
                     break;
             }
         }
@@ -67,13 +71,43 @@ public class Fight
                     ChangeAllie(entities, ref allie, enemie);
                     break;
                 case 1:
-                    /* Faire en sorte de use la potion ou d'ouvrir l'inventaire pour la use */
+                    p.RemoveAlcool(1);
+                    allie.AddStamina(20);
                     break;
             }
         }
 
-        CheckHealth(enemie, allie);
+        CheckHealth(enemie, allie, p);
         tourAlier = false;
+    }
+
+    public void playerInventory(Player player, EntityAbstract allie, EntityAbstract enemie)
+    {
+        List<string> options;
+        int selectedIndex;
+        options = new List<string> { $"Soin {player.NBAlcool}", "Stamina"};
+        selectedIndex = RunOptions(options, allie, enemie);
+        switch (selectedIndex)
+        {
+            case 0:
+                Soin(player, allie);
+                break;
+            case 1:
+                Stamina(player, allie);
+                break;
+        }
+    }
+
+    public void Soin(Player player, EntityAbstract allie) 
+    {
+        player.RemoveViande(1);
+        allie.AddHealth(20);
+    }
+
+    public void Stamina(Player player, EntityAbstract allie)
+    {
+        player.RemoveAlcool(1);
+        allie.AddStamina(20);
     }
 
     private void ChangeAllie(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie)
@@ -161,7 +195,7 @@ public class Fight
         }
     }
 
-    private void HandleEnemyTurn(EntityAbstract allie, EntityAbstract enemie)
+    private void HandleEnemyTurn(EntityAbstract allie, EntityAbstract enemie, Player p)
     {
         int nombreAleatoire = random.Next(1, 4);
         int randomAttackEnemy = random.Next(0, 2);
@@ -184,7 +218,7 @@ public class Fight
                 break;
         }
 
-        CheckHealth(enemie, allie);
+        CheckHealth(enemie, allie, p);
         tourAlier = true;
     }
 
@@ -211,13 +245,14 @@ public class Fight
         return false;
     }
 
-    private void CheckHealth(EntityAbstract enemie, EntityAbstract allie)
+    private void CheckHealth(EntityAbstract enemie, EntityAbstract allie, Player p)
     {
         if (enemie._health <= 0)
         {
             Console.WriteLine(@"Tu as gagné");
             int nombreAleatoire = random.Next(2, 10 * enemie._level);
             allie.AddExperience(nombreAleatoire);
+            enemie.Loot(p);
 
         }
         else if (allie._health <= 0)
