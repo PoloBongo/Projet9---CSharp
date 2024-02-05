@@ -87,6 +87,7 @@ namespace MapGame
         public void PrintMap()
         {
             DrawNPCs();
+            DrawWoodPieces();
 
             for (int i = 0; i < rows; i++)
             {
@@ -170,6 +171,15 @@ namespace MapGame
                 matrix[x, y] = '@';
             }
         }
+
+        public void DrawWoodPieces()
+        {
+            foreach (var woodPiece in WoodPieces)
+            {
+                matrix[woodPiece.PositionX, woodPiece.PositionY] = '!';
+            }
+        }
+
 
         public void PlaceEnemy(int x, int y)
         {
