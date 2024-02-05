@@ -1,6 +1,7 @@
 ﻿using MapEntities;
 
 using Project.Quest;
+using static Project.Quest.QuestNPC;
 
 namespace MapGame
 {
@@ -14,9 +15,13 @@ namespace MapGame
         Fight fight = new Fight();
         Random random = new Random();
 
+        public Player player;
+        public List<Npc> npcs;
+
         public World()
         {
             worldMaps = new Map[worldSize, worldSize];
+            npcs = new List<Npc>();
             InitializeWorld();
         }
 
@@ -171,14 +176,40 @@ namespace MapGame
                     oldMap.ClearPlayerPosition(oldLocalX, oldLocalY);
                 }
 
-                // Placer le joueur sur la nouvelle carte
+
                 Map? newMap = GetMapAt(player.WorldX, player.WorldY);
                 if (newMap != null)
                 {
-                    newMap.PlacePlayer(player.LocalX, player.LocalY);
+                    // Vérifier si un NPC de quête est à proximité
+                    foreach (var questNpc in newMap.questNPCs)
+                    {
+                        if (Utils.IsNear(player.LocalX, player.LocalY, questNpc.PositionX, questNpc.PositionY))
+                        {
+                            {
+                                Console.WriteLine("Appuyez sur 'E' pour interagir avec le NPC de quête.");
+                                var key = Console.ReadKey(true).Key;
+
+                                // Vérifier si la touche 'E' est pressée
+                                if (key == ConsoleKey.E)
+                                {
+                                    questNpc.Interact();
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
+
+        public static class Utils
+        {
+            public static bool IsNear(int x1, int y1, int x2, int y2, int threshold = 2)
+            {
+                return Math.Abs(x1 - x2) <= threshold && Math.Abs(y1 - y2) <= threshold;
+            }
+        }
+
 
 
 

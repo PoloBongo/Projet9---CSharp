@@ -1,4 +1,5 @@
-﻿using MapGame;
+﻿using MapEntities;
+using MapGame;
 
 
 namespace Project.Quest
@@ -12,14 +13,17 @@ namespace Project.Quest
 
         public QuestNPC(int x, int y, string questText)
         {
-            PositionX = x; 
-            PositionY = y; 
+            PositionX = x;
+            PositionY = y;
             QuestText = questText;
             QuestAccepted = false;
         }
 
         public void Interact()
         {
+            Console.WriteLine("Interaction avec NPC de quête"); // Debug
+            Console.WriteLine(QuestText);
+
             Console.WriteLine(QuestText);
             Console.WriteLine("Accepter la quête? (O/N)");
             var response = Console.ReadKey();
@@ -45,12 +49,13 @@ namespace Project.Quest
                 return Math.Abs(PositionX - x) <= 2 && Math.Abs(PositionY - y) <= 2;
             }
 
-            public void UpdatePlayerActions(Npc npc, Map map)
+            public void UpdatePlayerActions(Player player, Map map)
             {
                 foreach (var questNpc in map.questNPCs)
                 {
-                    if (npc.IsNear(questNpc.PositionX, questNpc.PositionY))
+                    if (this.IsNear(questNpc.PositionX, questNpc.PositionY))
                     {
+                        Console.WriteLine("NPC de quête à proximité, déclenchement de l'interaction"); 
                         questNpc.Interact();
                         break;
                     }
