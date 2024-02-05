@@ -11,6 +11,7 @@ namespace MapGame
         private int worldSize = 3;
         private List<EnemyMap> enemyMaps = new List<EnemyMap>();
         private List<int> positionX = new List<int>();
+        private bool CombatStart = false;
         Fight fight = new Fight();
         Random random = new Random();
 
@@ -114,14 +115,14 @@ namespace MapGame
 
         public void MovePlayerToNewMap(Player player)
         {
-            Map? currentMap = GetMapAt(player.WORLDX, player.WORLDY);
+            Map? currentMap = GetMapAt(player.WorldX, player.WorldY);
             if (currentMap == null) return;
 
-            int oldLocalX = player.LOCALX;
-            int oldLocalY = player.LOCALY;
+            int oldLocalX = player.LocalX;
+            int oldLocalY = player.LocalY;
 
-            int oldWorldX = player.WORLDX;
-            int oldWorldY = player.WORLDY;
+            int oldWorldX = player.WorldX;
+            int oldWorldY = player.WorldY;
 
             int mapHeight = 18;
             int mapWidth = 18;
@@ -129,37 +130,37 @@ namespace MapGame
             bool needsNewMap = false;
 
             // Déterminer la nouvelle position mondiale du joueur
-            if (player.LOCALX < 1)
+            if (player.LocalX < 1)
             {
-                player.WORLDX--;
-                player.LOCALX = mapWidth;
+                player.WorldX--;
+                player.LocalX = mapWidth;
                 needsNewMap = true;
             }
-            else if (player.LOCALX > mapHeight)
+            else if (player.LocalX > mapHeight)
             {
-                player.WORLDX++;
-                player.LOCALX = 0;
+                player.WorldX++;
+                player.LocalX = 0;
                 needsNewMap = true;
             }
-            else if (player.LOCALY < 1)
+            else if (player.LocalY < 1)
             {
-                player.WORLDY--;
-                player.LOCALY = mapHeight;
+                player.WorldY--;
+                player.LocalY = mapHeight;
                 needsNewMap = true;
             }
-            else if (player.LOCALY > mapWidth)
+            else if (player.LocalY > mapWidth)
             {
-                player.WORLDY++;
-                player.LOCALY = 0;
+                player.WorldY++;
+                player.LocalY = 0;
                 needsNewMap = true;
             }
 
             // Vérifier les limites du monde
-            if (player.WORLDX < 0 || player.WORLDX >= worldSize || player.WORLDY < 0 || player.WORLDY >= worldSize)
+            if (player.WorldX < 0 || player.WorldX >= worldSize || player.WorldY < 0 || player.WorldY >= worldSize)
             {
                 needsNewMap = false;
-                player.WORLDX = Math.Max(0, Math.Min(player.WORLDX, worldSize - 1));
-                player.WORLDY = Math.Max(0, Math.Min(player.WORLDY, worldSize - 1));
+                player.WorldX = Math.Max(0, Math.Min(player.WorldX, worldSize - 1));
+                player.WorldY = Math.Max(0, Math.Min(player.WorldY, worldSize - 1));
             }
 
             if (needsNewMap)
@@ -172,10 +173,10 @@ namespace MapGame
                 }
 
                 // Placer le joueur sur la nouvelle carte
-                Map? newMap = GetMapAt(player.WORLDX, player.WORLDY);
+                Map? newMap = GetMapAt(player.WorldX, player.WorldY);
                 if (newMap != null)
                 {
-                    newMap.PlacePlayer(player.LOCALX, player.LOCALX);
+                    newMap.PlacePlayer(player.LocalX, player.LocalY);
                 }
             }
         }
@@ -186,11 +187,11 @@ namespace MapGame
             {
                 for (int i = 0; i < enemyMaps.Count; i++)
                 {
-                    if (enemyMaps[i].LOCALX == player.LOCALX && enemyMaps[i].WORLDX == player.WORLDX && enemyMaps[i].WORLDY == player.WORLDY && !enemyMaps[i].COMBATSTART)
+                    if (enemyMaps[i].LocalX == player.LocalX && enemyMaps[i].WorldX == player.WorldX && enemyMaps[i].WorldY == player.WorldY && !enemyMaps[i].CombatStart)
                     {
                         // Gérer la rencontre entre le joueur et l'ennemi
                         HandleEncounter(allies, enemy, player);
-                        enemyMaps[i].COMBATSTART = true;
+                        enemyMaps[i].CombatStart = true;
                     }
                 }
             }
@@ -199,29 +200,29 @@ namespace MapGame
         public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
         {
             int randEnemy = random.Next(1, 19);
-            if(randEnemy == player.LOCALX)
+            if (randEnemy == player.LocalX)
             {
                 fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, true, player);
             }
         }
 
-        private void HandleEncounter(Allies allies, Enemy enemy, Player player)
+        private void HandleEncounter(Allies allies, Enemy enemy, Player p)
         {
             // Combat entre le joueur et l'ennemi
-            fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, false, player);
+            fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, false, p);
         }
 
         private void EnsurePlayerOnLand(Map currentMap, Player player)
         {
-            if (currentMap.IsWater(player.LOCALX, player.LOCALY))
+            if (currentMap.IsWater(player.LocalX, player.LocalY))
             {
                 // Trouver la case d'herbe la plus proche pour repositionner le joueur
                 for (int offsetX = -1; offsetX <= 1; offsetX++)
                 {
                     for (int offsetY = -1; offsetY <= 1; offsetY++)
                     {
-                        int newX = player.LOCALX + offsetX;
-                        int newY = player.LOCALY + offsetY;
+                        int newX = player.LocalX + offsetX;
+                        int newY = player.LocalY + offsetY;
 
                         if (newX >= 0 && newX < 20 && newY >= 0 && newY < 20)
                         {
@@ -229,8 +230,8 @@ namespace MapGame
                             {
                                 // Place le joueur sur cette position d'herbe
                                 currentMap.PlacePlayer(newX, newY);
-                                player.LOCALX = newX;
-                                player.LOCALY = newY;
+                                player.LocalX = newX;
+                                player.LocalY = newY;
                                 return;
                             }
                         }
@@ -248,7 +249,7 @@ namespace MapGame
             enemyMaps.Add(newEnemyMap);
 
             Map centerMap = worldMaps[1, 1];
-            centerMap.PlaceEnemy(newEnemyMap.LOCALX, newEnemyMap.LOCALY);
+            centerMap.PlaceEnemy(newEnemyMap.LocalX, newEnemyMap.LocalY);
         }
 
         private void PlaceEnemiesRandomly(Map map, int positionX, int positionY)

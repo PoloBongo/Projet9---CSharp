@@ -85,7 +85,9 @@ public class Fight
     {
         List<string> options;
         int selectedIndex;
-        options = new List<string> { $"Soin {player.NBAlcool}", "Stamina"};
+
+        options = new List<string> { "Soin", "Stamina" };
+
         selectedIndex = RunOptions(options, allie, enemie);
         switch (selectedIndex)
         {
@@ -100,13 +102,13 @@ public class Fight
 
     public void Soin(Player player, EntityAbstract allie) 
     {
-        player.RemoveViande(1);
+        /*player.RemoveViande(1);*/
         allie.AddHealth(20);
     }
 
     public void Stamina(Player player, EntityAbstract allie)
     {
-        player.RemoveAlcool(1);
+        /*player.RemoveAlcool(1);*/
         allie.AddStamina(20);
     }
 
