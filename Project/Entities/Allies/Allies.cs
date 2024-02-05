@@ -1,4 +1,5 @@
 ﻿
+using MapEntities;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -64,4 +65,5 @@ public class Allies : EntityAbstract
             }
         }
     }
+    public override void Loot(Player p){}
 }
