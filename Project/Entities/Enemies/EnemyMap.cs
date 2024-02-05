@@ -3,10 +3,10 @@ namespace MapEntities;
 
 public class EnemyMap
 {
-    private int LocalX { get; set; }
-    private int LocalY { get; set; }
-    private int WorldX { get; set; }
-    private int WorldY { get; set; }
+    private int LocalX;
+    private int LocalY;
+    private int WorldX;
+    private int WorldY;
     private bool CombatStart;
 
     public EnemyMap(int worldX, int worldY, int localX, int localY)
@@ -46,8 +46,8 @@ public class EnemyMap
     }
 
     public bool COMBATSTART
-    { 
+    {
         get => CombatStart;
-        set => CombatStart = value; 
+        set => CombatStart = value;
     }
 }

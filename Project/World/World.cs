@@ -11,6 +11,7 @@ namespace MapGame
         private int worldSize = 3;
         private List<EnemyMap> enemyMaps = new List<EnemyMap>();
         private List<int> positionX = new List<int>();
+        private bool CombatStart = false;
         Fight fight = new Fight();
         Random random = new Random();
 
@@ -175,7 +176,7 @@ namespace MapGame
                 Map? newMap = GetMapAt(player.WORLDX, player.WORLDY);
                 if (newMap != null)
                 {
-                    newMap.PlacePlayer(player.LOCALX, player.LOCALX);
+                    newMap.PlacePlayer(player.LOCALX, player.LOCALY);
                 }
             }
         }
@@ -199,16 +200,16 @@ namespace MapGame
         public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
         {
             int randEnemy = random.Next(1, 19);
-            if(randEnemy == player.LOCALX)
+            if (randEnemy == player.LOCALX)
             {
                 fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, true, player);
             }
         }
 
-        private void HandleEncounter(Allies allies, Enemy enemy, Player player)
+        private void HandleEncounter(Allies allies, Enemy enemy, Player p)
         {
             // Combat entre le joueur et l'ennemi
-            fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, false, player);
+            fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, false, p);
         }
 
         private void EnsurePlayerOnLand(Map currentMap, Player player)

@@ -73,7 +73,7 @@ Bienvenu chez les pirates ";
                 currentMap.PrintMap();
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
 
-                int newLocalX = player.LOCALY;
+                int newLocalX = player.LOCALX;
                 int newLocalY = player.LOCALY;
 
                 switch (keyInfo.Key)
