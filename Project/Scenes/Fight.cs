@@ -27,7 +27,15 @@ public class Fight
             }
             else
             {
-                HandleEnemyTurn(allie, enemie);
+                if (enemie._name == "Marine" || enemie._name == "Sanglier")
+                {
+                    HandleEnemyTurnIARandom(allie, enemie);
+                }
+                else if (enemie._name == "Kobby")
+                {
+                    HandleEnemyTurnIADificil(allie, enemie);
+                }
+                
             }
 
             AfficherEtatDesCombattants(allie, enemie);
@@ -161,7 +169,7 @@ public class Fight
         }
     }
 
-    private void HandleEnemyTurn(EntityAbstract allie, EntityAbstract enemie)
+    private void HandleEnemyTurnIARandom(EntityAbstract allie, EntityAbstract enemie)
     {
         int nombreAleatoire = random.Next(1, 4);
         int randomAttackEnemy = random.Next(0, 2);
@@ -188,6 +196,36 @@ public class Fight
         tourAlier = true;
     }
 
+    private void HandleEnemyTurnIADificil(EntityAbstract allie, EntityAbstract enemie)
+    {
+        int criticalChance = random.Next(1, 100);
+
+        if (allie._type == "Logia")
+        {
+            for (int i = 0; i < enemie._ListCapacities.Count(); i++)
+            {
+                if (enemie._ListCapacities[i]._type == "Eau")
+                {
+                    allie.TakeDamage(enemie._ListCapacities[i]._damage * enemie._ListCapacities[i]._criticalChance);
+                    break;
+                }
+                else if (enemie._ListCapacities[i]._type == "Feu")
+                {
+                    allie.TakeDamage(enemie._ListCapacities[i]._damage);
+                    break;
+                }
+                else if (enemie._ListCapacities[i]._type == "Physique")
+                {
+                    allie.TakeDamage(enemie._ListCapacities[i]._damage);
+                    break;
+                }
+            }
+        }
+
+        CheckHealth(enemie, allie);
+        tourAlier = true;
+    }
+
     private bool CheckStaminaAllie(EntityAbstract allie, EntityContainer entities)
     {
         for (int i = 0; i < allie._ListCapacities.Count(); i++)
@@ -198,14 +236,14 @@ public class Fight
             }
         }
         /* A LAISSER SI VOUS VOULEZ QUE QUAND IL L ALLIE N'A PLUS DE STAMINA QU'IL SOIT REMVOE DE LA LISTE DE SELECTION DES ALLIES*/
-        var entitie = allie.GetInfoEntityUpdateBlocked("../../../Entities/entity.json");
+/*        var entitie = allie.GetInfoEntityUpdateBlocked("../../../Entities/entity.json");
         var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(allie._name, StringComparison.OrdinalIgnoreCase));
 
         if (targetAlliesUpdate != null)
         {
             targetAlliesUpdate._blocked = allie._blocked;
             allie.UpdateJsonBlocked(entities, "../../../Entities/entity.json", 1);
-        }
+        }*/
         /* FIN */
 
         return false;
