@@ -15,16 +15,28 @@ namespace MapGame
         Fight fight = new Fight();
         Random random = new Random();
 
+        private List<QuestNPC> questNPCs;
+
+
         public Player player;
         public List<Npc> npcs;
 
         public World()
         {
+            questNPCs = new List<QuestNPC>
+        {
+            new QuestNPC(1, 1, "Quest 1 Description"),
+            new QuestNPC(2, 3, "Quest 2 Description"),
+
+        };
             worldMaps = new Map[worldSize, worldSize];
             npcs = new List<Npc>();
             InitializeWorld();
         }
-
+        public List<QuestNPC> GetQuestNPCs()
+        {
+            return questNPCs;
+        }
         private void InitializeWorld()
         {
             for (int i = 0; i < worldSize; i++)
@@ -39,6 +51,11 @@ namespace MapGame
                     if (!(i == 1 && j == 1) && !(i == 0 && j == 2))
                     {
                         PlaceEnemiesRandomly(worldMaps[i, j], i, j);
+                    }
+                    if (i == 1 && j == 1) 
+                    {
+                        // Add NPCs to this map
+                        questNPCs.Add(new QuestNPC( 10, 10, "Test"));
                     }
                 }
             }
@@ -180,33 +197,8 @@ namespace MapGame
                 Map? newMap = GetMapAt(player.WorldX, player.WorldY);
                 if (newMap != null)
                 {
-                    // Vérifier si un NPC de quête est à proximité
-                    foreach (var questNpc in newMap.questNPCs)
-                    {
-                        if (Utils.IsNear(player.LocalX, player.LocalY, questNpc.PositionX, questNpc.PositionY))
-                        {
-                            {
-                                Console.WriteLine("Appuyez sur 'E' pour interagir avec le NPC de quête.");
-                                var key = Console.ReadKey(true).Key;
-
-                                // Vérifier si la touche 'E' est pressée
-                                if (key == ConsoleKey.E)
-                                {
-                                    questNpc.Interact();
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    newMap.PlacePlayer(player.WorldX, player.WorldY);
                 }
-            }
-        }
-
-        public static class Utils
-        {
-            public static bool IsNear(int x1, int y1, int x2, int y2, int threshold = 2)
-            {
-                return Math.Abs(x1 - x2) <= threshold && Math.Abs(y1 - y2) <= threshold;
             }
         }
 
@@ -233,7 +225,7 @@ namespace MapGame
         public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
         {
             int randEnemy = random.Next(1, 19);
-            if(randEnemy == player.LocalX)
+            if (randEnemy == player.LocalX)
             {
                 fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, true);
             }

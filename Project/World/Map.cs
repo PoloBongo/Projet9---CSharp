@@ -1,5 +1,5 @@
-﻿
-using Project.Quest;
+﻿using Project.Quest;
+using static Project.Quest.QuestNPC;
 
 namespace MapGame
 {
@@ -15,6 +15,7 @@ namespace MapGame
         private int columns;
 
         public List<QuestNPC> questNPCs = new List<QuestNPC>();
+        public List<WoodPiece> WoodPieces { get; private set; }
 
         public Map(int rows, int columns)
         {
@@ -22,7 +23,35 @@ namespace MapGame
             this.columns = columns;
             matrix = new char[rows, columns];
             CreateQuestNPCs();
+            WoodPieces = new List<WoodPiece>();
+            PlaceWoodPieces();
         }
+        private void PlaceWoodPieces()
+        {
+            Random random = new Random();
+            int numberOfWoodPieces = 5; // Vous pouvez ajuster ce nombre
+            int attempts = 0;
+            int maxAttempts = 100; // Un nombre maximal d'essais pour éviter la boucle infinie
+
+            for (int i = 0; i < numberOfWoodPieces; i++)
+            {
+                int x, y;
+                do
+                {
+                    x = random.Next(rows);
+                    y = random.Next(columns);
+                    attempts++;
+                    if (attempts > maxAttempts)
+                    {
+                        return; // Sortie anticipée si on ne trouve pas d'espace vide
+                    }
+                }
+                while (matrix[x, y] == '~' || matrix[x, y] == 'O' || matrix[x, y] == '?');
+
+                WoodPieces.Add(new WoodPiece(x, y));
+            }
+        }
+
 
         public void CreateQuestNPCs()
         {
@@ -83,6 +112,10 @@ namespace MapGame
                     else if (matrix[i, j] == '?') // NPC de quête
                     {
                         currentColor = ConsoleColor.Yellow;
+                    }
+                    else if (matrix[i, j] == '!') //bois
+                    {
+                        currentColor= ConsoleColor.DarkYellow;
                     }
                     else
                     {
@@ -182,6 +215,6 @@ namespace MapGame
 
 
 
-     
+
     }
 }

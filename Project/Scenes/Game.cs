@@ -2,6 +2,7 @@
 using MapEntities;
 using MenuPr;
 using ShopDemo;
+using Project.Quest;
 
 namespace InGame
 {
@@ -29,7 +30,7 @@ namespace InGame
 
 
 Bienvenu chez les pirates ";
-            string[] options = { "Play", "Credit","Shop", "Exit" };
+            string[] options = { "Play", "Credit", "Shop", "Exit" };
             Menu mainMenu = new Menu(prompt, options);
             int selectedIndex = mainMenu.Run();
 
@@ -57,6 +58,9 @@ Bienvenu chez les pirates ";
             Allies allies = new Allies();
             World world = new World();
             Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
+            QuestNPC questNPC = new QuestNPC(0, 0, "Some quest description");
+            List<QuestNPC> questNPCs = world.GetQuestNPCs();
+
 
             string path = "../../../Entities/entity.json";
             enemy.CreateEntity(path);
@@ -93,6 +97,15 @@ Bienvenu chez les pirates ";
                         newLocalY++;
                         break;
                 }
+
+                foreach (var questNpc in questNPCs)
+                {
+                    if (questNpc.IsNear(player))
+                    {
+                        questNpc.Interact();
+                    }
+                }
+
                 // Gérer le changement de carte si le joueur atteint les bords de la carte actuelle
                 if (newLocalX < 0 || newLocalX >= mapRows || newLocalY < 0 || newLocalY >= mapColumns)
                 {
@@ -125,7 +138,7 @@ Bienvenu chez les pirates ";
 
 
 
-       private void Shopping()
+        private void Shopping()
         {
             Shop.Run();
         }
