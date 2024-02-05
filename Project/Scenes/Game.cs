@@ -2,6 +2,7 @@
 using MapEntities;
 using MenuPr;
 using ShopDemo;
+
 namespace InGame
 {
     class Game

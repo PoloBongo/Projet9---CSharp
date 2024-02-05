@@ -1,6 +1,5 @@
 ﻿
-using MapEntities;
-using MapGame;
+using Project.Quest;
 
 namespace MapGame
 {
@@ -15,12 +14,28 @@ namespace MapGame
         private int rows;
         private int columns;
 
+        public List<QuestNPC> questNPCs = new List<QuestNPC>();
 
         public Map(int rows, int columns)
         {
             this.rows = rows;
             this.columns = columns;
             matrix = new char[rows, columns];
+            CreateQuestNPCs();
+        }
+
+        public void CreateQuestNPCs()
+        {
+            questNPCs.Add(new QuestNPC(10, 10, "Tuer trois ennemis"));
+            questNPCs.Add(new QuestNPC(2, 2, "Ramasser 5 morceaux de bois"));
+        }
+
+        public void DrawNPCs()
+        {
+            foreach (var npc in questNPCs)
+            {
+                matrix[npc.PositionX, npc.PositionY] = '?';
+            }
         }
 
         public void InitializeCustomMap(char[,] layout)
@@ -42,6 +57,8 @@ namespace MapGame
 
         public void PrintMap()
         {
+            DrawNPCs();
+
             for (int i = 0; i < rows; i++)
             {
                 for (int j = 0; j < columns; j++)
@@ -62,6 +79,10 @@ namespace MapGame
                     else if (matrix[i, j] == 'O') // Ennemi
                     {
                         currentColor = enemyColor;
+                    }
+                    else if (matrix[i, j] == '?') // NPC de quête
+                    {
+                        currentColor = ConsoleColor.Yellow;
                     }
                     else
                     {
@@ -155,5 +176,12 @@ namespace MapGame
                 PlacePlayer(oldX, oldY);
             }
         }
+
+
+
+
+
+
+     
     }
 }

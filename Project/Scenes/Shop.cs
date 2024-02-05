@@ -36,7 +36,7 @@ namespace ShopDemo
                     {
                         money -= prixTotal;
                         Clear();
-                        DisplayProducts(); // Afficher les informations mises à jour
+                        DisplayProducts(); 
                         WriteLine($"Le prix total pour {quantite} {articleChoisi} est : {prixTotal}");
                         WriteLine($"Il vous reste {money}.");
                     }

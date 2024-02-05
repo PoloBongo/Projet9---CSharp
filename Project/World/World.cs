@@ -1,7 +1,6 @@
-﻿using MapGame;
-using MapEntities;
-using System;
-using System.Collections.Generic;
+﻿using MapEntities;
+
+using Project.Quest;
 
 namespace MapGame
 {
@@ -180,6 +179,9 @@ namespace MapGame
                 }
             }
         }
+
+
+
 
         public void CheckForEncounter(Player player, Allies allies, Enemy enemy)
         {
