@@ -13,7 +13,13 @@ public class Fight
         EntityAbstract enemie = entities2.EnemiesList[0];
         if (sanglier)
         {
-            enemie = entities2.EnemiesList[2];
+            for (int i = 0; i < entities2.EnemiesList.Count(); i++)
+            {
+                if (entities2.EnemiesList[i]._name == "Sanglier")
+                {
+                    enemie = entities2.EnemiesList[i];
+                }
+            }
         }
 
         AfficherEtatDesCombattants(allie, enemie);
@@ -28,15 +34,23 @@ public class Fight
             }
             else
             {
-                if (enemie._name == "Marine" || enemie._name == "Sanglier")
+                if (entities2.EnemiesList[0]._difficultyIA == "Normal")
                 {
-                    HandleEnemyTurnIARandom(allie, enemie);
+                    HandleEnemyTurnIARandom(allie, enemie, player);
                 }
-                else if (enemie._name == "Kobby")
+                else if (entities2.EnemiesList[0]._difficultyIA == "Dificil")
                 {
-                    HandleEnemyTurnIADificil(allie, enemie);
+                    HandleEnemyTurnIADificil(allie, enemie, player);
+                    CheckHealth(enemie, allie, player);
+                    tourAlier = true;
                 }
-                
+                else if (entities2.EnemiesList[0]._difficultyIA == "Hard")
+                {
+                    HandleEnemyTurnIAHard(allie, enemie, player);
+                    CheckHealth(enemie, allie, player);
+                    tourAlier = true;
+                }
+
             }
 
             AfficherEtatDesCombattants(allie, enemie);
@@ -203,7 +217,7 @@ public class Fight
         }
     }
 
-    private void HandleEnemyTurnIARandom(EntityAbstract allie, EntityAbstract enemie)
+    private void HandleEnemyTurnIARandom(EntityAbstract allie, EntityAbstract enemie, Player p)
     {
         int nombreAleatoire = random.Next(1, 4);
         int randomAttackEnemy = random.Next(0, 2);
@@ -226,38 +240,54 @@ public class Fight
                 break;
         }
 
-        CheckHealth(enemie, allie);
+        CheckHealth(enemie, allie, p);
         tourAlier = true;
     }
 
-    private void HandleEnemyTurnIADificil(EntityAbstract allie, EntityAbstract enemie)
+    private void HandleEnemyTurnIADificil(EntityAbstract allie, EntityAbstract enemie, Player p)
     {
-        int criticalChance = random.Next(1, 100);
+        int UpAttackIndex = -1;
+        float damageUp = float.MinValue;
+       
 
-        if (allie._type == "Logia")
+        for (int i = 0; i < enemie._ListCapacities.Count(); i++)
         {
-            for (int i = 0; i < enemie._ListCapacities.Count(); i++)
+            float damage = 0;
+            switch (enemie._ListCapacities[i]._type)
             {
-                if (enemie._ListCapacities[i]._type == "Eau")
-                {
-                    allie.TakeDamage(enemie._ListCapacities[i]._damage * enemie._ListCapacities[i]._criticalChance);
+                case "Eau":
+                    damage = enemie._ListCapacities[i]._damage / allie._resistanceEau;
                     break;
-                }
-                else if (enemie._ListCapacities[i]._type == "Feu")
-                {
-                    allie.TakeDamage(enemie._ListCapacities[i]._damage);
+                case "Feu":
+                    damage = enemie._ListCapacities[i]._damage / allie._resistanceFeu;
                     break;
-                }
-                else if (enemie._ListCapacities[i]._type == "Physique")
-                {
-                    allie.TakeDamage(enemie._ListCapacities[i]._damage);
+                case "Vent":
+                    damage = enemie._ListCapacities[i]._damage / allie._resistanceVent;
                     break;
-                }
+                case "Physique":
+                    damage = enemie._ListCapacities[i]._damage / allie._resistancePhysique;
+                    break;
+            }
+
+            if (damage > damageUp)
+            {
+                damageUp = damage;
+                UpAttackIndex = i;
             }
         }
 
-        CheckHealth(enemie, allie, p);
-        tourAlier = true;
+        if (UpAttackIndex != -1)
+        {
+            allie.TakeDamage(damageUp);
+        }
+    }
+
+    private void HandleEnemyTurnIAHard(EntityAbstract allie, EntityAbstract enemie, Player p)
+    {
+        HandleEnemyTurnIADificil(allie, enemie, p);
+
+
+
     }
 
     private bool CheckStaminaAllie(EntityAbstract allie, EntityContainer entities)
