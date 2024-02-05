@@ -66,7 +66,6 @@ Bienvenu chez les pirates ";
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine($"{player.NBViande}");
                 world.CheckForEncounter(player, allies, enemy);
                 world.CheckRandEnemy(player, allies, enemy);
 
