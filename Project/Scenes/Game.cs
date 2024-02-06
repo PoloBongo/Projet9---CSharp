@@ -20,15 +20,15 @@ namespace InGame
         private void RunMainMenu()
         {
             string prompt = @"
- ██████  ███    ██ ███████     ██████  ██ ███████  ██████ ███████ 
-██    ██ ████   ██ ██          ██   ██ ██ ██      ██      ██
-██    ██ ██ ██  ██ █████       ██████  ██ █████   ██      █████
-██    ██ ██  ██ ██ ██          ██      ██ ██      ██      ██
- ██████  ██   ████ ███████     ██      ██ ███████  ██████ ███████ 
+             ██████  ███    ██ ███████     ██████  ██ ███████  ██████ ███████ 
+            ██    ██ ████   ██ ██          ██   ██ ██ ██      ██      ██
+            ██    ██ ██ ██  ██ █████       ██████  ██ █████   ██      █████
+            ██    ██ ██  ██ ██ ██          ██      ██ ██      ██      ██
+             ██████  ██   ████ ███████     ██      ██ ███████  ██████ ███████ 
 
 
 
-";
+            ";
             string[] options = { "Jouer", "Crédits","Shop", "Quitter" };
             Menu mainMenu = new Menu(prompt, options);
             int selectedIndex = mainMenu.Run();
@@ -36,6 +36,8 @@ namespace InGame
             switch (selectedIndex)
             {
                 case 0:
+                    // Narration de l'histoire
+                    NarrateStory();
                     PlayGame();
                     break;
                 case 1:
@@ -48,6 +50,75 @@ namespace InGame
                     ExitGame();
                     break;
             }
+        }
+
+        private void DisplayArt()
+        {
+            string art = @"
+          ████████ ████████████ ██████    ███████   ███       ███
+         ██            ███     ███   ███  ██    ████  ██    ██
+         ███            ██    ███     ███ ██     ██    ██  ██
+          ████████      ██    ███     ███ ████████      ████
+                ███     ██    ███     ███ ███   ██       ██
+                 ██     ██     ███   ███  ██     ██     ██
+          ████████      ██       █████    ██      ██  ███
+
+
+
+
+            ";
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(art);
+            Console.ResetColor();
+
+        }
+
+        private void NarrateStory()
+        {
+            Console.Clear();
+            DisplayArt();
+
+            string[] storyLines = {
+                "\tSur une île mystérieuse aux confins du ", "Nouveau Monde, \n",
+                "\tLuffy, Ace et Jimbey sont pris au piège, confrontés à un défi inédit.\n",
+                "\tCette île, gouvernée par des ", "forces surnaturelles, \n",
+                "\tcrée des effets miroirs déroutants, rendant toute évasion impossible.\n",
+                "\tPour quitter cette île, nos héros doivent ", "devenir plus forts, \n",
+                "\tgagner en compétences et ", "vaincre l'amiral de la Marine, \n",
+                "\tle gardien de l'île.\n\n\n", "\t\tL'aventure commence au cœur d'un ",
+                "village de marchands...\n"
+            };
+
+            ConsoleColor[] lineColors = {
+                ConsoleColor.White, ConsoleColor.Cyan, ConsoleColor.White,
+                ConsoleColor.White, ConsoleColor.Magenta, ConsoleColor.White,
+                ConsoleColor.White, ConsoleColor.Green, ConsoleColor.White,
+                ConsoleColor.Yellow, ConsoleColor.White, ConsoleColor.White,
+                ConsoleColor.Blue
+            };
+
+            for (int i = 0; i < storyLines.Length; i++)
+            {
+                WriteAnimatedText(storyLines[i], lineColors[i], i % 2 == 0 ? 20 : 60);
+            }
+
+            Console.BackgroundColor = ConsoleColor.DarkYellow;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine("\n\t\tAppuyez sur une touche pour commencer l'aventure...");
+            Console.ResetColor();
+            Console.ReadKey();
+        }
+
+        private void WriteAnimatedText(string text, ConsoleColor color, int delay)
+        {
+            Console.ForegroundColor = color;
+            foreach (char c in text)
+            {
+                Console.Write(c);
+                System.Threading.Thread.Sleep(delay);
+            }
+            Console.ResetColor();
         }
 
 
@@ -128,7 +199,7 @@ namespace InGame
         {
             Console.BackgroundColor = ConsoleColor.DarkRed;
             Console.ForegroundColor = ConsoleColor.Black;
-            Console.WriteLine("\t\tAppuyer sur une touche pour Quitter le Jeu");
+            Console.WriteLine("\t\tAppuyez sur une touche pour Quitter le Jeu");
             Console.ResetColor();
             Console.ReadKey(true);
             Environment.Exit(0);
@@ -160,9 +231,10 @@ namespace InGame
                 System.Threading.Thread.Sleep(300); // Délai entre les lignes
             }
 
-            Console.BackgroundColor = ConsoleColor.White;
+
+            Console.BackgroundColor = ConsoleColor.DarkYellow;
             Console.ForegroundColor = ConsoleColor.Black;
-            Console.WriteLine("\t\tAppuyer sur une touche pour retourner au Menu");
+            Console.WriteLine("\t\tAppuyez sur une touche pour retourner au Menu");
             Console.ResetColor();
 
             Console.ReadKey(true);
@@ -174,5 +246,4 @@ namespace InGame
             //Shop.Run(player);
         }
     }
-
 }
