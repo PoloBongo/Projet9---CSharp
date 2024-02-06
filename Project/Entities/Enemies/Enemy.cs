@@ -56,7 +56,7 @@ public class Enemy : EntityAbstract
             p.AddAlcool(nbLoot);
             Console.BackgroundColor = ConsoleColor.DarkCyan;
             Console.ForegroundColor = ConsoleColor.Black;
-            Console.WriteLine($"\tTu as recuperé {nbLoot} bouteille d'alcool(s)");
+            Console.WriteLine($"\tTu as recuperé {nbLoot} bouteille(s) d'alcool(s)");
             Console.ResetColor();
         }
         if (_name == "Sanglier")
