@@ -27,8 +27,8 @@ namespace InGame
 
 
 
-Bienvenu chez les pirates ";
-            string[] options = { "Play", "Credit","Shop", "Exit" };
+";
+            string[] options = { "Jouer", "Crédits","Shop", "Quitter" };
             Menu mainMenu = new Menu(prompt, options);
             int selectedIndex = mainMenu.Run();
 
@@ -107,7 +107,11 @@ Bienvenu chez les pirates ";
                 // Vérifier si le joueur est à côté d'une porte
                 if (world.IsPlayerNextToDoor(player))
                 {
-                    Console.WriteLine("Appuyez sur 'E' pour entrer.");
+
+                    Console.BackgroundColor = ConsoleColor.DarkCyan;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine("\tAppuyez sur 'E' pour entrer");
+                    Console.ResetColor();
                     var key = Console.ReadKey(true);
                     if (key.Key == ConsoleKey.E)
                     {
@@ -118,7 +122,10 @@ Bienvenu chez les pirates ";
         }
         private void ExitGame()
         {
-            Console.WriteLine("\n Press any key to exit");
+            Console.BackgroundColor = ConsoleColor.DarkRed;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine("\t\tAppuyer sur une touche pour Quitter le Jeu");
+            Console.ResetColor();
             Console.ReadKey(true);
             Environment.Exit(0);
         }
@@ -126,15 +133,39 @@ Bienvenu chez les pirates ";
         private void Credits()
         {
             Console.Clear();
-            Console.WriteLine("JSP QUOI ECRIRE");
-            Console.WriteLine("\n Press any key to the menu");
+            string[] credits = {
+                "\tQuentin LEFORESTIER",
+                "\tLucie QUINTANA",
+                "\tArthur BRU",
+                "\tMathias REBECCA"
+            };
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\t\tGame Developed By:\n");
+            Console.WriteLine(new string('=', 55));
+            Console.ResetColor();
+
+            foreach (string line in credits)
+            {
+                foreach (char c in line)
+                {
+                    Console.Write(c);
+                    System.Threading.Thread.Sleep(50); // Délai pour simuler l'effet de frappe
+                }
+                Console.WriteLine("\n");
+                System.Threading.Thread.Sleep(300); // Délai entre les lignes
+            }
+
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine("\t\tAppuyer sur une touche pour retourner au Menu");
+            Console.ResetColor();
+
             Console.ReadKey(true);
             RunMainMenu();
         }
 
-
-
-       private void Shopping()
+        private void Shopping()
         {
             Shop.Run();
         }

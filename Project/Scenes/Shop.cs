@@ -8,7 +8,7 @@ namespace ShopDemo
         private static Dictionary<string, double> produits = new Dictionary<string, double>()
         {
             { "Pommes", 1.50 },
-            { "Bananes", 0.75 },
+            { "Bananes", 18.00 },
             { "Oranges", 2.00 },
             { "Fraises", 3.50 },
             { "Pêches", 2.25 },
@@ -36,7 +36,7 @@ namespace ShopDemo
                 }
 
                 string articleChoisi = produits.Keys.ElementAt(produitChoisi);
-                Write($"Entrez la quantité que vous souhaitez acheter de {articleChoisi} : ");
+                Write($"\nEntrez la quantité que vous souhaitez acheter de {articleChoisi} : ");
                 int quantite;
                 if (int.TryParse(ReadLine(), out quantite) && quantite > 0)
                 {
@@ -46,20 +46,29 @@ namespace ShopDemo
                         money -= prixTotal;
                         Clear();
                         DisplayProducts(); // Afficher les informations mises à jour
-                        WriteLine($"Le prix total pour {quantite} {articleChoisi} est : {prixTotal}");
-                        WriteLine($"Il vous reste {money}.");
+                        WriteLine($"\n\tLe prix total pour {quantite} {articleChoisi} est : {prixTotal} pieces");
+                        WriteLine($"\tIl vous reste {money} piece(s).");
                     }
                     else
                     {
-                        WriteLine("Fonds insuffisants pour cet achat.");
+                        Console.BackgroundColor = ConsoleColor.DarkRed;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.WriteLine("\n\t\tFonds insuffisants pour cet achat");
+                        Console.ResetColor();
                     }
                 }
                 else
                 {
-                    WriteLine("La quantité doit être supérieure à zéro.");
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine("\n\t\t Choix Incorrect");
+                    Console.ResetColor();
                 }
 
-                WriteLine("Appuyez sur une touche pour continuer...");
+                Console.BackgroundColor = ConsoleColor.DarkYellow;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine("\n\t\tAppuyer sur une touche pour Continuer");
+                Console.ResetColor();
                 ReadKey();
             }
         }
@@ -83,7 +92,7 @@ namespace ShopDemo
                     SelectedIndex--;
                     if (SelectedIndex < 0)
                     {
-                        SelectedIndex = produits.Count; // Réglé sur le nombre de produits pour "Exit"
+                        SelectedIndex = produits.Count;
                     }
                 }
                 else if (keyPressed == ConsoleKey.DownArrow)
@@ -106,52 +115,59 @@ namespace ShopDemo
 
 
             WriteLine(@"
-███████ ██   ██  ██████  ██████
-██      ██   ██ ██    ██ ██   ██
-███████ ███████ ██    ██ ██████
-     ██ ██   ██ ██    ██ ██
-███████ ██   ██  ██████  ██
+            ███████ ██   ██  ██████  ██████
+            ██      ██   ██ ██    ██ ██   ██
+            ███████ ███████ ██    ██ ██████
+                 ██ ██   ██ ██    ██ ██
+            ███████ ██   ██  ██████  ██
                                  
                                  
                                  
                                  
-                                 ");
+            ");
 
 
             ForegroundColor = ConsoleColor.Green;
-            WriteLine($"Argent disponible : {money}");
+            WriteLine($"\t\tMontant restant : {money} piece(s)");
             ResetColor();
-            WriteLine(" ");
 
-            WriteLine("Voici nos produits disponibles :");
+            WriteLine("\n\tVoici nos produits disponibles :");
+
             int index = 0;
+
             foreach (var produit in produits)
             {
+                string prefix;
+
                 if (index == SelectedIndex)
                 {
+                    prefix = ">>";
                     ForegroundColor = ConsoleColor.Black;
                     BackgroundColor = ConsoleColor.White;
                 }
                 else
                 {
+                    prefix = "  ";
                     ForegroundColor = ConsoleColor.White;
                     BackgroundColor = ConsoleColor.Black;
                 }
 
-                WriteLine($" <<{produit.Key}: {produit.Value}>>");
+                WriteLine($"   {prefix} {produit.Key}: {produit.Value}  ");
                 index++;
             }
+
             if (SelectedIndex == produits.Count)
             {
                 ForegroundColor = ConsoleColor.Black;
-                BackgroundColor = ConsoleColor.White;
+                BackgroundColor = ConsoleColor.DarkRed;
             }
             else
             {
                 ForegroundColor = ConsoleColor.White;
                 BackgroundColor = ConsoleColor.Black;
             }
-            WriteLine(" << QUITTER >>");
+            WriteLine(" < [ QUITTER ]   ");
+
             ResetColor();
         }
     }
