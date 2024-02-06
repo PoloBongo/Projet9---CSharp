@@ -7,6 +7,8 @@ namespace MapGame
 {
     public class World
     {
+        public EntityContainer EntityContainer { get; private set; }
+
         private Map[,] worldMaps;
         private int worldSize = 3;
         private List<EnemyMap> enemyMaps = new List<EnemyMap>();
@@ -18,6 +20,7 @@ namespace MapGame
         public World()
         {
             worldMaps = new Map[worldSize, worldSize];
+            EntityContainer = new EntityContainer();
             InitializeWorld();
         }
 
@@ -371,6 +374,87 @@ namespace MapGame
         public List<EnemyMap> GetEnemyMaps()
         {
             return enemyMaps;
+        }
+
+        public void DisplayInventoryAndTeam(Player player, EntityContainer entityContainer)
+        {
+            int inventoryX = 43; // Position X pour l'inventaire
+            int inventoryY = 2;  // Position Y pour l'inventaire
+
+            // Créez un cadre pour l'inventaire
+            DrawBox(inventoryX - 2, inventoryY - 1, 30, 8);
+
+            // Titre de l'inventaire
+            Console.SetCursorPosition(inventoryX, inventoryY++);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Inventaire");
+            Console.ForegroundColor = ConsoleColor.Gray;
+
+            // Affiche les détails de l'inventaire
+            Console.SetCursorPosition(inventoryX, inventoryY++);
+            Console.WriteLine($"Viande : {player.NBViande}");
+            Console.SetCursorPosition(inventoryX, inventoryY++);
+            Console.WriteLine($"Alcool : {player.NBAlcool}");
+            Console.SetCursorPosition(inventoryX, inventoryY++);
+            Console.WriteLine($"Or    : {player.NBGold}");
+
+            // Séparation visuelle
+            Console.SetCursorPosition(inventoryX, inventoryY++);
+            Console.WriteLine(new string('-', 20));
+
+            if (entityContainer.AlliesList != null)
+            {
+                // Affiche l'équipe des alliés
+                Console.SetCursorPosition(inventoryX, inventoryY++);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Equipe");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.SetCursorPosition(inventoryX, inventoryY++);
+                Console.WriteLine($"Nombre d'alliés : {entityContainer.AlliesList.Count}");
+
+                for (int i = 0; i < entityContainer.AlliesList.Count; i++)
+                {
+                    var ally = entityContainer.AlliesList[i];
+                    if (ally != null)
+                    {
+                        Console.SetCursorPosition(inventoryX, inventoryY++);
+                        Console.WriteLine($"{ally._name} - HP: {ally._health} - Stamina: {ally._stamina}");
+                    }
+                    else
+                    {
+                        Console.SetCursorPosition(inventoryX, inventoryY++);
+                        Console.WriteLine("Allié non initialisé");
+                    }
+                }
+            }
+            // Réinitialise les couleurs par défaut
+            Console.ResetColor();
+        }
+
+        // Méthode pour dessiner un cadre autour de l'inventaire
+        private void DrawBox(int x, int y, int width, int height)
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            string horizontalLine = "+" + new string('-', width - 2) + "+";
+
+            // Dessine la ligne supérieure
+            Console.SetCursorPosition(x, y);
+            Console.Write(horizontalLine);
+
+            // Dessine les côtés
+            for (int i = 1; i < height - 1; i++)
+            {
+                Console.SetCursorPosition(x, y + i);
+                Console.Write("|");
+                Console.SetCursorPosition(x + width - 1, y + i);
+                Console.Write("|");
+            }
+
+            // Dessine la ligne inférieure
+            Console.SetCursorPosition(x, y + height - 1);
+            Console.Write(horizontalLine);
+
+            Console.ResetColor();
         }
     }
 }

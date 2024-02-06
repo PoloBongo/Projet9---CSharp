@@ -50,17 +50,22 @@ public class Enemy : EntityAbstract
 
     public override void Loot(Player p)
     {
-        Console.WriteLine($"Tu as recuperé alcool");
         int nbLoot = random.Next(1, 3);
         if (_name == "Marine")
         {
             p.AddAlcool(nbLoot);
-            Console.WriteLine($"Tu as recuperé {nbLoot} bouteille d'alcool(s)");
+            Console.BackgroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine($"\tTu as recuperé {nbLoot} bouteille d'alcool(s)");
+            Console.ResetColor();
         }
         if (_name == "Sanglier")
         {
             p.AddViande(nbLoot);
-            Console.WriteLine($"Tu as recuperé {nbLoot} viande(s)");
+            Console.BackgroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine($"\tTu as recuperé {nbLoot} viande(s)");
+            Console.ResetColor();
         }
     }
 }

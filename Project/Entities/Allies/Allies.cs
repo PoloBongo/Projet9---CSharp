@@ -55,7 +55,11 @@ public class Allies : EntityAbstract
             _experience = tmp;
             _level++;
             _maxExerience = 100 * _level;
-            Console.WriteLine($"Tu as monter de nv {_level} : {_experience}/{_maxExerience} ");
+
+            Console.BackgroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine($"LEVEL UP {_level} : {_experience}/{_maxExerience} ");
+            Console.ResetColor();
 
             var entities = GetInfoEntityUpdateLevel(path);
             var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(this._name, StringComparison.OrdinalIgnoreCase));
