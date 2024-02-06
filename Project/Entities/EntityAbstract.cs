@@ -113,7 +113,7 @@ public abstract class EntityAbstract
             _maxStamina = 300,
             _speed = 50,
             _resistanceFeu = 1.5f,
-            _resistanceEau = 0.5f,
+            _resistanceEau = 1.5f,
             _resistanceVent = 1.25f,
             _resistancePhysique = 2.0f,
             _boostDamage = 1.0f,
@@ -233,170 +233,126 @@ public abstract class EntityAbstract
             _currentStamina = 300,
         };
 
-        Enemy enemy = new Enemy
-        {
-            _name = "Marine",
-            _type = "Humain",
-            _difficultyIA = "Normal",
-            _blocked = 0,
-            _currentBlocked = 0,
-            _maxhealth = 500,
-            _health = 500.0f,
-            _stamina = 300.0f,
-            _maxStamina = 300,
-            _speed = 50,
-            _resistanceFeu = 0.5f,
-            _resistanceEau = 0.5f,
-            _resistanceVent = 0.5f,
-            _resistancePhysique = 0.75f,
-            _boostDamage = 1.0f,
-            _level = 1,
-            _ListCapacities = new List<EntitiesCapacities>
-            {
-                new EntitiesCapacities
+        /*        Enemy enemy = new Enemy
                 {
-                    _name = "Punch",
-                    _type = "Physique",
-                    _damage = 5.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _resistance = 1.0f,
+                    _name = "Marine",
+                    _type = "Humain",
+                    _difficultyIA = "Normal",
+                    _blocked = 0,
+                    _currentBlocked = 0,
+                    _maxhealth = 500,
+                    _health = 500.0f,
+                    _stamina = 300.0f,
+                    _maxStamina = 300,
+                    _speed = 50,
+                    _resistanceFeu = 0.5f,
+                    _resistanceEau = 0.5f,
+                    _resistanceVent = 0.5f,
+                    _resistancePhysique = 0.75f,
                     _boostDamage = 1.0f,
-                    _criticalChance = 1.2f,
-                    _level = 0
-                },
-                new EntitiesCapacities
-                {
-                    _name = "Epee",
-                    _type = "Physique",
-                    _damage = 20.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _resistance = 1.0f,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.2f,
-                    _level = 0
-                }
-            },
-            _currentLevel = 1,
-            _currentStamina = 300,
-        };
+                    _level = 1,
+                    _ListCapacities = new List<EntitiesCapacities>
+                    {
+                        new EntitiesCapacities
+                        {
+                            _name = "Punch",
+                            _type = "Physique",
+                            _damage = 5.0f,
+                            _stamina = 20.0f,
+                            _speed = 20,
+                            _resistance = 1.0f,
+                            _boostDamage = 1.0f,
+                            _criticalChance = 1.2f,
+                            _level = 0
+                        },
+                        new EntitiesCapacities
+                        {
+                            _name = "Epee",
+                            _type = "Physique",
+                            _damage = 20.0f,
+                            _stamina = 20.0f,
+                            _speed = 20,
+                            _resistance = 1.0f,
+                            _boostDamage = 1.0f,
+                            _criticalChance = 1.2f,
+                            _level = 0
+                        }
+                    },
+                    _currentLevel = 1,
+                    _currentStamina = 300,
+                };
 
-        Enemy enemy2 = new Enemy
-        {
-            _name = "Amarial Sengoku",
-            _type = "Zoan",
-            _difficultyIA = "Dificil",
-            _blocked = 0,
-            _currentBlocked = 0,
-            _maxhealth = 500,
-            _health = 500.0f,
-            _stamina = 300.0f,
-            _maxStamina = 300,
-            _speed = 50,
-            _resistanceFeu = 1.5f,
-            _resistanceEau = 1.5f,
-            _resistanceVent = 1.5f,
-            _resistancePhysique = 1.5f,
-            _boostDamage = 1.0f,
-            _level = 1,
-            _ListCapacities = new List<EntitiesCapacities>
-            {
-                new EntitiesCapacities
+                Enemy enemy2 = new Enemy
                 {
-                    _name = "Geyser of Purification",
-                    _type = "Eau",
-                    _damage = 30.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _criticalChance = 1.2f,
-                    _level = 0
-                },
-                new EntitiesCapacities
-                {
-                    _name = "Buddhist Inferno",
-                    _type = "Feu",
-                    _damage = 30.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _criticalChance = 1.2f,
-                    _level = 0
-                },
-                new EntitiesCapacities
-                {
-                    _name = "Haki",
-                    _type = "Vent",
-                    _damage = 50.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _criticalChance = 1.2f,
-                    _level = 0
-                },
-                new EntitiesCapacities
-                {
-                    _name = "Daibutsu",
-                    _type = "Physique",
-                    _damage = 100.0f,
-                    _stamina = 100.0f,
-                    _speed = 70,
-                    _criticalChance = 1.2f,
-                    _level = 0
-                }
-            },
-            _currentLevel = 1,
-            _currentStamina = 300,
-        };
+                    _name = "Amarial Sengoku",
+                    _type = "Zoan",
+                    _difficultyIA = "Dificil",
+                    _blocked = 0,
+                    _currentBlocked = 0,
+                    _maxhealth = 500,
+                    _health = 500.0f,
+                    _stamina = 300.0f,
+                    _maxStamina = 300,
+                    _speed = 50,
+                    _resistanceFeu = 1.5f,
+                    _resistanceEau = 1.5f,
+                    _resistanceVent = 1.5f,
+                    _resistancePhysique = 1.5f,
+                    _boostDamage = 1.0f,
+                    _level = 1,
+                    _ListCapacities = new List<EntitiesCapacities>
+                    {
+                        new EntitiesCapacities
+                        {
+                            _name = "Geyser of Purification",
+                            _type = "Eau",
+                            _damage = 30.0f,
+                            _stamina = 20.0f,
+                            _speed = 20,
+                            _criticalChance = 1.2f,
+                            _level = 0
+                        },
+                        new EntitiesCapacities
+                        {
+                            _name = "Buddhist Inferno",
+                            _type = "Feu",
+                            _damage = 30.0f,
+                            _stamina = 20.0f,
+                            _speed = 20,
+                            _criticalChance = 1.2f,
+                            _level = 0
+                        },
+                        new EntitiesCapacities
+                        {
+                            _name = "Haki",
+                            _type = "Vent",
+                            _damage = 50.0f,
+                            _stamina = 20.0f,
+                            _speed = 20,
+                            _criticalChance = 1.2f,
+                            _level = 0
+                        },
+                        new EntitiesCapacities
+                        {
+                            _name = "Daibutsu",
+                            _type = "Physique",
+                            _damage = 100.0f,
+                            _stamina = 100.0f,
+                            _speed = 70,
+                            _criticalChance = 1.2f,
+                            _level = 0
+                        }
+                    },
+                    _currentLevel = 1,
+                    _currentStamina = 300,
+                };*/
 
         Enemy enemy3 = new Enemy
         {
-            _name = "Doflamingo",
-            _type = "Paramecia",
-            _difficultyIA = "Dificil",
-            _blocked = 0,
-            _currentBlocked = 0,
-            _maxhealth = 500,
-            _health = 500.0f,
-            _stamina = 300.0f,
-            _maxStamina = 300,
-            _speed = 50,
-            _resistanceFeu = 0.75f,
-            _resistanceEau = 0.75f,
-            _resistanceVent = 2.0f,
-            _resistancePhysique = 1.5f,
-            _boostDamage = 1.0f,
-            _level = 1,
-            _ListCapacities = new List<EntitiesCapacities>
-            {
-                new EntitiesCapacities
-                {
-                    _name = "Ball of yarn",
-                    _type = "Vent",
-                    _damage = 20.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _criticalChance = 1.2f,
-                    _level = 0
-                },
-                new EntitiesCapacities
-                {
-                    _name = "Bird Cage",
-                    _type = "Vent",
-                    _damage = 30.0f,
-                    _stamina = 100.0f,
-                    _speed = 70,
-                    _criticalChance = 1.2f,
-                    _level = 0
-                }
-            },
-            _currentLevel = 1,
-            _currentStamina = 300,
-        };
-
-        Enemy enemy4 = new Enemy
-        {
             _name = "Kobby",
             _type = "Paramecia",
-            _difficultyIA = "Dificil",
+            _difficultyIA = "Hard",
+            _index = 0,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 500,
@@ -437,11 +393,58 @@ public abstract class EntityAbstract
             _currentStamina = 300,
         };
 
+        Enemy enemy4 = new Enemy
+        {
+            _name = "Doflamingo",
+            _type = "Paramecia",
+            _difficultyIA = "Hard",
+            _index = 1,
+            _blocked = 0,
+            _currentBlocked = 0,
+            _maxhealth = 500,
+            _health = 500.0f,
+            _stamina = 300.0f,
+            _maxStamina = 300,
+            _speed = 50,
+            _resistanceFeu = 1.10f,
+            _resistanceEau = 1.10f,
+            _resistanceVent = 2.0f,
+            _resistancePhysique = 1.5f,
+            _boostDamage = 1.0f,
+            _level = 1,
+            _ListCapacities = new List<EntitiesCapacities>
+            {
+                new EntitiesCapacities
+                {
+                    _name = "Ball of yarn",
+                    _type = "Vent",
+                    _damage = 40.0f,
+                    _stamina = 20.0f,
+                    _speed = 20,
+                    _criticalChance = 1.2f,
+                    _level = 0
+                },
+                new EntitiesCapacities
+                {
+                    _name = "Bird Cage",
+                    _type = "Vent",
+                    _damage = 70.0f,
+                    _stamina = 100.0f,
+                    _speed = 70,
+                    _criticalChance = 1.2f,
+                    _level = 0
+                }
+            },
+            _currentLevel = 1,
+            _currentStamina = 300,
+        };
+
         Enemy enemy5 = new Enemy
         {
             _name = "Sanglier",
             _type = "Humain",
             _difficultyIA = "Normal",
+            _index = 2,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 100,
@@ -485,7 +488,7 @@ public abstract class EntityAbstract
         entitiesContainer = new EntityContainer
         {
             AlliesList = new List<Allies> { allies, allies2, allies3 },
-            EnemiesList = new List<Enemy> { enemy, enemy2, enemy3, enemy4, enemy5 },
+            EnemiesList = new List<Enemy> { enemy3, enemy4, enemy5 },
         };
 
         if (gameReset || !GetExistsJson(path) || GetEmptyJson(path))

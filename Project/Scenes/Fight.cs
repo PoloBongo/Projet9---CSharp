@@ -1,23 +1,25 @@
 ﻿using MapEntities;
 using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 public class Fight
 {
     private bool tourAlier = false;
+    private bool allieSwitch = false;
     Random random = new Random();
     List<string> alliesNames;
-
-    public void startCombat(EntityContainer entities1, EntityContainer entities2, bool sanglier, Player player)
+    
+    public void startCombat(EntityContainer entities, bool sanglier, Player player)
     {
-        EntityAbstract allie = entities1.AlliesList[0];
-        EntityAbstract enemie = entities2.EnemiesList[0];
+        EntityAbstract allie = entities.AlliesList[0];
+        EntityAbstract enemie = entities.EnemiesList[0];
         if (sanglier)
         {
-            for (int i = 0; i < entities2.EnemiesList.Count(); i++)
+            for (int i = 0; i < entities.EnemiesList.Count(); i++)
             {
-                if (entities2.EnemiesList[i]._name == "Sanglier")
+                if (entities.EnemiesList[i]._name == "Sanglier")
                 {
-                    enemie = entities2.EnemiesList[i];
+                    enemie = entities.EnemiesList[i];
                 }
             }
         }
@@ -30,29 +32,24 @@ public class Fight
 
             if (tourAlier)
             {
-                HandleAllieTurn(entities1, ref allie, enemie, player);
+                HandleAllieTurn(entities, ref allie, enemie, player);
             }
             else
             {
-                if (entities2.EnemiesList[0]._difficultyIA == "Normal")
+                if (entities.EnemiesList[0]._difficultyIA == "Normal")
                 {
                     HandleEnemyTurnIARandom(allie, enemie, player);
                 }
-                else if (entities2.EnemiesList[0]._difficultyIA == "Dificil")
+                else if (entities.EnemiesList[0]._difficultyIA == "Dificil")
                 {
                     HandleEnemyTurnIADificil(allie, enemie, player);
-                    CheckHealth(enemie, allie, player);
-                    tourAlier = true;
                 }
-                else if (entities2.EnemiesList[0]._difficultyIA == "Hard")
+                else if (entities.EnemiesList[0]._difficultyIA == "Hard")
                 {
-                    HandleEnemyTurnIAHard(allie, enemie, player);
-                    CheckHealth(enemie, allie, player);
-                    tourAlier = true;
+                    HandleEnemyTurnIAHard(allie, ref enemie, ref entities, player);
                 }
 
             }
-
             AfficherEtatDesCombattants(allie, enemie);
         }
     }
@@ -74,9 +71,10 @@ public class Fight
             {
                 case 0:
                     ChangeAllie(entities, ref allie, enemie);
+                    allieSwitch = true;
                     break;
                 case 1:
-                    AttackEnemy(allie, enemie, entities);
+                    AttackEnemy(allie, enemie);
                     break;
                 case 2:
                     playerInventory(p, allie, enemie);
@@ -154,8 +152,15 @@ public class Fight
         AfficherEtatDesCombattants(allie, enemie);
     }
 
+    private void ChangeEnemy( EntityAbstract allie, ref EntityAbstract enemie)
+    {
+        EntityAbstract newEnemy = enemie;
 
-    private void AttackEnemy(EntityAbstract allie, EntityAbstract enemie, EntityContainer entities)
+        Console.WriteLine($"Vous avez choisi l'allié : {newEnemy._name}");
+        AfficherEtatDesCombattants(allie, newEnemy);
+    }
+
+    private void AttackEnemy(EntityAbstract allie, EntityAbstract enemie)
     {
         Console.WriteLine($"Choisis la capacité que tu veux utiliser pour attaquer :\n");
         List<string> displayedCapacities = new List<string>();
@@ -248,15 +253,22 @@ public class Fight
 
     private void HandleEnemyTurnIADificil(EntityAbstract allie, EntityAbstract enemie, Player p)
     {
+        IACalculMaxDamage(allie, enemie);
+        CheckHealth(enemie, allie, p);
+        tourAlier = true;
+    }
+
+    private void IACalculMaxDamage(EntityAbstract allie, EntityAbstract enemie)
+    {
         int UpAttackIndex = -1;
         float damageUp = float.MinValue;
-       
 
         for (int i = 0; i < enemie._ListCapacities.Count(); i++)
         {
             float damage = 0;
             switch (enemie._ListCapacities[i]._type)
             {
+                /* Check toutes ces capacités et renvoi l'attaque qui fera le plus mal au player */
                 case "Eau":
                     damage = enemie._ListCapacities[i]._damage / allie._resistanceEau;
                     break;
@@ -284,12 +296,86 @@ public class Fight
         }
     }
 
-    private void HandleEnemyTurnIAHard(EntityAbstract allie, EntityAbstract enemie, Player p)
+    private void HandleEnemyTurnIAHard(EntityAbstract allie, ref EntityAbstract enemy, ref EntityContainer enemies, Player p)
     {
-        HandleEnemyTurnIADificil(allie, enemie, p);
+        Console.WriteLine("ALLIE A SWITCH OU PAS ? :" + allieSwitch);
+        /* Si le player n'a pas changé de perso ou que ce n'est pas le début du tour alors l'IA attaque */
+        if (allieSwitch)
+        {
+            allieSwitch = false;
+            IAHardCalculSwitchEnemy(allie, ref enemy, ref enemies, p);
+        }
+        else
+        {
+            IACalculMaxDamage(allie, enemy);
+        }
 
+        CheckHealth(enemy, allie, p);
+        tourAlier = true;
 
+    }
 
+    private void IAHardCalculSwitchEnemy(EntityAbstract allie, ref EntityAbstract enemy, ref EntityContainer enemies, Player p)
+    {
+        Console.WriteLine("IA Hard");
+
+        Dictionary<string, float> attackInfo = new Dictionary<string, float>();
+
+        int UpAttackIndex = -1;
+        float damageUp = float.MinValue;
+
+        for (int i = 0; i < enemies.AlliesList.Count(); i++)
+        {
+            if (enemies.EnemiesList[i]._difficultyIA == "Hard" && enemies.EnemiesList[i]._health > 0)
+            {
+                for (int j = 0; j < enemies.EnemiesList[i]._ListCapacities.Count; j++)
+                {
+                    float damage = 0;
+
+                    switch (enemies.EnemiesList[i]._ListCapacities[j]._type)
+                    {
+                        /* Check toutes ces capacités et renvoi l'attaque qui fera le plus mal au player */
+                        case "Eau":
+                            damage = enemies.EnemiesList[i]._ListCapacities[j]._damage / allie._resistanceEau;
+                            attackInfo.Add(enemies.EnemiesList[i]._ListCapacities[j]._name, damage);
+                            break;
+                        case "Feu":
+                            damage = enemies.EnemiesList[i]._ListCapacities[j]._damage / allie._resistanceFeu;
+                            attackInfo.Add(enemies.EnemiesList[i]._ListCapacities[j]._name, damage);
+                            break;
+                        case "Vent":
+                            damage = enemies.EnemiesList[i]._ListCapacities[j]._damage / allie._resistanceVent;
+                            attackInfo.Add(enemies.EnemiesList[i]._ListCapacities[j]._name, damage);
+                            break;
+                        case "Physique":
+                            damage = enemies.EnemiesList[i]._ListCapacities[j]._damage / allie._resistancePhysique;
+                            attackInfo.Add(enemies.EnemiesList[i]._ListCapacities[j]._name, damage);
+                            break;
+                    }
+                    if (damage > damageUp)
+                    {
+                        damageUp = damage;
+                        UpAttackIndex = i;
+                    }
+                }
+            }
+        }
+
+        /* Détecter le changement de perso allié, si il change alors appellé cette fonction pour que l'ia garde l'avantage sinon elle attaque avec ces spell qui font le plus de dégâts */
+
+        foreach (KeyValuePair<string, float> attackEntry in attackInfo)
+        {
+            Console.WriteLine("Nom de l'attaque : " + attackEntry.Key + ", Dommages : " + attackEntry.Value);
+        }
+
+        Console.WriteLine("ATTAQUE LA PLUS PUISSANTE : " + damageUp);
+        Console.WriteLine("POSITION DU PERSO : " + UpAttackIndex);
+
+        if (UpAttackIndex != -1)
+        {
+            enemy = enemies.EnemiesList[UpAttackIndex];
+            ChangeEnemy(allie, ref enemy);
+        }
     }
 
     private bool CheckStaminaAllie(EntityAbstract allie, EntityContainer entities)
@@ -301,7 +387,7 @@ public class Fight
                 return true;
             }
         }
-        /* A LAISSER SI VOUS VOULEZ QUE QUAND IL L ALLIE N'A PLUS DE STAMINA QU'IL SOIT REMVOE DE LA LISTE DE SELECTION DES ALLIES*/
+        /* A LAISSER SI VOUS VOULEZ QUE QUAND L ALLIE N'A PLUS DE STAMINA QU'IL SOIT REMVOE DE LA LISTE DE SELECTION DES ALLIES*/
 /*        var entitie = allie.GetInfoEntityUpdateBlocked("../../../Entities/entity.json");
         var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(allie._name, StringComparison.OrdinalIgnoreCase));
 
@@ -360,7 +446,7 @@ public class Fight
 
     private void AfficherEtatDesCombattants(EntityAbstract allie, EntityAbstract enemie)
     {
-        Console.Clear();
+        /*Console.Clear();*/
         Console.WriteLine(@"
  ██████╗ ██████╗ ███╗   ███╗██████╗  █████╗ ████████╗
 ██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝
