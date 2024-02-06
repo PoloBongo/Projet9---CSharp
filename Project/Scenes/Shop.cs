@@ -1,4 +1,5 @@
-﻿using static System.Console;
+﻿using MapEntities;
+using static System.Console;
 
 
 namespace ShopDemo
@@ -7,19 +8,18 @@ namespace ShopDemo
     {
         private static Dictionary<string, double> produits = new Dictionary<string, double>()
         {
-            { "Pommes", 1.50 },
-            { "Bananes", 18.00 },
-            { "Oranges", 2.00 },
-            { "Fraises", 3.50 },
-            { "Pêches", 2.25 },
+            { "Viande", 5.00 },
+            { "Alcool", 10.00 },
         };
 
         private static bool running = true;
         private static int SelectedIndex = 0;
-        private static double money = 100.00;
+        private static Player player;
 
-        public static void Run()
+        public static void Run(Player currentPlayer)
         {
+            player = currentPlayer;
+
             running = true;
             while (running)
             {
@@ -41,13 +41,23 @@ namespace ShopDemo
                 if (int.TryParse(ReadLine(), out quantite) && quantite > 0)
                 {
                     double prixTotal = produits[articleChoisi] * quantite;
-                    if (money >= prixTotal)
+                    if (player.NBGold >= prixTotal)
                     {
-                        money -= prixTotal;
+                        player.NBGold -= (int)prixTotal;
                         Clear();
                         DisplayProducts(); // Afficher les informations mises à jour
-                        WriteLine($"\n\tLe prix total pour {quantite} {articleChoisi} est : {prixTotal} pieces");
-                        WriteLine($"\tIl vous reste {money} piece(s).");
+
+
+                        if (articleChoisi == "Viande")
+                        {
+                            player.AddViande(quantite);
+                        }
+                        else if (articleChoisi == "Alcool")
+                        {
+                            player.AddAlcool(quantite);
+                        }
+                        WriteLine($"\n\tLe prix total pour {quantite} {articleChoisi} est : {prixTotal} pièces d'or.");
+                        WriteLine($"\tIl vous reste {player.NBGold} pièces d'or.");
                     }
                     else
                     {
@@ -128,7 +138,7 @@ namespace ShopDemo
 
 
             ForegroundColor = ConsoleColor.Green;
-            WriteLine($"\t\tMontant restant : {money} piece(s)");
+            WriteLine($"\t\tMontant restant : {player.NBGold} piece(s)");
             ResetColor();
 
             WriteLine("\n\tVoici nos produits disponibles :");

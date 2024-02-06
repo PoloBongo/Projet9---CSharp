@@ -8,10 +8,10 @@ namespace MapEntities
         private int WorldX;
         private int WorldY;
 
-        private int nbViande = 4;
+        private int nbViande = 3;
 
-        private int nbAlcool = 4;
-        private int nbGold = 30;
+        private int nbAlcool = 1;
+        private int nbGold = 100;
 
         public Player(int worldX, int worldY, int localX, int localY)
         {
@@ -79,22 +79,22 @@ namespace MapEntities
 
         public void AddAlcool(int _alcool)
         {
-            nbViande += _alcool;
+            nbAlcool += _alcool;
         }
 
         public void RemoveAlcool(int _alcool)
         {
-            nbViande -= _alcool;
+            nbAlcool -= _alcool;
         }
 
         public void AddGoldl(int _gold)
         {
-            nbViande += _gold;
+            nbGold += _gold;
         }
 
         public void RemoveGold(int _alcool)
         {
-            nbViande -= _alcool;
+            nbGold -= _alcool;
         }
     }
 }

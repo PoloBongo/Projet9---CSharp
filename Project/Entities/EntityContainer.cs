@@ -1,6 +1,6 @@
 ﻿public class EntityContainer
 {
-    public List<Allies> AlliesList { get; set; }
+    public List<Allies> AlliesList { get; set; } = new List<Allies>();
     public List<Enemy> EnemiesList { get; set; }
 
     public List<Allies> GetAlliesAlive()

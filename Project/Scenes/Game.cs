@@ -2,6 +2,7 @@
 using MapEntities;
 using MenuPr;
 using ShopDemo;
+using System.Numerics;
 namespace InGame
 {
     class Game
@@ -63,6 +64,8 @@ namespace InGame
             allies.CreateEntity(path);
             allies.GetInfoEntity(path);
 
+
+
             while (true)
             {
                 Console.Clear();
@@ -71,6 +74,7 @@ namespace InGame
 
                 Map currentMap = world.GetMapAt(player.WORLDX, player.WORLDY);
                 currentMap.PrintMap();
+                world.DisplayInventoryAndTeam(player, world.EntityContainer);
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
 
                 int newLocalX = player.LOCALX;
@@ -115,7 +119,7 @@ namespace InGame
                     var key = Console.ReadKey(true);
                     if (key.Key == ConsoleKey.E)
                     {
-                        ShopDemo.Shop.Run();
+                        Shop.Run(player);
                     }
                 }
             }
@@ -167,7 +171,7 @@ namespace InGame
 
         private void Shopping()
         {
-            Shop.Run();
+            //Shop.Run(player);
         }
     }
 
