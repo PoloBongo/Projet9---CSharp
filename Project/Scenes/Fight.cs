@@ -196,7 +196,7 @@ public class Fight
 
     private void ManageDamageByType(int selectedIndex, EntityAbstract allie, EntityAbstract enemie)
     {
-        /* Si l'enemy est de type Humain alors je lui fait 50% de dégâts en plus*/
+        /* Si l'enemy est de type Humain alors je lui fait 50% de dégât en plus*/
         if (allie._type == "Logia" && enemie._type == "Humain")
         {
             enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 1.50f);
