@@ -268,7 +268,33 @@ namespace MapGame
                 Map? newMap = GetMapAt(player.WORLDX, player.WORLDY);
                 if (newMap != null)
                 {
-                    newMap.PlacePlayer(player.LOCALX, player.LOCALY);
+                    // Si la position initiale sur la nouvelle carte est de l'eau, chercher une position d'herbe
+                    if (newMap.IsWater(player.LOCALX, player.LOCALY))
+                    {
+                        PlacePlayerOnNearestGrass(newMap, player);
+                    }
+                    else
+                    {
+                        // Si la position initiale est praticable, placer le joueur là
+                        newMap.PlacePlayer(player.LOCALX, player.LOCALY);
+                    }
+                }
+            }
+        }
+
+        private void PlacePlayerOnNearestGrass(Map map, Player player)
+        {
+            for (int x = 0; x < 20; x++)
+            {
+                for (int y = 0; y < 20; y++)
+                {
+                    if (map.IsGrass(x, y))
+                    {
+                        map.PlacePlayer(x, y);
+                        player.LOCALX = x;
+                        player.LOCALY = y;
+                        return;
+                    }
                 }
             }
         }
