@@ -10,6 +10,7 @@ namespace MapGame
         private ConsoleColor waterColor = ConsoleColor.Blue;
         private ConsoleColor playerColor = ConsoleColor.Magenta;
         private ConsoleColor enemyColor = ConsoleColor.Red;
+        private ConsoleColor doorColor = ConsoleColor.Yellow;
 
         public char[,] matrix;
         private int rows;
@@ -63,6 +64,10 @@ namespace MapGame
                     {
                         currentColor = enemyColor;
                     }
+                    else if (matrix[i, j] == ']' || matrix[i, j] == '[' || matrix[i, j] == '―') // Portes
+                    {
+                        currentColor = doorColor;
+                    }
                     else
                     {
                         currentColor = ConsoleColor.White;
@@ -94,6 +99,11 @@ namespace MapGame
             return matrix[x, y] == '~';
         }
 
+        public bool IsSand(int x, int y)
+        {
+            return matrix[x, y] == 'S';
+        }
+
         public bool IsPlayer(int x, int y)
         {
             return matrix[x, y] == '@';
@@ -103,6 +113,11 @@ namespace MapGame
         {
             return matrix[x, y] == 'O';
         }
+        public bool IsDoor(int x, int y)
+        {
+            return matrix[x, y] == ']' || matrix[x, y] == '[' || matrix[x, y] == '―';
+        }
+
 
         public bool CanMoveTo(int x, int y)
         {
@@ -113,9 +128,11 @@ namespace MapGame
         {
             if (CanMoveTo(x, y) && !IsPlayer(x, y))
             {
+                ClearPlayerPosition(x, y);
                 matrix[x, y] = '@';
             }
         }
+
 
         public void PlaceEnemy(int x, int y)
         {
@@ -129,9 +146,23 @@ namespace MapGame
         {
             if (matrix[x, y] == '@')
             {
-                matrix[x, y] = IsWater(x, y) ? '~' : '.'; // Remettre de l'eau ou de l'herbe selon le cas
+                // Remettre de l'eau, de l'herbe ou du sable selon le cas
+                if (IsWater(x, y))
+                {
+                    matrix[x, y] = '~';
+                }
+                else if (IsSand(x, y))
+                {
+                    matrix[x, y] = 'S';
+                }
+                else
+                {
+                    matrix[x, y] = '.';
+                }
             }
         }
+
+
 
         public void ClearEnemyPosition(int x, int y)
         {
@@ -155,5 +186,24 @@ namespace MapGame
                 PlacePlayer(oldX, oldY);
             }
         }
+        public bool IsNextToDoor(int x, int y)
+        {
+            // Vérifier les cases autour de la position du joueur
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    if (x + i >= 0 && x + i < rows && y + j >= 0 && y + j < columns)
+                    {
+                        if (IsDoor(x + i, y + j))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
     }
 }

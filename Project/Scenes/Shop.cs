@@ -14,17 +14,26 @@ namespace ShopDemo
             { "Pêches", 2.25 },
         };
 
+        private static bool running = true;
         private static int SelectedIndex = 0;
         private static double money = 100.00;
 
         public static void Run()
         {
-            while (true)
+            running = true;
+            while (running)
             {
                 Clear();
                 DisplayProducts();
 
                 int produitChoisi = ChooseProduct();
+
+                // Sortir de la boutique
+                if (produitChoisi == produits.Count)
+                {
+                    running = false;
+                    continue;
+                }
 
                 string articleChoisi = produits.Keys.ElementAt(produitChoisi);
                 Write($"Entrez la quantité que vous souhaitez acheter de {articleChoisi} : ");
@@ -56,9 +65,9 @@ namespace ShopDemo
         }
 
 
-       
-    
-    private static int ChooseProduct()
+
+
+        private static int ChooseProduct()
         {
             ConsoleKey keyPressed;
             do
@@ -74,13 +83,13 @@ namespace ShopDemo
                     SelectedIndex--;
                     if (SelectedIndex < 0)
                     {
-                        SelectedIndex = produits.Count - 1;
+                        SelectedIndex = produits.Count; // Réglé sur le nombre de produits pour "Exit"
                     }
                 }
                 else if (keyPressed == ConsoleKey.DownArrow)
                 {
                     SelectedIndex++;
-                    if (SelectedIndex == produits.Count)
+                    if (SelectedIndex > produits.Count)
                     {
                         SelectedIndex = 0;
                     }
@@ -97,11 +106,11 @@ namespace ShopDemo
 
 
             WriteLine(@"
-███████ ██   ██  ██████  ██████  
-██      ██   ██ ██    ██ ██   ██ 
-███████ ███████ ██    ██ ██████  
-     ██ ██   ██ ██    ██ ██      
-███████ ██   ██  ██████  ██      
+███████ ██   ██  ██████  ██████
+██      ██   ██ ██    ██ ██   ██
+███████ ███████ ██    ██ ██████
+     ██ ██   ██ ██    ██ ██
+███████ ██   ██  ██████  ██
                                  
                                  
                                  
@@ -132,6 +141,17 @@ namespace ShopDemo
                 WriteLine($" <<{produit.Key}: {produit.Value}>>");
                 index++;
             }
+            if (SelectedIndex == produits.Count)
+            {
+                ForegroundColor = ConsoleColor.Black;
+                BackgroundColor = ConsoleColor.White;
+            }
+            else
+            {
+                ForegroundColor = ConsoleColor.White;
+                BackgroundColor = ConsoleColor.Black;
+            }
+            WriteLine(" << QUITTER >>");
             ResetColor();
         }
     }
