@@ -26,7 +26,6 @@ public abstract class EntityAbstract
 
     public List<EntitiesCapacities> _ListCapacities { get; set; }
     public EntityContainer entitiesContainer;
-    public string path = "../../../Entities/entity.json";
 
     public int _currentLevel { get; set; }
 
@@ -67,7 +66,6 @@ public abstract class EntityAbstract
                     _damage = 20.0f,
                     _stamina = 10.0f,
                     _speed = 5,
-                    _resistance = 1.0f,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.4f,
                     _level = 0
@@ -79,7 +77,6 @@ public abstract class EntityAbstract
                     _damage = 40.0f,
                     _stamina = 10.0f,
                     _speed = 5,
-                    _resistance = 1.0f,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.3f,
                     _level = 0
@@ -91,7 +88,6 @@ public abstract class EntityAbstract
                     _damage = 80.0f,
                      _stamina = 10.0f,
                     _speed = 5,
-                    _resistance = 1.0f,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
                     _level = 0
@@ -113,7 +109,7 @@ public abstract class EntityAbstract
             _maxStamina = 300,
             _speed = 50,
             _resistanceFeu = 1.5f,
-            _resistanceEau = 1.5f,
+            _resistanceEau = 0.5f,
             _resistanceVent = 1.25f,
             _resistancePhysique = 2.0f,
             _boostDamage = 1.0f,
@@ -127,7 +123,6 @@ public abstract class EntityAbstract
                     _damage = 20.0f,
                     _stamina = 20.0f,
                     _speed = 20,
-                    _resistance = 1.0f,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.4f,
                     _level = 0
@@ -139,7 +134,6 @@ public abstract class EntityAbstract
                     _damage = 50.0f,
                     _stamina = 100.0f,
                     _speed = 70,
-                    _resistance = 1.0f,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
                     _level = 0
@@ -151,19 +145,17 @@ public abstract class EntityAbstract
                     _damage = 60.0f,
                     _stamina = 20.0f,
                     _speed = 20,
-                    _resistance = 1.0f,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.3f,
                     _level = 0
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Haki", // que les amiraux qui resistent sinon sa fait full dégâts
+                    _name = "Haki",
                     _type = "Physique",
                     _damage = 70.0f,
                     _stamina = 20.0f,
                     _speed = 20,
-                    _resistance = 1.0f,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.3f,
                     _level = 0
@@ -199,7 +191,6 @@ public abstract class EntityAbstract
                     _damage = 20.0f,
                     _stamina = 20.0f,
                     _speed = 20,
-                    _resistance = 1.0f,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
                     _level = 0
@@ -211,7 +202,6 @@ public abstract class EntityAbstract
                     _damage = 30.0f,
                     _stamina = 100.0f,
                     _speed = 70,
-                    _resistance = 1.0f,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
                     _level = 0
@@ -223,7 +213,6 @@ public abstract class EntityAbstract
                     _damage = 50.0f,
                     _stamina = 100.0f,
                     _speed = 70,
-                    _resistance = 1.0f,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
                     _level = 0
@@ -233,25 +222,25 @@ public abstract class EntityAbstract
             _currentStamina = 300,
         };
 
-        /*        Enemy enemy = new Enemy
-                {
-                    _name = "Marine",
-                    _type = "Humain",
-                    _difficultyIA = "Normal",
-                    _blocked = 0,
-                    _currentBlocked = 0,
-                    _maxhealth = 500,
-                    _health = 500.0f,
-                    _stamina = 300.0f,
-                    _maxStamina = 300,
-                    _speed = 50,
-                    _resistanceFeu = 0.5f,
-                    _resistanceEau = 0.5f,
-                    _resistanceVent = 0.5f,
-                    _resistancePhysique = 0.75f,
-                    _boostDamage = 1.0f,
-                    _level = 1,
-                    _ListCapacities = new List<EntitiesCapacities>
+        Enemy enemy = new Enemy
+        {
+            _name = "Marine",
+            _type = "Humain",
+            _difficultyIA = "Normal",
+            _blocked = 0,
+            _currentBlocked = 0,
+            _maxhealth = 500,
+            _health = 500.0f,
+            _stamina = 300.0f,
+            _maxStamina = 300,
+            _speed = 50,
+            _resistanceFeu = 0.5f,
+            _resistanceEau = 0.5f,
+            _resistanceVent = 0.5f,
+            _resistancePhysique = 0.75f,
+            _boostDamage = 1.0f,
+            _level = 1,
+            _ListCapacities = new List<EntitiesCapacities>
                     {
                         new EntitiesCapacities
                         {
@@ -260,7 +249,6 @@ public abstract class EntityAbstract
                             _damage = 5.0f,
                             _stamina = 20.0f,
                             _speed = 20,
-                            _resistance = 1.0f,
                             _boostDamage = 1.0f,
                             _criticalChance = 1.2f,
                             _level = 0
@@ -272,35 +260,34 @@ public abstract class EntityAbstract
                             _damage = 20.0f,
                             _stamina = 20.0f,
                             _speed = 20,
-                            _resistance = 1.0f,
                             _boostDamage = 1.0f,
                             _criticalChance = 1.2f,
                             _level = 0
                         }
                     },
-                    _currentLevel = 1,
-                    _currentStamina = 300,
-                };
+            _currentLevel = 1,
+            _currentStamina = 300,
+        };
 
-                Enemy enemy2 = new Enemy
-                {
-                    _name = "Amarial Sengoku",
-                    _type = "Zoan",
-                    _difficultyIA = "Dificil",
-                    _blocked = 0,
-                    _currentBlocked = 0,
-                    _maxhealth = 500,
-                    _health = 500.0f,
-                    _stamina = 300.0f,
-                    _maxStamina = 300,
-                    _speed = 50,
-                    _resistanceFeu = 1.5f,
-                    _resistanceEau = 1.5f,
-                    _resistanceVent = 1.5f,
-                    _resistancePhysique = 1.5f,
-                    _boostDamage = 1.0f,
-                    _level = 1,
-                    _ListCapacities = new List<EntitiesCapacities>
+        Enemy enemy2 = new Enemy
+        {
+            _name = "Amarial Sengoku",
+            _type = "Zoan",
+            _difficultyIA = "Dificil",
+            _blocked = 0,
+            _currentBlocked = 0,
+            _maxhealth = 500,
+            _health = 500.0f,
+            _stamina = 300.0f,
+            _maxStamina = 300,
+            _speed = 50,
+            _resistanceFeu = 1.5f,
+            _resistanceEau = 1.5f,
+            _resistanceVent = 1.5f,
+            _resistancePhysique = 1.5f,
+            _boostDamage = 1.0f,
+            _level = 1,
+            _ListCapacities = new List<EntitiesCapacities>
                     {
                         new EntitiesCapacities
                         {
@@ -343,16 +330,15 @@ public abstract class EntityAbstract
                             _level = 0
                         }
                     },
-                    _currentLevel = 1,
-                    _currentStamina = 300,
-                };*/
+            _currentLevel = 1,
+            _currentStamina = 300,
+        };
 
         Enemy enemy3 = new Enemy
         {
             _name = "Kobby",
             _type = "Paramecia",
             _difficultyIA = "Hard",
-            _index = 0,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 500,
@@ -398,7 +384,6 @@ public abstract class EntityAbstract
             _name = "Doflamingo",
             _type = "Paramecia",
             _difficultyIA = "Hard",
-            _index = 1,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 500,
@@ -444,7 +429,6 @@ public abstract class EntityAbstract
             _name = "Sanglier",
             _type = "Humain",
             _difficultyIA = "Normal",
-            _index = 2,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 100,

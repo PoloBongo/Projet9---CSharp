@@ -7,7 +7,6 @@ public class Enemy : EntityAbstract
 {
     Random random = new Random();
     public string _difficultyIA;
-    public int _index;
     public override void DisplayDetails()
     {
         Console.WriteLine($"Name : {_name} Health: {_health}, Stamina: {_stamina}, Speed: {_speed}, Level: {_level}");

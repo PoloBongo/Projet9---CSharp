@@ -1,4 +1,5 @@
 ﻿using MapEntities;
+using System;
 using System.IO;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -6,6 +7,7 @@ public class Fight
 {
     private bool tourAlier = false;
     private bool allieSwitch = false;
+    private bool firstSwitch = false;
     Random random = new Random();
     List<string> alliesNames;
     
@@ -46,7 +48,15 @@ public class Fight
                 }
                 else if (entities.EnemiesList[0]._difficultyIA == "Hard")
                 {
-                    HandleEnemyTurnIAHard(allie, ref enemie, ref entities, player);
+                    if (!firstSwitch)
+                    {
+                        firstSwitch = true;
+                        IAHardCalculSwitchEnemy(allie, ref enemie, ref entities, player);
+                    }
+                    else
+                    {
+                        HandleEnemyTurnIAHard(allie, ref enemie, ref entities, player);
+                    }
                 }
 
             }
@@ -298,7 +308,6 @@ public class Fight
 
     private void HandleEnemyTurnIAHard(EntityAbstract allie, ref EntityAbstract enemy, ref EntityContainer enemies, Player p)
     {
-        Console.WriteLine("ALLIE A SWITCH OU PAS ? :" + allieSwitch);
         /* Si le player n'a pas changé de perso ou que ce n'est pas le début du tour alors l'IA attaque */
         if (allieSwitch)
         {
@@ -310,7 +319,7 @@ public class Fight
             IACalculMaxDamage(allie, enemy);
         }
 
-        CheckHealth(enemy, allie, p);
+        CheckHealthAllie(allie, enemies, enemy, p);
         tourAlier = true;
 
     }
@@ -401,6 +410,23 @@ public class Fight
         return false;
     }
 
+    private void CheckHealthAllie(EntityAbstract allie, EntityContainer entities, EntityAbstract enemy, Player p)
+    {
+        for(int i = 0; i < entities.AlliesList.Count(); i++)
+        {
+            if (allie._health < 0 && entities.AlliesList[i]._health > 0)
+            {
+                ChangeAllie(entities, ref allie, enemy);
+            }
+            else
+            {
+                int nombreAleatoire = random.Next(2, 10 * enemy._level);
+                allie.AddExperience(nombreAleatoire);
+                enemy.Loot(p);
+            }
+        }
+    }
+
     private void CheckHealth(EntityAbstract enemie, EntityAbstract allie, Player p)
     {
         if (enemie._health <= 0)
@@ -446,7 +472,7 @@ public class Fight
 
     private void AfficherEtatDesCombattants(EntityAbstract allie, EntityAbstract enemie)
     {
-        /*Console.Clear();*/
+        Console.Clear();
         Console.WriteLine(@"
  ██████╗ ██████╗ ███╗   ███╗██████╗  █████╗ ████████╗
 ██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝

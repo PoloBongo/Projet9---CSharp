@@ -332,7 +332,7 @@ namespace MapGame
             int randEnemy = random.Next(1, 19);
             if (randEnemy == player.LOCALX)
             {
-                fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, true, player);
+                fight.startCombat(allies.entitiesContainer, true, player);
             }
         }
 
