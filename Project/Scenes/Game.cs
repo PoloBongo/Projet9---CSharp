@@ -3,6 +3,7 @@ using MapEntities;
 using MenuPr;
 using ShopDemo;
 using System.Numerics;
+using System;
 namespace InGame
 {
     class Game
@@ -14,18 +15,27 @@ namespace InGame
         public void Start()
         {
             string title = "One Piece Game";
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.ResetColor();
             RunMainMenu();
         }
 
         private void RunMainMenu()
         {
             string prompt = @"
-             ██████  ███    ██ ███████     ██████  ██ ███████  ██████ ███████ 
-            ██    ██ ████   ██ ██          ██   ██ ██ ██      ██      ██
-            ██    ██ ██ ██  ██ █████       ██████  ██ █████   ██      █████
-            ██    ██ ██  ██ ██ ██          ██      ██ ██      ██      ██
-             ██████  ██   ████ ███████     ██      ██ ███████  ██████ ███████ 
-
+                                          .-.                              
+  .--.    ___ .-.     .--.        .-..   ( __)   .--.     .--.      .--.   
+ /    \  (   )   \   /    \      /    \  (''"") /    \   /    \    /    \  
+|  .-. ;  |  .-. .  |  .-. ;    ' .-,  ;  | |  |  .-. ; |  .-. ;  |  .-. ; 
+| |  | |  | |  | |  |  | | |    | |  . |  | |  |  | | | |  |(___) |  | | | 
+| |  | |  | |  | |  |  |/  |    | |  | |  | |  |  |/  | |  |      |  |/  | 
+| |  | |  | |  | |  |  ' _.'    | |  | |  | |  |  ' _.' |  | ___  |  ' _.' 
+| '  | |  | |  | |  |  .'.-.    | |  ' |  | |  |  .'.-. |  '(   ) |  .'.-. 
+'  `-' /  | |  | |  '  `-' /    | `-'  '  | |  '  `-' / '  `-' |  '  `-' / 
+ `.__.'  (___)(___)  `.__.'     | \__.'  (___)  `.__.'   `.__,'    `.__.'  
+                                | |                                        
+                               (___)                                       
 
 
             ";
@@ -54,7 +64,7 @@ namespace InGame
 
         private void DisplayArt()
         {
-            string art = @"
+/*            string art = @"
           ████████ ████████████ ██████    ███████   ███       ███
          ██            ███     ███   ███  ██    ████  ██    ██
          ███            ██    ███     ███ ██     ██    ██  ██
@@ -66,7 +76,21 @@ namespace InGame
 
 
 
+            ";*/
+            string art = @"
+                ███████╗████████╗ ██████╗ ██████╗ ██╗   ██╗    
+                ██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝    
+                ███████╗   ██║   ██║   ██║██████╔╝ ╚████╔╝     
+                ╚════██║   ██║   ██║   ██║██╔══██╗  ╚██╔╝      
+                ███████║   ██║   ╚██████╔╝██║  ██║   ██║       
+                ╚══════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝
+
+
+
+
             ";
+
+
 
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(art);
@@ -77,6 +101,7 @@ namespace InGame
         private void NarrateStory()
         {
             Console.Clear();
+            Console.ResetColor();
             DisplayArt();
 
             string[] storyLines = {
@@ -213,10 +238,25 @@ namespace InGame
                 "\tArthur BRU",
                 "\tMathias REBECCA"
             };
+            string art = @"
 
+            _________                    .___.__  __   
+            \_   ___ \_______   ____   __| _/|__|/  |_ 
+            /    \  \/\_  __ \_/ __ \ / __ | |  \   __\
+            \     \____|  | \/\  ___// /_/ | |  ||  |  
+             \______  /|__|    \___  >____ | |__||__|  
+                    \/             \/     \/           
+
+
+            ";
+
+
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(art);
+            Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\t\tGame Developed By:\n");
-            Console.WriteLine(new string('=', 55));
+            Console.WriteLine("\t\t\tGame Developed By: \n");
             Console.ResetColor();
 
             foreach (string line in credits)
