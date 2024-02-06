@@ -140,14 +140,15 @@ namespace MapGame
                 // Créer une forteresse ou tout autre structure spéciale
             }
 
-            /*// S'assurer que les bords sont praticables
+            /* 
+            // S'assurer que les bords sont praticables
             for (int i = 0; i < 20; i++)
             {
                 layout[0, i] = layout[19, i] = '.';
                 layout[i, 0] = layout[i, 19] = '.';
-            }*/
+            }
+            */
 
-            // Gérer les cartes de bord
             // Gérer les cartes de bord
             if (isBorderMap)
             {
@@ -258,7 +259,6 @@ namespace MapGame
                 player.WORLDX = Math.Max(0, Math.Min(player.WORLDX, worldSize - 1));
                 player.WORLDY = Math.Max(0, Math.Min(player.WORLDY, worldSize - 1));
             }
-
             if (needsNewMap)
             {
                 // Effacer la position du joueur sur l'ancienne carte
@@ -298,6 +298,12 @@ namespace MapGame
                 }
             }
         }
+        public bool IsPlayerNextToDoor(Player player)
+        {
+            Map currentMap = GetMapAt(player.WORLDX, player.WORLDY);
+            return currentMap != null && currentMap.IsNextToDoor(player.LOCALX, player.LOCALY);
+        }
+
 
         public void CheckForEncounter(Player player, Allies allies, Enemy enemy)
         {
@@ -315,6 +321,12 @@ namespace MapGame
             }
         }
 
+        private void HandleEncounter(Allies allies, Enemy enemy, Player p)
+        {
+            // Combat entre le joueur et l'ennemi
+            fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, false, p);
+        }
+
         public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
         {
             int randEnemy = random.Next(1, 19);
@@ -324,43 +336,6 @@ namespace MapGame
             }
         }
 
-        private void HandleEncounter(Allies allies, Enemy enemy, Player p)
-        {
-            // Combat entre le joueur et l'ennemi
-            fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, false, p);
-        }
-
-        private void EnsurePlayerOnLand(Map map, Player player)
-        {
-            if (map.IsWater(player.LOCALX, player.LOCALY) || !map.CanMoveTo(player.LOCALX, player.LOCALY))
-            {
-                // Trouver la case d'herbe la plus proche pour repositionner le joueur
-                for (int offsetX = -1; offsetX <= 1; offsetX++)
-                {
-                    for (int offsetY = -1; offsetY <= 1; offsetY++)
-                    {
-                        int newX = player.LOCALX + offsetX;
-                        int newY = player.LOCALY + offsetY;
-
-                        if (newX >= 0 && newX < 20 && newY >= 0 && newY < 20 && map.IsGrass(newX, newY))
-                        {
-                            map.ClearPlayerPosition(player.LOCALX, player.LOCALY); // Effacer l'ancienne position
-                            map.PlacePlayer(newX, newY); // Placer le joueur sur cette position d'herbe
-                            player.LOCALX = newX;
-                            player.LOCALY = newY;
-                            return;
-                        }
-                    }
-                }
-
-                // Si aucune case d'herbe n'est trouvée, placez le joueur sur la position originale
-                map.PlacePlayer(player.LOCALX, player.LOCALY);
-            }
-            else
-            {
-                map.PlacePlayer(player.LOCALX, player.LOCALY);
-            }
-        }
         private void InitializeEnemy()
         {
             int enemyLocalX = random.Next(1, 19);

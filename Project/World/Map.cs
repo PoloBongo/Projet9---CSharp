@@ -64,7 +64,7 @@ namespace MapGame
                     {
                         currentColor = enemyColor;
                     }
-                    else if (matrix[i, j] == ']' || matrix[i, j] == '[') // Portes
+                    else if (matrix[i, j] == ']' || matrix[i, j] == '[' || matrix[i, j] == '―') // Portes
                     {
                         currentColor = doorColor;
                     }
@@ -113,6 +113,11 @@ namespace MapGame
         {
             return matrix[x, y] == 'O';
         }
+        public bool IsDoor(int x, int y)
+        {
+            return matrix[x, y] == ']' || matrix[x, y] == '[' || matrix[x, y] == '―';
+        }
+
 
         public bool CanMoveTo(int x, int y)
         {
@@ -181,5 +186,24 @@ namespace MapGame
                 PlacePlayer(oldX, oldY);
             }
         }
+        public bool IsNextToDoor(int x, int y)
+        {
+            // Vérifier les cases autour de la position du joueur
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    if (x + i >= 0 && x + i < rows && y + j >= 0 && y + j < columns)
+                    {
+                        if (IsDoor(x + i, y + j))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
     }
 }
