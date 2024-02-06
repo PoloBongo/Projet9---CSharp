@@ -77,7 +77,7 @@ namespace ShopDemo
 
                 Console.BackgroundColor = ConsoleColor.DarkYellow;
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("\t     Appuyer sur une touche pour Continuer     ");
+                Console.WriteLine("\t     Appuyez sur une touche pour Continuer     ");
                 Console.ResetColor();
                 ReadKey();
             }

@@ -378,8 +378,8 @@ namespace MapGame
 
         public void DisplayInventoryAndTeam(Player player, EntityContainer entityContainer)
         {
-            int inventoryX = 43; // Position X pour l'inventaire
-            int inventoryY = 2;  // Position Y pour l'inventaire
+            int inventoryX = 43;
+            int inventoryY = 2;
 
             // Créez un cadre pour l'inventaire
             DrawBox(inventoryX - 2, inventoryY - 1, 30, 8);
@@ -427,7 +427,6 @@ namespace MapGame
                     }
                 }
             }
-            // Réinitialise les couleurs par défaut
             Console.ResetColor();
         }
 
