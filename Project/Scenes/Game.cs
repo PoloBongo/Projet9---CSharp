@@ -56,15 +56,14 @@ namespace InGame
             Enemy enemy = new Enemy();
             Allies allies = new Allies();
             World world = new World();
+            EntityContainer entities = new EntityContainer();
             Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
 
             string path = "../../../Entities/entity.json";
-            enemy.CreateEntity(path);
+            enemy.CreateEntity(path, entities);
             enemy.GetInfoEntity(path);
-            allies.CreateEntity(path);
+            allies.CreateEntity(path, entities);
             allies.GetInfoEntity(path);
-
-
 
             while (true)
             {
@@ -74,7 +73,7 @@ namespace InGame
 
                 Map currentMap = world.GetMapAt(player.WORLDX, player.WORLDY);
                 currentMap.PrintMap();
-                world.DisplayInventoryAndTeam(player, world.EntityContainer);
+                world.DisplayInventoryAndTeam(player, entities);
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
 
                 int newLocalX = player.LOCALX;

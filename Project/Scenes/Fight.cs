@@ -1,4 +1,5 @@
 ﻿using MapEntities;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using static System.Net.Mime.MediaTypeNames;
@@ -10,11 +11,12 @@ public class Fight
     private bool firstSwitch = false;
     Random random = new Random();
     List<string> alliesNames;
-    
+
     public void startCombat(EntityContainer entities, bool sanglier, Player player)
     {
         EntityAbstract allie = entities.AlliesList[0];
         EntityAbstract enemie = entities.EnemiesList[0];
+        
         if (sanglier)
         {
             for (int i = 0; i < entities.EnemiesList.Count(); i++)
@@ -234,6 +236,43 @@ public class Fight
         }
     }
 
+    private void UpdateJsonHealth(EntityAbstract entity, string path)
+    {
+        EntityContainer entities;
+
+        // Utilisez un bloc using pour libérer la ressource après la lecture du fichier
+        using (StreamReader reader = File.OpenText(path))
+        {
+            string json = reader.ReadToEnd();
+            entities = JsonConvert.DeserializeObject<EntityContainer>(json);
+        }
+
+        if (entity is Allies)
+        {
+            var targetAllies = entities.AlliesList.FirstOrDefault(a => a._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
+            if (targetAllies != null)
+            {
+                targetAllies._health = entity._health;
+            }
+        }
+        /*else if (entity is Enemy)
+        {
+            var targetEnemy = entities.AlliesList.FirstOrDefault(e => e._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
+            if (targetEnemy != null)
+            {
+                targetEnemy._health = entity._health;
+            }
+        }*/
+
+        // Utilisez à nouveau un bloc using pour libérer la ressource après l'écriture dans le fichier
+        using (StreamWriter writer = File.CreateText(path))
+        {
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.Serialize(writer, entities);
+        }
+    }
+
+
     private void HandleEnemyTurnIARandom(EntityAbstract allie, EntityAbstract enemie, Player p)
     {
         int nombreAleatoire = random.Next(1, 4);
@@ -257,6 +296,9 @@ public class Fight
                 break;
         }
 
+        string path = "../../../Entities/entity.json";
+        UpdateJsonHealth(allie, path);
+
         CheckHealth(enemie, allie, p);
         tourAlier = true;
     }
@@ -264,6 +306,10 @@ public class Fight
     private void HandleEnemyTurnIADificil(EntityAbstract allie, EntityAbstract enemie, Player p)
     {
         IACalculMaxDamage(allie, enemie);
+
+        string path = "../../../Entities/entity.json";
+        UpdateJsonHealth(allie, path);
+
         CheckHealth(enemie, allie, p);
         tourAlier = true;
     }
@@ -318,6 +364,9 @@ public class Fight
         {
             IACalculMaxDamage(allie, enemy);
         }
+
+        string path = "../../../Entities/entity.json";
+        UpdateJsonHealth(allie, path);
 
         CheckHealthAllie(allie, enemies, enemy, p);
         tourAlier = true;
