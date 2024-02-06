@@ -2,6 +2,7 @@
 using MapEntities;
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace MapGame
 {
@@ -410,6 +411,7 @@ namespace MapGame
                 Console.WriteLine("Equipe");
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.SetCursorPosition(inventoryX, inventoryY++);
+
                 Console.WriteLine($"Nombre d'alliés : {entityContainer.AlliesList.Count}");
 
                 for (int i = 0; i < entityContainer.AlliesList.Count; i++)
@@ -417,6 +419,7 @@ namespace MapGame
                     var ally = entityContainer.AlliesList[i];
                     if (ally != null)
                     {
+                        UpdateInfoAllies(entityContainer, "../../../Entities/entity.json");
                         Console.SetCursorPosition(inventoryX, inventoryY++);
                         Console.WriteLine($"{ally._name} - HP: {ally._health} - Stamina: {ally._stamina}");
                     }
@@ -429,6 +432,23 @@ namespace MapGame
             }
             Console.ResetColor();
         }
+
+        public void UpdateInfoAllies(EntityContainer entityContainer, string path)
+        {
+            string json = File.ReadAllText(path);
+            var entities = JsonConvert.DeserializeObject<EntityContainer>(json);
+
+            foreach (var ally in entities.AlliesList)
+            {
+                var targetAlly = entityContainer.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
+                if (targetAlly != null)
+                {
+                    targetAlly._health = ally._health;
+                    targetAlly._stamina = ally._stamina;
+                }
+            }
+        }
+
 
         // Méthode pour dessiner un cadre autour de l'inventaire
         private void DrawBox(int x, int y, int width, int height)
