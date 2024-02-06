@@ -21,14 +21,19 @@ namespace MenuPr
             for (int i = 0; i < Options.Length; i++)
             {
                 string currentOption = Options[i];
-
                 string prefix;
 
                 if (i == SelectedIndex)
                 {
-                    prefix = "*";
+                    prefix = ">>";
                     ForegroundColor = ConsoleColor.Black;
                     BackgroundColor = ConsoleColor.White;
+
+                    if (currentOption == "Quitter")
+                    {
+                        ForegroundColor = ConsoleColor.Black;
+                        BackgroundColor = ConsoleColor.DarkRed;
+                    }
                 }
                 else
                 {
@@ -37,10 +42,11 @@ namespace MenuPr
                     BackgroundColor = ConsoleColor.Black;
                 }
 
-                WriteLine($"{prefix}<<{currentOption}>>");
+                WriteLine($"   {prefix}  {currentOption}   ");
             }
             ResetColor();
         }
+
         public int Run()
         {
             ConsoleKey keyPressed;
