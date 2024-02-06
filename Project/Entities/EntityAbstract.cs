@@ -472,7 +472,7 @@ public abstract class EntityAbstract
         entitiesContainer = new EntityContainer
         {
             AlliesList = new List<Allies> { allies, allies2, allies3 },
-            EnemiesList = new List<Enemy> { enemy3, enemy4, enemy5 },
+            EnemiesList = new List<Enemy> { enemy, enemy, enemy3, enemy4, enemy5 },
         };
 
         if (gameReset || !GetExistsJson(path) || GetEmptyJson(path))
