@@ -10,6 +10,7 @@ namespace MapGame
         private ConsoleColor waterColor = ConsoleColor.Blue;
         private ConsoleColor playerColor = ConsoleColor.Magenta;
         private ConsoleColor enemyColor = ConsoleColor.Red;
+        private ConsoleColor doorColor = ConsoleColor.Yellow;
 
         public char[,] matrix;
         private int rows;
@@ -63,6 +64,10 @@ namespace MapGame
                     {
                         currentColor = enemyColor;
                     }
+                    else if (matrix[i, j] == ']' || matrix[i, j] == '[') // Portes
+                    {
+                        currentColor = doorColor;
+                    }
                     else
                     {
                         currentColor = ConsoleColor.White;
@@ -94,6 +99,11 @@ namespace MapGame
             return matrix[x, y] == '~';
         }
 
+        public bool IsSand(int x, int y)
+        {
+            return matrix[x, y] == 'S';
+        }
+
         public bool IsPlayer(int x, int y)
         {
             return matrix[x, y] == '@';
@@ -113,9 +123,11 @@ namespace MapGame
         {
             if (CanMoveTo(x, y) && !IsPlayer(x, y))
             {
+                ClearPlayerPosition(x, y);
                 matrix[x, y] = '@';
             }
         }
+
 
         public void PlaceEnemy(int x, int y)
         {
@@ -129,9 +141,23 @@ namespace MapGame
         {
             if (matrix[x, y] == '@')
             {
-                matrix[x, y] = IsWater(x, y) ? '~' : '.'; // Remettre de l'eau ou de l'herbe selon le cas
+                // Remettre de l'eau, de l'herbe ou du sable selon le cas
+                if (IsWater(x, y))
+                {
+                    matrix[x, y] = '~';
+                }
+                else if (IsSand(x, y))
+                {
+                    matrix[x, y] = 'S';
+                }
+                else
+                {
+                    matrix[x, y] = '.';
+                }
             }
         }
+
+
 
         public void ClearEnemyPosition(int x, int y)
         {
