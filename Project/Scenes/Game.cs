@@ -103,6 +103,17 @@ Bienvenu chez les pirates ";
                     player.LOCALX = newLocalX;
                     player.LOCALY = newLocalY;
                 }
+
+                // Vérifier si le joueur est à côté d'une porte
+                if (world.IsPlayerNextToDoor(player))
+                {
+                    Console.WriteLine("Appuyez sur 'E' pour entrer.");
+                    var key = Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.E)
+                    {
+                        ShopDemo.Shop.Run();
+                    }
+                }
             }
         }
         private void ExitGame()
