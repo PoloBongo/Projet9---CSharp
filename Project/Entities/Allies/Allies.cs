@@ -28,6 +28,7 @@ public class Allies : EntityAbstract
 
     public override void LessStamina(float less)
     {
+        string path = "../../../Entities/entity.json";
         _stamina -= less;
         var entities = GetInfoEntityUpdateLevel(path);
         var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(this._name, StringComparison.OrdinalIgnoreCase));
@@ -46,6 +47,7 @@ public class Allies : EntityAbstract
 
     public override void AddLevel()
     {
+        string path = "../../../Entities/entity.json";
         if (_experience >= _maxExerience)
         {
             int tmp = _experience - _maxExerience;

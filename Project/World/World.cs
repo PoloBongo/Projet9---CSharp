@@ -324,7 +324,7 @@ namespace MapGame
         private void HandleEncounter(Allies allies, Enemy enemy, Player p)
         {
             // Combat entre le joueur et l'ennemi
-            fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, false, p);
+            fight.startCombat(allies.entitiesContainer, false, p);
         }
 
         public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
@@ -332,7 +332,7 @@ namespace MapGame
             int randEnemy = random.Next(1, 19);
             if (randEnemy == player.LOCALX)
             {
-                fight.startCombat(allies.entitiesContainer, enemy.entitiesContainer, true, player);
+                fight.startCombat(allies.entitiesContainer, true, player);
             }
         }
 
