@@ -12,43 +12,128 @@ public class Fight
     Random random = new Random();
     List<string> alliesNames;
 
-    public void startCombat(EntityContainer entities, bool sanglier, Player player)
+    public void ResetEnemyHealth(EntityContainer entities, bool sanglier, int iaType)
     {
-        EntityAbstract allie = entities.AlliesList[0];
-        EntityAbstract enemie = entities.EnemiesList[0];
-        
+        EntityAbstract enemy = null;
         if (sanglier)
         {
-            for (int i = 0; i < entities.EnemiesList.Count(); i++)
+            enemy = entities.EnemiesList.FirstOrDefault(e => e._name == "Sanglier");
+        }
+        else
+        {
+            if (iaType == 1)
             {
-                if (entities.EnemiesList[i]._name == "Sanglier")
-                {
-                    enemie = entities.EnemiesList[i];
-                }
+                enemy = entities.EnemiesList.FirstOrDefault(e => e._name == "Marine");
             }
+            else if (iaType == 2)
+            {
+                enemy = entities.EnemiesList.FirstOrDefault(e => e._name == "Amarial Sengoku");
+            }
+            else if (iaType == 3)
+            {
+                enemy = entities.EnemiesList.FirstOrDefault(e => e._name == "Kobby");
+            }
+        }
+
+        if (enemy != null)
+        {
+            enemy._health = enemy._maxhealth;
+        }
+    }
+
+
+    public void startCombat(EntityContainer entities, bool sanglier, Player player, int iaType)
+    {
+        EntityAbstract allie = GetFirstAliveAlly(entities);
+        EntityAbstract enemie = entities.EnemiesList[0];
+
+        ResetEnemyHealth(entities, sanglier, iaType);
+
+        if (sanglier)
+        {
+            enemie = entities.EnemiesList[4];
         }
 
         AfficherEtatDesCombattants(allie, enemie);
 
-        while (allie._health > 0 && enemie._health > 0)
+        if (iaType == 1)
         {
-            DetermineTour(allie, enemie);
+            while (enemie._health > 0)
+            {
+                foreach (var ally in entities.AlliesList)
+                {
+                    if (ally._health > 0)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
 
-            if (tourAlier)
-            {
-                HandleAllieTurn(entities, ref allie, enemie, player);
+                DetermineTour(allie, enemie);
+
+                if (tourAlier)
+                {
+                    HandleAllieTurn(entities, ref allie, enemie, player);
+                }
+                else
+                {
+                    HandleEnemyTurnIARandom(allie, enemie, entities, player);
+
+                }
+                AfficherEtatDesCombattants(allie, enemie);
             }
-            else
+        }
+        else if (iaType == 2)
+        {
+            while (enemie._health > 0)
             {
-                if (entities.EnemiesList[0]._difficultyIA == "Normal")
+                for (int i = 0; i < entities.AlliesList.Count(); i++)
                 {
-                    HandleEnemyTurnIARandom(allie, enemie, player);
+                    if (entities.AlliesList[i]._health < 0)
+                    {
+                        break;
+                    }
                 }
-                else if (entities.EnemiesList[0]._difficultyIA == "Dificil")
+
+                DetermineTour(allie, enemie);
+
+                if (tourAlier)
                 {
-                    HandleEnemyTurnIADificil(allie, enemie, player);
+                    HandleAllieTurn(entities, ref allie, enemie, player);
                 }
-                else if (entities.EnemiesList[0]._difficultyIA == "Hard")
+                else
+                {
+                    HandleEnemyTurnIADificil(allie, enemie, entities, player);
+                }
+                AfficherEtatDesCombattants(allie, enemie);
+            }
+        }
+        else if (iaType == 3)
+        {
+            while (enemie._health > 0)
+            {
+                foreach (var ally in entities.AlliesList)
+                {
+                    if (ally._health > 0)
+                    {
+                        continue;
+                    }
+                    else if (ally._health < 0)
+                    {
+                        break;
+                    }
+                }
+
+                DetermineTour(allie, enemie);
+
+                if (tourAlier)
+                {
+                    HandleAllieTurn(entities, ref allie, enemie, player);
+                }
+                else
                 {
                     if (!firstSwitch)
                     {
@@ -59,12 +144,38 @@ public class Fight
                     {
                         HandleEnemyTurnIAHard(allie, ref enemie, ref entities, player);
                     }
-                }
 
+                }
+                AfficherEtatDesCombattants(allie, enemie);
             }
-            AfficherEtatDesCombattants(allie, enemie);
         }
     }
+
+    private EntityAbstract GetFirstAliveAlly(EntityContainer entities)
+    {
+        foreach (var ally in entities.AlliesList)
+        {
+            if (ally._health > 0)
+            {
+                return ally;
+            }
+        }
+        return null;
+    }
+
+    private bool EnemyIsDead(EntityAbstract enemy)
+    {
+        if (enemy._health > 0)
+        {
+            return true;
+        }
+        else if (enemy._health <= 0)
+        {
+            return false;
+        }
+        return false;
+    }
+
     private void DetermineTour(EntityAbstract allie, EntityAbstract enemie)
     {
         tourAlier = allie._speed > enemie._speed || tourAlier;
@@ -273,7 +384,7 @@ public class Fight
     }
 
 
-    private void HandleEnemyTurnIARandom(EntityAbstract allie, EntityAbstract enemie, Player p)
+    private void HandleEnemyTurnIARandom(EntityAbstract allie, EntityAbstract enemie, EntityContainer entities, Player p)
     {
         int nombreAleatoire = random.Next(1, 4);
         int randomAttackEnemy = random.Next(0, 2);
@@ -303,7 +414,7 @@ public class Fight
         tourAlier = true;
     }
 
-    private void HandleEnemyTurnIADificil(EntityAbstract allie, EntityAbstract enemie, Player p)
+    private void HandleEnemyTurnIADificil(EntityAbstract allie, EntityAbstract enemie, EntityContainer entities, Player p)
     {
         IACalculMaxDamage(allie, enemie);
 
@@ -489,7 +600,6 @@ public class Fight
         else if (allie._health <= 0)
         {
             Console.WriteLine("Tu as perdu");
-
         }
     }
 
