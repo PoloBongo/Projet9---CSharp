@@ -8,6 +8,11 @@ namespace InGame
 {
     class Game
     {
+        Enemy enemy = new Enemy();
+        Allies allies = new Allies();
+        World world = new World();
+        Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
+        Shop shop = new Shop();
         const int mapRows = 20;
         const int mapColumns = 20;
 

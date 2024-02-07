@@ -4,9 +4,9 @@ using static System.Console;
 
 namespace ShopDemo
 {
-    class Shop
+    public class Shop
     {
-        private static Dictionary<string, double> produits = new Dictionary<string, double>()
+        private Dictionary<string, double> produits = new Dictionary<string, double>()
         {
             { "Viande", 5.00 },
             { "Alcool", 10.00 },
@@ -89,7 +89,7 @@ namespace ShopDemo
 
 
 
-        private static int ChooseProduct()
+        public int ChooseProduct()
         {
             ConsoleKey keyPressed;
             do
@@ -123,7 +123,7 @@ namespace ShopDemo
         }
 
 
-        private static void DisplayProducts()
+        private void DisplayProducts()
         {
 
 
