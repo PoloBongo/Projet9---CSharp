@@ -34,13 +34,13 @@ namespace MapGame
                     char[,] selectedLayout = CreateRandomLayout(isBorderMap, isCenterMap, isSpecialMap, i, j);
                     worldMaps[i, j] = new Map(20, 20);
                     worldMaps[i, j].InitializeCustomMap(selectedLayout);
-                    if (!(i == 1 && j == 1) && !(i == 0 && j == 2))
+                    if (i != 1 && j != 1 && i != 0 && j != 2)
                     {
                         PlaceEnemiesRandomly(worldMaps[i, j], i, j);
                     }
                 }
             }
-            InitializeEnemy();
+            //InitializeEnemy();
         }
 
       
@@ -390,7 +390,7 @@ namespace MapGame
             fight.startCombat(allies.entitiesContainer, false, p, combatType);
         }
 
-        private void InitializeEnemy()
+        /*private void InitializeEnemy()
         {
             // Générer un nombre aléatoire entre 0 et 99
             int randChance = random.Next(100);
@@ -408,11 +408,11 @@ namespace MapGame
                 Map centerMap = worldMaps[1, 1];
                 centerMap.PlaceEnemy(newEnemyMap.LOCALX, newEnemyMap.LOCALY);
             }
-        }
+        }*/
 
         private void PlaceEnemiesRandomly(Map map, int positionX, int positionY)
         {
-            int chanceSpawnEnemy = 50; // Par exemple, 50% de chance de placer un ennemi aléatoire
+            int chanceSpawnEnemy = 75; // Par exemple, 50% de chance de placer un ennemi aléatoire
 
             for (int i = 0; i < 3; i++) // Vous pouvez ajuster le nombre d'ennemis à placer
             {
@@ -432,6 +432,7 @@ namespace MapGame
                     EnemyMap newEnemyMap = new EnemyMap(positionX, positionY, x, y);
                     enemyMaps.Add(newEnemyMap);
                     map.PlaceEnemy(x, y);
+
                 }
             }
         }
