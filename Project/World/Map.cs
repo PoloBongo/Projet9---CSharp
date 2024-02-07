@@ -10,6 +10,7 @@ namespace MapGame
         private ConsoleColor waterColor = ConsoleColor.Blue;
         private ConsoleColor playerColor = ConsoleColor.Magenta;
         private ConsoleColor enemyColor = ConsoleColor.Red;
+        private ConsoleColor doorColor = ConsoleColor.DarkYellow;
 
         public char[,] matrix;
         private int rows;
@@ -35,6 +36,7 @@ namespace MapGame
 
         private void CheckForWoodPickup(Player player)
         {
+            Console.WriteLine("on est la1");
             foreach (var woodPiece in WoodPieces.ToList())
             {
                 if (IsPlayerNearWood(player, woodPiece))
@@ -42,6 +44,7 @@ namespace MapGame
                     var questNpc = questNPCs.FirstOrDefault(npc => npc.QuestAccepted && npc.QuestText == "Ramasser 5 morceaux de bois");
                     if (questNpc != null)
                     {
+                        Console.WriteLine("on est la");
                         questNpc.CollectWood();
                         WoodPieces.Remove(woodPiece);
                         ClearWoodPiecePosition(woodPiece.PositionX, woodPiece.PositionY);
@@ -52,23 +55,37 @@ namespace MapGame
         }
 
 
-
+         public bool IsWood(int x, int y)
+    {
+        // Vérifier si les indices sont dans les limites de la matrice
+        if (x >= 0 && x < rows && y >= 0 && y < columns)
+        {
+            return matrix[x, y] == '!'; // Remplacer '!' par le caractère représentant le bois
+        }
+        return false;
+    }
 
         private bool IsPlayerNearWood(Player player, WoodPiece woodPiece)
         {
             Console.WriteLine("Le joueur est proche d'un morceau de bois.");
-            return Math.Abs(woodPiece.PositionX - player.LocalX) <= 1 && Math.Abs(woodPiece.PositionY - player.LocalY) <= 1;
+            return Math.Abs(woodPiece.PositionX - player.LOCALX) <= 1 && Math.Abs(woodPiece.PositionY - player.LOCALY) <= 1;
           
         }
 
 
-        private void ClearWoodPiecePosition(int x, int y)
+        public void ClearWoodPiecePosition(int x, int y)
         {
+            Console.WriteLine("Ca marche");
             if (matrix[x, y] == '!')
             {
                 matrix[x, y] = IsWater(x, y) ? '~' : '.'; // Remplacer par de l'eau ou de l'herbe
+
+                // Supprimer le morceau de bois de la liste WoodPieces
+                WoodPieces.RemoveAll(woodPiece => woodPiece.PositionX == x && woodPiece.PositionY == y);
             }
         }
+
+
         private void PlaceWoodPieces()
         {
             Random random = new Random();
@@ -98,8 +115,8 @@ namespace MapGame
 
         public void CreateQuestNPCs()
         {
-            questNPCs.Add(new QuestNPC(10, 10, "Tuer trois ennemis"));
-            questNPCs.Add(new QuestNPC(2, 2, "Ramasser 5 morceaux de bois"));
+            questNPCs.Add(new QuestNPC(10, 10, "Tuer trois ennemis", this)); 
+            questNPCs.Add(new QuestNPC(15, 15, "Ramasser 5 morceaux de bois", this));
         }
 
         public void DrawNPCs()
@@ -136,34 +153,20 @@ namespace MapGame
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    ConsoleColor currentColor;
-                    if (matrix[i, j] == '@') // Joueur
+                    ConsoleColor currentColor = ConsoleColor.White;
+                    switch (matrix[i, j])
                     {
-                        currentColor = playerColor;
-                    }
-                    else if (matrix[i, j] == '~') // Eau
-                    {
-                        currentColor = waterColor;
-                    }
-                    else if (matrix[i, j] == '.') // Herbe
-                    {
-                        currentColor = grassColor;
-                    }
-                    else if (matrix[i, j] == 'O') // Ennemi
-                    {
-                        currentColor = enemyColor;
-                    }
-                    else if (matrix[i, j] == '?') // NPC de quête
-                    {
-                        currentColor = ConsoleColor.Yellow;
-                    }
-                    else if (matrix[i, j] == '!') //bois
-                    {
-                        currentColor= ConsoleColor.DarkYellow;
-                    }
-                    else
-                    {
-                        currentColor = ConsoleColor.White;
+                        case '@': currentColor = playerColor; break;
+                        case '~': currentColor = waterColor; break;
+                        case '.': currentColor = grassColor; break;
+                        case 'O': currentColor = enemyColor; break;
+                        case 'H': currentColor = ConsoleColor.Gray; break; // Murs des maisons
+                        case 'F': currentColor = ConsoleColor.DarkGray; break; // Murs de la forteresse
+                        case 'D':
+                        case ']':
+                        case '[':
+                        case '―': currentColor = ConsoleColor.DarkYellow; break; // Portes
+                        case 'S': currentColor = ConsoleColor.Yellow; break; // Sable
                     }
 
                     Console.ForegroundColor = currentColor;
@@ -192,6 +195,11 @@ namespace MapGame
             return matrix[x, y] == '~';
         }
 
+        public bool IsSand(int x, int y)
+        {
+            return matrix[x, y] == 'S';
+        }
+
         public bool IsPlayer(int x, int y)
         {
             return matrix[x, y] == '@';
@@ -201,6 +209,11 @@ namespace MapGame
         {
             return matrix[x, y] == 'O';
         }
+        public bool IsDoor(int x, int y)
+        {
+            return matrix[x, y] == ']' || matrix[x, y] == '[' || matrix[x, y] == '―';
+        }
+
 
         public bool CanMoveTo(int x, int y)
         {
@@ -211,6 +224,7 @@ namespace MapGame
         {
             if (CanMoveTo(x, y) && !IsPlayer(x, y))
             {
+                ClearPlayerPosition(x, y);
                 matrix[x, y] = '@';
             }
         }
@@ -236,9 +250,23 @@ namespace MapGame
         {
             if (matrix[x, y] == '@')
             {
-                matrix[x, y] = IsWater(x, y) ? '~' : '.'; // Remettre de l'eau ou de l'herbe selon le cas
+                // Remettre de l'eau, de l'herbe ou du sable selon le cas
+                if (IsWater(x, y))
+                {
+                    matrix[x, y] = '~';
+                }
+                else if (IsSand(x, y))
+                {
+                    matrix[x, y] = 'S';
+                }
+                else
+                {
+                    matrix[x, y] = '.';
+                }
             }
         }
+
+
 
         public void ClearEnemyPosition(int x, int y)
         {
@@ -262,5 +290,62 @@ namespace MapGame
                 PlacePlayer(oldX, oldY);
             }
         }
+
+        public bool IsNextToDoor(int x, int y)
+        {
+            // Vérifier les cases autour de la position du joueur
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    if (x + i >= 0 && x + i < rows && y + j >= 0 && y + j < columns)
+                    {
+                        if (IsDoor(x + i, y + j))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool IsNextToWood(int x, int y)
+        {
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    if (x + i >= 0 && x + i < rows && y + j >= 0 && y + j < columns)
+                    {
+                        if (matrix[x + i, y + j] == '!') // Assuming '!' represents a wood piece
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+
+        public bool IsNextToFortressDoor(int x, int y)
+        {
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    if (x + i >= 0 && x + i < rows && y + j >= 0 && y + j < columns)
+                    {
+                        if (matrix[x + i, y + j] == 'D')
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
     }
 }

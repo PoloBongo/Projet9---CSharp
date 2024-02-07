@@ -1,59 +1,206 @@
-﻿using System.IO;
+﻿using MapEntities;
+using Newtonsoft.Json;
+using System;
+using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 public class Fight
 {
     private bool tourAlier = false;
+    private bool allieSwitch = false;
+    private bool firstSwitch = false;
     Random random = new Random();
     List<string> alliesNames;
 
-    public void startCombat(EntityContainer entities1, EntityContainer entities2, bool sanglier)
+    public void ResetEnemyHealth(EntityContainer entities, bool sanglier, int iaType)
     {
-        EntityAbstract allie = entities1.AlliesList[0];
-        EntityAbstract enemie = entities2.EnemiesList[0];
+        EntityAbstract enemy = null;
         if (sanglier)
         {
-            enemie = entities2.EnemiesList[2];
+            enemy = entities.EnemiesList.FirstOrDefault(e => e._name == "Sanglier");
+        }
+        else
+        {
+            if (iaType == 1)
+            {
+                enemy = entities.EnemiesList.FirstOrDefault(e => e._name == "Marine");
+            }
+            else if (iaType == 2)
+            {
+                enemy = entities.EnemiesList.FirstOrDefault(e => e._name == "Amarial Sengoku");
+            }
+            else if (iaType == 3)
+            {
+                enemy = entities.EnemiesList.FirstOrDefault(e => e._name == "Kobby");
+            }
+        }
+
+        if (enemy != null)
+        {
+            enemy._health = enemy._maxhealth;
+        }
+    }
+
+
+    public void startCombat(EntityContainer entities, bool sanglier, Player player, int iaType)
+    {
+        EntityAbstract allie = GetFirstAliveAlly(entities);
+        EntityAbstract enemie = entities.EnemiesList[0];
+
+        ResetEnemyHealth(entities, sanglier, iaType);
+
+        if (sanglier)
+        {
+            enemie = entities.EnemiesList[4];
         }
 
         AfficherEtatDesCombattants(allie, enemie);
 
-        while (allie._health > 0 && enemie._health > 0)
+        if (iaType == 1)
         {
-            DetermineTour(allie, enemie);
-
-            if (tourAlier)
+            while (enemie._health > 0)
             {
-                HandleAllieTurn(entities1, ref allie, enemie);
-            }
-            else
-            {
-                HandleEnemyTurn(allie, enemie);
-            }
+                foreach (var ally in entities.AlliesList)
+                {
+                    if (ally._health > 0)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
 
-            AfficherEtatDesCombattants(allie, enemie);
+                DetermineTour(allie, enemie);
+
+                if (tourAlier)
+                {
+                    HandleAllieTurn(entities, ref allie, enemie, player);
+                }
+                else
+                {
+                    HandleEnemyTurnIARandom(allie, enemie, entities, player);
+
+                }
+                AfficherEtatDesCombattants(allie, enemie);
+            }
+        }
+        else if (iaType == 2)
+        {
+            while (enemie._health > 0)
+            {
+                for (int i = 0; i < entities.AlliesList.Count(); i++)
+                {
+                    if (entities.AlliesList[i]._health < 0)
+                    {
+                        break;
+                    }
+                }
+
+                DetermineTour(allie, enemie);
+
+                if (tourAlier)
+                {
+                    HandleAllieTurn(entities, ref allie, enemie, player);
+                }
+                else
+                {
+                    HandleEnemyTurnIADificil(allie, enemie, entities, player);
+                }
+                AfficherEtatDesCombattants(allie, enemie);
+            }
+        }
+        else if (iaType == 3)
+        {
+            while (enemie._health > 0)
+            {
+                foreach (var ally in entities.AlliesList)
+                {
+                    if (ally._health > 0)
+                    {
+                        continue;
+                    }
+                    else if (ally._health < 0)
+                    {
+                        break;
+                    }
+                }
+
+                DetermineTour(allie, enemie);
+
+                if (tourAlier)
+                {
+                    HandleAllieTurn(entities, ref allie, enemie, player);
+                }
+                else
+                {
+                    if (!firstSwitch)
+                    {
+                        firstSwitch = true;
+                        IAHardCalculSwitchEnemy(allie, ref enemie, ref entities, player);
+                    }
+                    else
+                    {
+                        HandleEnemyTurnIAHard(allie, ref enemie, ref entities, player);
+                    }
+
+                }
+                AfficherEtatDesCombattants(allie, enemie);
+            }
         }
     }
+
+    private EntityAbstract GetFirstAliveAlly(EntityContainer entities)
+    {
+        foreach (var ally in entities.AlliesList)
+        {
+            if (ally._health > 0)
+            {
+                return ally;
+            }
+        }
+        return null;
+    }
+
+    private bool EnemyIsDead(EntityAbstract enemy)
+    {
+        if (enemy._health > 0)
+        {
+            return true;
+        }
+        else if (enemy._health <= 0)
+        {
+            return false;
+        }
+        return false;
+    }
+
     private void DetermineTour(EntityAbstract allie, EntityAbstract enemie)
     {
         tourAlier = allie._speed > enemie._speed || tourAlier;
     }
 
-    private void HandleAllieTurn(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie)
+    private void HandleAllieTurn(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie, Player p)
     {
         List<string> options;
         int selectedIndex;
 
         if (CheckStaminaAllie(allie, entities))
         {
-            options = new List<string> { "Changer d'allié", "Attaquer" };
+            options = new List<string> { "Changer d'allié", "Attaquer", "Inventory" };
             selectedIndex = RunOptions(options, allie, enemie);
             switch (selectedIndex)
             {
                 case 0:
                     ChangeAllie(entities, ref allie, enemie);
+                    allieSwitch = true;
                     break;
                 case 1:
-                    AttackEnemy(allie, enemie, entities);
+                    AttackEnemy(allie, enemie);
+                    break;
+                case 2:
+                    playerInventory(p, allie, enemie);
                     break;
             }
         }
@@ -67,13 +214,45 @@ public class Fight
                     ChangeAllie(entities, ref allie, enemie);
                     break;
                 case 1:
-                    /* Faire en sorte de use la potion ou d'ouvrir l'inventaire pour la use */
+                    p.RemoveAlcool(1);
+                    allie.AddStamina(20);
                     break;
             }
         }
 
-        CheckHealth(enemie, allie);
+        CheckHealth(enemie, allie, p);
         tourAlier = false;
+    }
+
+    public void playerInventory(Player player, EntityAbstract allie, EntityAbstract enemie)
+    {
+        List<string> options;
+        int selectedIndex;
+
+        options = new List<string> { "Soin", "Stamina" };
+
+        selectedIndex = RunOptions(options, allie, enemie);
+        switch (selectedIndex)
+        {
+            case 0:
+                Soin(player, allie);
+                break;
+            case 1:
+                Stamina(player, allie);
+                break;
+        }
+    }
+
+    public void Soin(Player player, EntityAbstract allie) 
+    {
+        /*player.RemoveViande(1);*/
+        allie.AddHealth(20);
+    }
+
+    public void Stamina(Player player, EntityAbstract allie)
+    {
+        /*player.RemoveAlcool(1);*/
+        allie.AddStamina(20);
     }
 
     private void ChangeAllie(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie)
@@ -96,8 +275,15 @@ public class Fight
         AfficherEtatDesCombattants(allie, enemie);
     }
 
+    private void ChangeEnemy( EntityAbstract allie, ref EntityAbstract enemie)
+    {
+        EntityAbstract newEnemy = enemie;
 
-    private void AttackEnemy(EntityAbstract allie, EntityAbstract enemie, EntityContainer entities)
+        Console.WriteLine($"Vous avez choisi l'allié : {newEnemy._name}");
+        AfficherEtatDesCombattants(allie, newEnemy);
+    }
+
+    private void AttackEnemy(EntityAbstract allie, EntityAbstract enemie)
     {
         Console.WriteLine($"Choisis la capacité que tu veux utiliser pour attaquer :\n");
         List<string> displayedCapacities = new List<string>();
@@ -123,7 +309,7 @@ public class Fight
 
     private void ManageDamageByType(int selectedIndex, EntityAbstract allie, EntityAbstract enemie)
     {
-        /* Si l'enemy est de type Humain alors je lui fait 50% de dégâts en plus*/
+        /* Si l'enemy est de type Humain alors je lui fait 50% de dégât en plus*/
         if (allie._type == "Logia" && enemie._type == "Humain")
         {
             enemie.TakeDamage(allie._ListCapacities[selectedIndex]._damage * 1.50f);
@@ -161,7 +347,44 @@ public class Fight
         }
     }
 
-    private void HandleEnemyTurn(EntityAbstract allie, EntityAbstract enemie)
+    private void UpdateJsonHealth(EntityAbstract entity, string path)
+    {
+        EntityContainer entities;
+
+        // Utilisez un bloc using pour libérer la ressource après la lecture du fichier
+        using (StreamReader reader = File.OpenText(path))
+        {
+            string json = reader.ReadToEnd();
+            entities = JsonConvert.DeserializeObject<EntityContainer>(json);
+        }
+
+        if (entity is Allies)
+        {
+            var targetAllies = entities.AlliesList.FirstOrDefault(a => a._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
+            if (targetAllies != null)
+            {
+                targetAllies._health = entity._health;
+            }
+        }
+        /*else if (entity is Enemy)
+        {
+            var targetEnemy = entities.AlliesList.FirstOrDefault(e => e._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
+            if (targetEnemy != null)
+            {
+                targetEnemy._health = entity._health;
+            }
+        }*/
+
+        // Utilisez à nouveau un bloc using pour libérer la ressource après l'écriture dans le fichier
+        using (StreamWriter writer = File.CreateText(path))
+        {
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.Serialize(writer, entities);
+        }
+    }
+
+
+    private void HandleEnemyTurnIARandom(EntityAbstract allie, EntityAbstract enemie, EntityContainer entities, Player p)
     {
         int nombreAleatoire = random.Next(1, 4);
         int randomAttackEnemy = random.Next(0, 2);
@@ -184,8 +407,144 @@ public class Fight
                 break;
         }
 
-        CheckHealth(enemie, allie);
+        string path = "../../../Entities/entity.json";
+        UpdateJsonHealth(allie, path);
+
+        CheckHealth(enemie, allie, p);
         tourAlier = true;
+    }
+
+    private void HandleEnemyTurnIADificil(EntityAbstract allie, EntityAbstract enemie, EntityContainer entities, Player p)
+    {
+        IACalculMaxDamage(allie, enemie);
+
+        string path = "../../../Entities/entity.json";
+        UpdateJsonHealth(allie, path);
+
+        CheckHealth(enemie, allie, p);
+        tourAlier = true;
+    }
+
+    private void IACalculMaxDamage(EntityAbstract allie, EntityAbstract enemie)
+    {
+        int UpAttackIndex = -1;
+        float damageUp = float.MinValue;
+
+        for (int i = 0; i < enemie._ListCapacities.Count(); i++)
+        {
+            float damage = 0;
+            switch (enemie._ListCapacities[i]._type)
+            {
+                /* Check toutes ces capacités et renvoi l'attaque qui fera le plus mal au player */
+                case "Eau":
+                    damage = enemie._ListCapacities[i]._damage / allie._resistanceEau;
+                    break;
+                case "Feu":
+                    damage = enemie._ListCapacities[i]._damage / allie._resistanceFeu;
+                    break;
+                case "Vent":
+                    damage = enemie._ListCapacities[i]._damage / allie._resistanceVent;
+                    break;
+                case "Physique":
+                    damage = enemie._ListCapacities[i]._damage / allie._resistancePhysique;
+                    break;
+            }
+
+            if (damage > damageUp)
+            {
+                damageUp = damage;
+                UpAttackIndex = i;
+            }
+        }
+
+        if (UpAttackIndex != -1)
+        {
+            allie.TakeDamage(damageUp);
+        }
+    }
+
+    private void HandleEnemyTurnIAHard(EntityAbstract allie, ref EntityAbstract enemy, ref EntityContainer enemies, Player p)
+    {
+        /* Si le player n'a pas changé de perso ou que ce n'est pas le début du tour alors l'IA attaque */
+        if (allieSwitch)
+        {
+            allieSwitch = false;
+            IAHardCalculSwitchEnemy(allie, ref enemy, ref enemies, p);
+        }
+        else
+        {
+            IACalculMaxDamage(allie, enemy);
+        }
+
+        string path = "../../../Entities/entity.json";
+        UpdateJsonHealth(allie, path);
+
+        CheckHealthAllie(allie, enemies, enemy, p);
+        tourAlier = true;
+
+    }
+
+    private void IAHardCalculSwitchEnemy(EntityAbstract allie, ref EntityAbstract enemy, ref EntityContainer enemies, Player p)
+    {
+        Console.WriteLine("IA Hard");
+
+        Dictionary<string, float> attackInfo = new Dictionary<string, float>();
+
+        int UpAttackIndex = -1;
+        float damageUp = float.MinValue;
+
+        for (int i = 0; i < enemies.AlliesList.Count(); i++)
+        {
+            if (enemies.EnemiesList[i]._difficultyIA == "Hard" && enemies.EnemiesList[i]._health > 0)
+            {
+                for (int j = 0; j < enemies.EnemiesList[i]._ListCapacities.Count; j++)
+                {
+                    float damage = 0;
+
+                    switch (enemies.EnemiesList[i]._ListCapacities[j]._type)
+                    {
+                        /* Check toutes ces capacités et renvoi l'attaque qui fera le plus mal au player */
+                        case "Eau":
+                            damage = enemies.EnemiesList[i]._ListCapacities[j]._damage / allie._resistanceEau;
+                            attackInfo.Add(enemies.EnemiesList[i]._ListCapacities[j]._name, damage);
+                            break;
+                        case "Feu":
+                            damage = enemies.EnemiesList[i]._ListCapacities[j]._damage / allie._resistanceFeu;
+                            attackInfo.Add(enemies.EnemiesList[i]._ListCapacities[j]._name, damage);
+                            break;
+                        case "Vent":
+                            damage = enemies.EnemiesList[i]._ListCapacities[j]._damage / allie._resistanceVent;
+                            attackInfo.Add(enemies.EnemiesList[i]._ListCapacities[j]._name, damage);
+                            break;
+                        case "Physique":
+                            damage = enemies.EnemiesList[i]._ListCapacities[j]._damage / allie._resistancePhysique;
+                            attackInfo.Add(enemies.EnemiesList[i]._ListCapacities[j]._name, damage);
+                            break;
+                    }
+                    if (damage > damageUp)
+                    {
+                        damageUp = damage;
+                        UpAttackIndex = i;
+                    }
+                }
+            }
+        }
+
+        /* Détecter le changement de perso allié, si il change alors appellé cette fonction pour que l'ia garde l'avantage sinon elle attaque avec ces spell qui font le plus de dégâts */
+
+        foreach (KeyValuePair<string, float> attackEntry in attackInfo)
+        {
+            Console.WriteLine("Nom de l'attaque : " + attackEntry.Key + ", Dommages : " + attackEntry.Value);
+        }
+
+        Console.WriteLine("ATTAQUE LA PLUS PUISSANTE : " + damageUp);
+        Console.WriteLine("POSITION DU PERSO : " + UpAttackIndex);
+
+        if (UpAttackIndex != -1)
+        {
+            enemy = enemies.EnemiesList[UpAttackIndex];
+            ChangeEnemy(allie, ref enemy);
+        }
     }
 
     private bool CheckStaminaAllie(EntityAbstract allie, EntityContainer entities)
@@ -197,33 +556,50 @@ public class Fight
                 return true;
             }
         }
-        /* A LAISSER SI VOUS VOULEZ QUE QUAND IL L ALLIE N'A PLUS DE STAMINA QU'IL SOIT REMVOE DE LA LISTE DE SELECTION DES ALLIES*/
-        var entitie = allie.GetInfoEntityUpdateBlocked("../../../Entities/entity.json");
+        /* A LAISSER SI VOUS VOULEZ QUE QUAND L ALLIE N'A PLUS DE STAMINA QU'IL SOIT REMVOE DE LA LISTE DE SELECTION DES ALLIES*/
+/*        var entitie = allie.GetInfoEntityUpdateBlocked("../../../Entities/entity.json");
         var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(allie._name, StringComparison.OrdinalIgnoreCase));
 
         if (targetAlliesUpdate != null)
         {
             targetAlliesUpdate._blocked = allie._blocked;
             allie.UpdateJsonBlocked(entities, "../../../Entities/entity.json", 1);
-        }
+        }*/
         /* FIN */
 
         return false;
     }
 
-    private void CheckHealth(EntityAbstract enemie, EntityAbstract allie)
+    private void CheckHealthAllie(EntityAbstract allie, EntityContainer entities, EntityAbstract enemy, Player p)
+    {
+        for(int i = 0; i < entities.AlliesList.Count(); i++)
+        {
+            if (allie._health < 0 && entities.AlliesList[i]._health > 0)
+            {
+                ChangeAllie(entities, ref allie, enemy);
+            }
+            else
+            {
+                int nombreAleatoire = random.Next(2, 10 * enemy._level);
+                allie.AddExperience(nombreAleatoire);
+                enemy.Loot(p);
+            }
+        }
+    }
+
+    private void CheckHealth(EntityAbstract enemie, EntityAbstract allie, Player p)
     {
         if (enemie._health <= 0)
         {
             Console.WriteLine(@"Tu as gagné");
             int nombreAleatoire = random.Next(2, 10 * enemie._level);
             allie.AddExperience(nombreAleatoire);
+            enemie.Loot(p);
 
         }
         else if (allie._health <= 0)
         {
             Console.WriteLine("Tu as perdu");
-
         }
     }
 
@@ -301,19 +677,23 @@ public class Fight
     private void DisplayHealthBar(EntityAbstract allie, EntityAbstract enemie)
     {
         Console.ForegroundColor = ConsoleColor.Blue;
-        Console.WriteLine($"Stamina de {allie._name}");
-        DrawStaminaBar(allie._stamina, allie._maxStamina);
-        Console.WriteLine();
+        if (allie != null && enemie != null)
+        {
+            Console.WriteLine($"Stamina de {allie._name}");
+            DrawStaminaBar(allie._stamina, allie._maxStamina);
 
-        Console.ForegroundColor = ConsoleColor.Blue;
-        Console.WriteLine(allie._name);
-        DrawHealthBar(allie._health, allie._maxhealth);
-        Console.WriteLine();
+            Console.WriteLine();
 
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine(enemie._name);
-        DrawHealthBar(enemie._health, enemie._maxhealth);
-        Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine(allie._name);
+            DrawHealthBar(allie._health, allie._maxhealth);
+            Console.WriteLine();
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(enemie._name);
+            DrawHealthBar(enemie._health, enemie._maxhealth);
+            Console.WriteLine();
+        }
     }
 
     static void DrawHealthBar(float currentHealth, int maxHealth)

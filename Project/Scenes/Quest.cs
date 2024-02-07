@@ -12,18 +12,21 @@ namespace Project.Quest
         public bool QuestAccepted { get; set; }
         public int WoodCollected { get; private set; }
 
+        private Map map;
+
         public bool IsNear(Player player)
         {
-            return Math.Abs(PositionX - player.LocalX) <= 2 && Math.Abs(PositionY - player.LocalY) <= 2;
+            return Math.Abs(PositionX - player.LOCALX) <= 2 && Math.Abs(PositionY - player.LOCALY) <= 2;
         }
 
-        public QuestNPC(int x, int y, string questText)
+        public QuestNPC(int x, int y, string questText, Map map)
         {
             PositionX = x;
             PositionY = y;
             QuestText = questText;
             QuestAccepted = false;
             WoodCollected = 0;
+            this.map = map;
         }
         public void CollectWood()
         {
@@ -31,12 +34,14 @@ namespace Project.Quest
             {
                 WoodCollected++;
                 Console.WriteLine($"Morceau de bois ramassé. Vous avez maintenant {WoodCollected}/5.");
+                map.ClearWoodPiecePosition(PositionX, PositionY);
             }
             else
             {
                 Console.WriteLine("Vous avez déjà ramassé suffisamment de bois.");
             }
         }
+
         public void Interact()
         {
 

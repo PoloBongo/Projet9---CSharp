@@ -1,4 +1,5 @@
 ﻿
+using MapEntities;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -7,7 +8,7 @@ public class Allies : EntityAbstract
 {
     public override void DisplayDetails()
     {
-        Console.WriteLine($"Name : {_name} Health: {_health}, Stamina: {_stamina}, Speed: {_speed}, Level: {_level}");
+        Console.WriteLine($"Name : {_name} Health: {_health}, Stamina: {_stamina}, Speed: {_speed}, Level: {_level} - {_experience} / {_maxExerience}");
     }
 
     public override void AddHealth(int add)
@@ -27,6 +28,7 @@ public class Allies : EntityAbstract
 
     public override void LessStamina(float less)
     {
+        string path = "../../../Entities/entity.json";
         _stamina -= less;
         var entities = GetInfoEntityUpdateLevel(path);
         var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(this._name, StringComparison.OrdinalIgnoreCase));
@@ -45,6 +47,7 @@ public class Allies : EntityAbstract
 
     public override void AddLevel()
     {
+        string path = "../../../Entities/entity.json";
         if (_experience >= _maxExerience)
         {
             int tmp = _experience - _maxExerience;
@@ -52,7 +55,11 @@ public class Allies : EntityAbstract
             _experience = tmp;
             _level++;
             _maxExerience = 100 * _level;
-            Console.WriteLine($"Tu as monter de nv {_level} : {_experience}/{_maxExerience} ");
+
+            Console.BackgroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine($"LEVEL UP {_level} : {_experience}/{_maxExerience} ");
+            Console.ResetColor();
 
             var entities = GetInfoEntityUpdateLevel(path);
             var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(this._name, StringComparison.OrdinalIgnoreCase));
@@ -64,4 +71,5 @@ public class Allies : EntityAbstract
             }
         }
     }
+    public override void Loot(Player p){}
 }

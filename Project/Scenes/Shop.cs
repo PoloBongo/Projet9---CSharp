@@ -1,64 +1,95 @@
-﻿using static System.Console;
+﻿using MapEntities;
+using static System.Console;
 
 
 namespace ShopDemo
 {
-    class Shop
+    public class Shop
     {
         private static Dictionary<string, double> produits = new Dictionary<string, double>()
         {
-            { "Pommes", 1.50 },
-            { "Bananes", 0.75 },
-            { "Oranges", 2.00 },
-            { "Fraises", 3.50 },
-            { "Pêches", 2.25 },
+            { "Viande", 5.00 },
+            { "Alcool", 10.00 },
         };
 
+        private static bool running = true;
         private static int SelectedIndex = 0;
-        private static double money = 100.00;
+        private static Player player;
 
-        public static void Run()
+        public static void Run(Player currentPlayer)
         {
-            while (true)
+            player = currentPlayer;
+
+            running = true;
+            while (running)
             {
                 Clear();
                 DisplayProducts();
 
                 int produitChoisi = ChooseProduct();
 
+                // Sortir de la boutique
+                if (produitChoisi == produits.Count)
+                {
+                    running = false;
+                    continue;
+                }
+
                 string articleChoisi = produits.Keys.ElementAt(produitChoisi);
-                Write($"Entrez la quantité que vous souhaitez acheter de {articleChoisi} : ");
+                Console.BackgroundColor = ConsoleColor.DarkYellow;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Write($"\n\t\tEntrez la quantité que vous souhaitez acheter de {articleChoisi} : ");
+                Console.ResetColor();
                 int quantite;
                 if (int.TryParse(ReadLine(), out quantite) && quantite > 0)
                 {
                     double prixTotal = produits[articleChoisi] * quantite;
-                    if (money >= prixTotal)
+                    if (player.NBGold >= prixTotal)
                     {
-                        money -= prixTotal;
+                        player.NBGold -= (int)prixTotal;
                         Clear();
-                        DisplayProducts(); 
-                        WriteLine($"Le prix total pour {quantite} {articleChoisi} est : {prixTotal}");
-                        WriteLine($"Il vous reste {money}.");
+                        DisplayProducts(); // Afficher les informations mises à jour
+
+
+                        if (articleChoisi == "Viande")
+                        {
+                            player.AddViande(quantite);
+                        }
+                        else if (articleChoisi == "Alcool")
+                        {
+                            player.AddAlcool(quantite);
+                        }
+                        WriteLine($"\n\tLe prix total pour {quantite} {articleChoisi} est : {prixTotal} pièces d'or.");
+                        WriteLine($"\tIl vous reste {player.NBGold} pièces d'or.");
                     }
                     else
                     {
-                        WriteLine("Fonds insuffisants pour cet achat.");
+                        Console.BackgroundColor = ConsoleColor.DarkRed;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.WriteLine("\n\t\tFonds insuffisants pour cet achat");
+                        Console.ResetColor();
                     }
                 }
                 else
                 {
-                    WriteLine("La quantité doit être supérieure à zéro.");
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine("\n\t\t Choix Incorrect");
+                    Console.ResetColor();
                 }
 
-                WriteLine("Appuyez sur une touche pour continuer...");
+                Console.BackgroundColor = ConsoleColor.DarkYellow;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine("\t     Appuyez sur une touche pour Continuer     ");
+                Console.ResetColor();
                 ReadKey();
             }
         }
 
 
-       
-    
-    private static int ChooseProduct()
+
+
+        public static int ChooseProduct()
         {
             ConsoleKey keyPressed;
             do
@@ -74,13 +105,13 @@ namespace ShopDemo
                     SelectedIndex--;
                     if (SelectedIndex < 0)
                     {
-                        SelectedIndex = produits.Count - 1;
+                        SelectedIndex = produits.Count;
                     }
                 }
                 else if (keyPressed == ConsoleKey.DownArrow)
                 {
                     SelectedIndex++;
-                    if (SelectedIndex == produits.Count)
+                    if (SelectedIndex > produits.Count)
                     {
                         SelectedIndex = 0;
                     }
@@ -97,41 +128,77 @@ namespace ShopDemo
 
 
             WriteLine(@"
-███████ ██   ██  ██████  ██████  
-██      ██   ██ ██    ██ ██   ██ 
-███████ ███████ ██    ██ ██████  
-     ██ ██   ██ ██    ██ ██      
-███████ ██   ██  ██████  ██      
+
+                ███████╗██╗  ██╗ ██████╗ ██████╗ 
+                ██╔════╝██║  ██║██╔═══██╗██╔══██╗
+                ███████╗███████║██║   ██║██████╔╝
+                ╚════██║██╔══██║██║   ██║██╔═══╝ 
+                ███████║██║  ██║╚██████╔╝██║     
+                ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝     
                                  
+
                                  
-                                 
-                                 
-                                 ");
+            ");
 
 
             ForegroundColor = ConsoleColor.Green;
-            WriteLine($"Argent disponible : {money}");
+            WriteLine($"\t\tMontant restant : {player.NBGold} piece(s)");
             ResetColor();
-            WriteLine(" ");
 
-            WriteLine("Voici nos produits disponibles :");
+            WriteLine("\n\n\tVoici nos produits disponibles :");
+
             int index = 0;
+
             foreach (var produit in produits)
             {
+                string prefix;
+                string prefixCroStart;
+                string prefixCroEnd;
+
                 if (index == SelectedIndex)
                 {
+                    prefix = ">>";
+                    prefixCroStart = "[ ";
+                    prefixCroEnd = " ]";
                     ForegroundColor = ConsoleColor.Black;
                     BackgroundColor = ConsoleColor.White;
                 }
                 else
                 {
+                    prefix = "  ";
+                    prefixCroStart = " ";
+                    prefixCroEnd = " ";
                     ForegroundColor = ConsoleColor.White;
                     BackgroundColor = ConsoleColor.Black;
                 }
 
-                WriteLine($" <<{produit.Key}: {produit.Value}>>");
+                WriteLine($"\t{prefix} {prefixCroStart}{produit.Key}{prefixCroEnd}: {produit.Value}  ");
                 index++;
             }
+
+            // Gérer le style visuel de l'option "Quitter"
+            string quitPrefix;
+            string quitPrefixCroStart;
+            string quitPrefixCroEnd;
+
+            if (SelectedIndex == produits.Count)
+            {
+                quitPrefix = ">>";
+                quitPrefixCroStart = "[ ";
+                quitPrefixCroEnd = " ]";
+                ForegroundColor = ConsoleColor.Black;
+                BackgroundColor = ConsoleColor.DarkRed;
+            }
+            else
+            {
+                quitPrefix = "  ";
+                quitPrefixCroStart = " ";
+                quitPrefixCroEnd = " ";
+                ForegroundColor = ConsoleColor.White;
+                BackgroundColor = ConsoleColor.Black;
+            }
+
+            WriteLine($"\t{quitPrefix} {quitPrefixCroStart}QUITTER{quitPrefixCroEnd}   ");
             ResetColor();
         }
     }
