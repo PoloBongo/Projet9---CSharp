@@ -1,4 +1,5 @@
-﻿using static System.Console;
+﻿using MapEntities;
+using static System.Console;
 
 
 namespace ShopDemo
@@ -7,19 +8,18 @@ namespace ShopDemo
     {
         private Dictionary<string, double> produits = new Dictionary<string, double>()
         {
-            { "Pommes", 1.50 },
-            { "Bananes", 18.00 },
-            { "Oranges", 2.00 },
-            { "Fraises", 3.50 },
-            { "Pêches", 2.25 },
+            { "Viande", 5.00 },
+            { "Alcool", 10.00 },
         };
 
-        private bool running = true;
-        private int SelectedIndex = 0;
-        private double money = 100.00;
+        private static bool running = true;
+        private static int SelectedIndex = 0;
+        private static Player player;
 
-        public void Run()
+        public static void Run(Player currentPlayer)
         {
+            player = currentPlayer;
+
             running = true;
             while (running)
             {
@@ -36,18 +36,31 @@ namespace ShopDemo
                 }
 
                 string articleChoisi = produits.Keys.ElementAt(produitChoisi);
-                Write($"\nEntrez la quantité que vous souhaitez acheter de {articleChoisi} : ");
+                Console.BackgroundColor = ConsoleColor.DarkYellow;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Write($"\n\t\tEntrez la quantité que vous souhaitez acheter de {articleChoisi} : ");
+                Console.ResetColor();
                 int quantite;
                 if (int.TryParse(ReadLine(), out quantite) && quantite > 0)
                 {
                     double prixTotal = produits[articleChoisi] * quantite;
-                    if (money >= prixTotal)
+                    if (player.NBGold >= prixTotal)
                     {
-                        money -= prixTotal;
+                        player.NBGold -= (int)prixTotal;
                         Clear();
                         DisplayProducts(); // Afficher les informations mises à jour
-                        WriteLine($"\n\tLe prix total pour {quantite} {articleChoisi} est : {prixTotal} pieces");
-                        WriteLine($"\tIl vous reste {money} piece(s).");
+
+
+                        if (articleChoisi == "Viande")
+                        {
+                            player.AddViande(quantite);
+                        }
+                        else if (articleChoisi == "Alcool")
+                        {
+                            player.AddAlcool(quantite);
+                        }
+                        WriteLine($"\n\tLe prix total pour {quantite} {articleChoisi} est : {prixTotal} pièces d'or.");
+                        WriteLine($"\tIl vous reste {player.NBGold} pièces d'or.");
                     }
                     else
                     {
@@ -67,7 +80,7 @@ namespace ShopDemo
 
                 Console.BackgroundColor = ConsoleColor.DarkYellow;
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("\t     Appuyer sur une touche pour Continuer     ");
+                Console.WriteLine("\t     Appuyez sur une touche pour Continuer     ");
                 Console.ResetColor();
                 ReadKey();
             }
@@ -115,59 +128,77 @@ namespace ShopDemo
 
 
             WriteLine(@"
-            ███████ ██   ██  ██████  ██████
-            ██      ██   ██ ██    ██ ██   ██
-            ███████ ███████ ██    ██ ██████
-                 ██ ██   ██ ██    ██ ██
-            ███████ ██   ██  ██████  ██
+
+                ███████╗██╗  ██╗ ██████╗ ██████╗ 
+                ██╔════╝██║  ██║██╔═══██╗██╔══██╗
+                ███████╗███████║██║   ██║██████╔╝
+                ╚════██║██╔══██║██║   ██║██╔═══╝ 
+                ███████║██║  ██║╚██████╔╝██║     
+                ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝     
                                  
-                                 
-                                 
+
                                  
             ");
 
 
             ForegroundColor = ConsoleColor.Green;
-            WriteLine($"\t\tMontant restant : {money} piece(s)");
+            WriteLine($"\t\tMontant restant : {player.NBGold} piece(s)");
             ResetColor();
 
-            WriteLine("\n\tVoici nos produits disponibles :");
+            WriteLine("\n\n\tVoici nos produits disponibles :");
 
             int index = 0;
 
             foreach (var produit in produits)
             {
                 string prefix;
+                string prefixCroStart;
+                string prefixCroEnd;
 
                 if (index == SelectedIndex)
                 {
                     prefix = ">>";
+                    prefixCroStart = "[ ";
+                    prefixCroEnd = " ]";
                     ForegroundColor = ConsoleColor.Black;
                     BackgroundColor = ConsoleColor.White;
                 }
                 else
                 {
                     prefix = "  ";
+                    prefixCroStart = " ";
+                    prefixCroEnd = " ";
                     ForegroundColor = ConsoleColor.White;
                     BackgroundColor = ConsoleColor.Black;
                 }
 
-                WriteLine($"   {prefix} {produit.Key}: {produit.Value}  ");
+                WriteLine($"\t{prefix} {prefixCroStart}{produit.Key}{prefixCroEnd}: {produit.Value}  ");
                 index++;
             }
 
+            // Gérer le style visuel de l'option "Quitter"
+            string quitPrefix;
+            string quitPrefixCroStart;
+            string quitPrefixCroEnd;
+
             if (SelectedIndex == produits.Count)
             {
+                quitPrefix = ">>";
+                quitPrefixCroStart = "[ ";
+                quitPrefixCroEnd = " ]";
                 ForegroundColor = ConsoleColor.Black;
                 BackgroundColor = ConsoleColor.DarkRed;
             }
             else
             {
+                quitPrefix = "  ";
+                quitPrefixCroStart = " ";
+                quitPrefixCroEnd = " ";
                 ForegroundColor = ConsoleColor.White;
                 BackgroundColor = ConsoleColor.Black;
             }
-            WriteLine(" < [ QUITTER ]   ");
 
+            WriteLine($"\t{quitPrefix} {quitPrefixCroStart}QUITTER{quitPrefixCroEnd}   ");
             ResetColor();
         }
     }

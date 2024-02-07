@@ -23,6 +23,7 @@ public abstract class EntityAbstract
     public int _experience;
     public int _maxExerience;
     public bool gameReset = false;
+    public bool gameStart = true;
 
     public List<EntitiesCapacities> _ListCapacities { get; set; }
     public EntityContainer entitiesContainer;
@@ -38,7 +39,7 @@ public abstract class EntityAbstract
     public abstract void AddExperience(int add);
     public abstract void Loot(Player p);
 
-    public void CreateEntity(string path)
+    public void CreateEntity(string path, EntityContainer entities)
     {
         Allies allies = new Allies
         {
@@ -472,8 +473,18 @@ public abstract class EntityAbstract
         entitiesContainer = new EntityContainer
         {
             AlliesList = new List<Allies> { allies, allies2, allies3 },
-            EnemiesList = new List<Enemy> { enemy3, enemy4, enemy5 },
+            EnemiesList = new List<Enemy> { enemy, enemy, enemy3, enemy4, enemy5 },
         };
+
+        // Check le nb d'allié pour l'hud
+        foreach (var addAllies in entitiesContainer.AlliesList)
+        {
+            if (!entities.AlliesList.Any(noDoublons => noDoublons._name == addAllies._name))
+            {
+                entities.AlliesList.Add(addAllies);
+            }
+        }
+
 
         if (gameReset || !GetExistsJson(path) || GetEmptyJson(path))
         {
