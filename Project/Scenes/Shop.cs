@@ -4,9 +4,9 @@ using static System.Console;
 
 namespace ShopDemo
 {
-    class Shop
+    public class Shop
     {
-        private static Dictionary<string, double> produits = new Dictionary<string, double>()
+        private Dictionary<string, double> produits = new Dictionary<string, double>()
         {
             { "Viande", 5.00 },
             { "Alcool", 10.00 },
@@ -36,7 +36,10 @@ namespace ShopDemo
                 }
 
                 string articleChoisi = produits.Keys.ElementAt(produitChoisi);
-                Write($"\nEntrez la quantité que vous souhaitez acheter de {articleChoisi} : ");
+                Console.BackgroundColor = ConsoleColor.DarkYellow;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Write($"\n\t\tEntrez la quantité que vous souhaitez acheter de {articleChoisi} : ");
+                Console.ResetColor();
                 int quantite;
                 if (int.TryParse(ReadLine(), out quantite) && quantite > 0)
                 {
@@ -86,7 +89,7 @@ namespace ShopDemo
 
 
 
-        private static int ChooseProduct()
+        public int ChooseProduct()
         {
             ConsoleKey keyPressed;
             do
@@ -120,19 +123,20 @@ namespace ShopDemo
         }
 
 
-        private static void DisplayProducts()
+        private void DisplayProducts()
         {
 
 
             WriteLine(@"
-            ███████ ██   ██  ██████  ██████
-            ██      ██   ██ ██    ██ ██   ██
-            ███████ ███████ ██    ██ ██████
-                 ██ ██   ██ ██    ██ ██
-            ███████ ██   ██  ██████  ██
+
+                ███████╗██╗  ██╗ ██████╗ ██████╗ 
+                ██╔════╝██║  ██║██╔═══██╗██╔══██╗
+                ███████╗███████║██║   ██║██████╔╝
+                ╚════██║██╔══██║██║   ██║██╔═══╝ 
+                ███████║██║  ██║╚██████╔╝██║     
+                ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝     
                                  
-                                 
-                                 
+
                                  
             ");
 
@@ -141,43 +145,60 @@ namespace ShopDemo
             WriteLine($"\t\tMontant restant : {player.NBGold} piece(s)");
             ResetColor();
 
-            WriteLine("\n\tVoici nos produits disponibles :");
+            WriteLine("\n\n\tVoici nos produits disponibles :");
 
             int index = 0;
 
             foreach (var produit in produits)
             {
                 string prefix;
+                string prefixCroStart;
+                string prefixCroEnd;
 
                 if (index == SelectedIndex)
                 {
                     prefix = ">>";
+                    prefixCroStart = "[ ";
+                    prefixCroEnd = " ]";
                     ForegroundColor = ConsoleColor.Black;
                     BackgroundColor = ConsoleColor.White;
                 }
                 else
                 {
                     prefix = "  ";
+                    prefixCroStart = " ";
+                    prefixCroEnd = " ";
                     ForegroundColor = ConsoleColor.White;
                     BackgroundColor = ConsoleColor.Black;
                 }
 
-                WriteLine($"   {prefix} {produit.Key}: {produit.Value}  ");
+                WriteLine($"\t{prefix} {prefixCroStart}{produit.Key}{prefixCroEnd}: {produit.Value}  ");
                 index++;
             }
 
+            // Gérer le style visuel de l'option "Quitter"
+            string quitPrefix;
+            string quitPrefixCroStart;
+            string quitPrefixCroEnd;
+
             if (SelectedIndex == produits.Count)
             {
+                quitPrefix = ">>";
+                quitPrefixCroStart = "[ ";
+                quitPrefixCroEnd = " ]";
                 ForegroundColor = ConsoleColor.Black;
                 BackgroundColor = ConsoleColor.DarkRed;
             }
             else
             {
+                quitPrefix = "  ";
+                quitPrefixCroStart = " ";
+                quitPrefixCroEnd = " ";
                 ForegroundColor = ConsoleColor.White;
                 BackgroundColor = ConsoleColor.Black;
             }
-            WriteLine(" < [ QUITTER ]   ");
 
+            WriteLine($"\t{quitPrefix} {quitPrefixCroStart}QUITTER{quitPrefixCroEnd}   ");
             ResetColor();
         }
     }
