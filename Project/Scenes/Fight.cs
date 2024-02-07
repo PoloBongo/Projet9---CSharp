@@ -56,21 +56,23 @@ public class Fight
 
         AfficherEtatDesCombattants(allie, enemie);
 
+        bool alliesAlive = true;
         if (iaType == 1)
         {
             while (enemie._health > 0)
             {
+                alliesAlive = false;
+
                 foreach (var ally in entities.AlliesList)
                 {
                     if (ally._health > 0)
                     {
-                        continue;
-                    }
-                    else
-                    {
+                        alliesAlive = true;
                         break;
                     }
                 }
+
+                if (!alliesAlive) { break; }
 
                 DetermineTour(allie, enemie);
 
@@ -90,13 +92,18 @@ public class Fight
         {
             while (enemie._health > 0)
             {
-                for (int i = 0; i < entities.AlliesList.Count(); i++)
+                alliesAlive = false;
+
+                foreach (var ally in entities.AlliesList)
                 {
-                    if (entities.AlliesList[i]._health < 0)
+                    if (ally._health > 0)
                     {
+                        alliesAlive = true;
                         break;
                     }
                 }
+
+                if (!alliesAlive) { break; }
 
                 DetermineTour(allie, enemie);
 
@@ -113,19 +120,20 @@ public class Fight
         }
         else if (iaType == 3)
         {
-            while (enemie._health > 0)
+            while (enemie._health > 0 && alliesAlive)
             {
+                alliesAlive = false;
+
                 foreach (var ally in entities.AlliesList)
                 {
                     if (ally._health > 0)
                     {
-                        continue;
-                    }
-                    else if (ally._health < 0)
-                    {
+                        alliesAlive = true;
                         break;
                     }
                 }
+
+                if (!alliesAlive) {  break;}
 
                 DetermineTour(allie, enemie);
 
@@ -148,6 +156,7 @@ public class Fight
                 }
                 AfficherEtatDesCombattants(allie, enemie);
             }
+
         }
     }
 
@@ -493,11 +502,11 @@ public class Fight
         int UpAttackIndex = -1;
         float damageUp = float.MinValue;
 
-        for (int i = 0; i < enemies.AlliesList.Count(); i++)
+        for (int i = 0; i < enemies.EnemiesList.Count(); i++)
         {
             if (enemies.EnemiesList[i]._difficultyIA == "Hard" && enemies.EnemiesList[i]._health > 0)
             {
-                for (int j = 0; j < enemies.EnemiesList[i]._ListCapacities.Count; j++)
+                for (int j = 0; j < enemies.EnemiesList[i]._ListCapacities.Count(); j++)
                 {
                     float damage = 0;
 
