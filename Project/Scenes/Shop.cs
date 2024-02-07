@@ -6,7 +6,7 @@ namespace ShopDemo
 {
     public class Shop
     {
-        private Dictionary<string, double> produits = new Dictionary<string, double>()
+        private static Dictionary<string, double> produits = new Dictionary<string, double>()
         {
             { "Viande", 5.00 },
             { "Alcool", 10.00 },
@@ -89,7 +89,7 @@ namespace ShopDemo
 
 
 
-        public int ChooseProduct()
+        public static int ChooseProduct()
         {
             ConsoleKey keyPressed;
             do
@@ -123,7 +123,7 @@ namespace ShopDemo
         }
 
 
-        private void DisplayProducts()
+        private static void DisplayProducts()
         {
 
 
