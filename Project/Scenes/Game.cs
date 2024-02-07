@@ -162,7 +162,7 @@ namespace InGame
             {
                 Console.Clear();
                 world.CheckForEncounter(player, allies, enemy);
-                world.CheckRandEnemy(player, allies, enemy);
+                world.CheckRandEnemy(player, allies);
                 world.CheckHealthStartFight(entities);
                 Map currentMap = world.GetMapAt(player.WORLDX, player.WORLDY);
                 currentMap.PrintMap();
