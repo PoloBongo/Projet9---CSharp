@@ -17,7 +17,9 @@ namespace MenuPr
 
         private void DisplayOptions()
         {
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
             WriteLine(Prompt);
+            Console.ResetColor();
             for (int i = 0; i < Options.Length; i++)
             {
                 string currentOption = Options[i];
