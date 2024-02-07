@@ -3,6 +3,7 @@ using MapEntities;
 using MenuPr;
 using ShopDemo;
 using Project.Quest;
+using Wood;
 
 namespace InGame
 {
@@ -16,6 +17,7 @@ namespace InGame
         const int mapRows = 20;
         const int mapColumns = 20;
 
+        WoodCollector woodCollector;
 
         public void Start()
         {
@@ -149,17 +151,20 @@ namespace InGame
             World world = new World();
             EntityContainer entities = new EntityContainer();
             Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
-            QuestNPC questNPC = new QuestNPC(0, 0, "Some quest description", world.GetMapAt(player.WORLDX, player.WORLDY));
             List<QuestNPC> questNPCs = world.GetQuestNPCs();
 
+            Map map = world.GetMapAt(player.WORLDX, player.WORLDY);
 
+            List<WoodPiece> woodPiecesList = new List<WoodPiece>();
+            WoodCollector woodCollector = new WoodCollector(player.WORLDX, player.WORLDY, player.LOCALX, player.LOCALY, 0, map, woodPiecesList);
 
             string path = "../../../Entities/entity.json";
             enemy.CreateEntity(path, entities);
             enemy.GetInfoEntity(path);
             allies.CreateEntity(path, entities);
             allies.GetInfoEntity(path);
-            
+
+
             while (true)
             {
                 Console.Clear();
@@ -191,34 +196,30 @@ namespace InGame
                 }
 
                 // Interaction avec les PNJ
-                foreach (var questNpc in questNPCs)
+                // Interaction avec les PNJ
+                for (int i = 0; i < questNPCs.Count; i++)
                 {
+                    var questNpc = questNPCs[i];
                     if (questNpc.IsNear(player))
                     {
-                        questNpc.Interact();
-                        break; // Sortir de la boucle après avoir interagi avec le PNJ le plus proche
+                        questNpc.Interact(woodCollector); 
+                        break;
                     }
                 }
 
-                // Collecte de bois
+
+
                 if (world.IsNextToWood(player))
                 {
                     Console.WriteLine("\tAppuyez sur 'E' pour ramasser le bois");
                     var key = Console.ReadKey(true);
                     if (key.Key == ConsoleKey.E)
                     {
-                        // Trouver le PNJ le plus proche pour la collecte de bois
-                        foreach (var questNpc in questNPCs)
-                        {
-                            if (questNpc.IsNear(player))
-                            {
-                                questNpc.CollectWood(); 
-
-                                break; 
-                            }
-                        }
+                        // Collecter du bois via le collecteur de bois
+                        woodCollector.CollectWood();
                     }
                 }
+
 
 
 

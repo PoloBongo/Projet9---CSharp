@@ -1,5 +1,5 @@
-﻿using MapEntities;
-using Project.Quest;
+﻿using Project.Quest;
+using Wood;
 using static Project.Quest.QuestNPC;
 
 namespace MapGame
@@ -29,56 +29,25 @@ namespace MapGame
             PlaceWoodPieces();
         }
 
-        public void UpdatePlayerActions(Player player)
-        {
-            CheckForWoodPickup(player);
-        }
-
-        private void CheckForWoodPickup(Player player)
-        {
-            Console.WriteLine("on est la1");
-            foreach (var woodPiece in WoodPieces.ToList())
-            {
-                if (IsPlayerNearWood(player, woodPiece))
-                {
-                    var questNpc = questNPCs.FirstOrDefault(npc => npc.QuestAccepted && npc.QuestText == "Ramasser 5 morceaux de bois");
-                    if (questNpc != null)
-                    {
-                        Console.WriteLine("on est la");
-                        questNpc.CollectWood();
-                        WoodPieces.Remove(woodPiece);
-                        ClearWoodPiecePosition(woodPiece.PositionX, woodPiece.PositionY);
-                        break;
-                    }
-                }
-            }
-        }
 
 
          public bool IsWood(int x, int y)
     {
-        // Vérifier si les indices sont dans les limites de la matrice
         if (x >= 0 && x < rows && y >= 0 && y < columns)
         {
-            return matrix[x, y] == '!'; // Remplacer '!' par le caractère représentant le bois
+            return matrix[x, y] == '!'; 
         }
         return false;
     }
 
-        private bool IsPlayerNearWood(Player player, WoodPiece woodPiece)
-        {
-            Console.WriteLine("Le joueur est proche d'un morceau de bois.");
-            return Math.Abs(woodPiece.PositionX - player.LOCALX) <= 1 && Math.Abs(woodPiece.PositionY - player.LOCALY) <= 1;
-          
-        }
+
 
 
         public void ClearWoodPiecePosition(int x, int y)
         {
-            Console.WriteLine("Ca marche");
             if (matrix[x, y] == '!')
             {
-                matrix[x, y] = IsWater(x, y) ? '~' : '.'; // Remplacer par de l'eau ou de l'herbe
+                matrix[x, y] = '.'; 
 
                 // Supprimer le morceau de bois de la liste WoodPieces
                 WoodPieces.RemoveAll(woodPiece => woodPiece.PositionX == x && woodPiece.PositionY == y);
@@ -86,12 +55,14 @@ namespace MapGame
         }
 
 
+
+
         private void PlaceWoodPieces()
         {
             Random random = new Random();
-            int numberOfWoodPieces = 5; // Vous pouvez ajuster ce nombre
+            int numberOfWoodPieces = 5; 
             int attempts = 0;
-            int maxAttempts = 100; // Un nombre maximal d'essais pour éviter la boucle infinie
+            int maxAttempts = 100; 
 
             for (int i = 0; i < numberOfWoodPieces; i++)
             {
@@ -103,14 +74,18 @@ namespace MapGame
                     attempts++;
                     if (attempts > maxAttempts)
                     {
-                        return; // Sortie anticipée si on ne trouve pas d'espace vide
+                        return; 
                     }
                 }
-                while (matrix[x, y] == '~' || matrix[x, y] == 'O' || matrix[x, y] == '?');
+                while (IsWater(x, y) || IsEnemy(x, y));
 
                 WoodPieces.Add(new WoodPiece(x, y));
+
+
             }
         }
+
+
 
 
         public void CreateQuestNPCs()
@@ -301,24 +276,6 @@ namespace MapGame
                     if (x + i >= 0 && x + i < rows && y + j >= 0 && y + j < columns)
                     {
                         if (IsDoor(x + i, y + j))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-        public bool IsNextToWood(int x, int y)
-        {
-            for (int i = -1; i <= 1; i++)
-            {
-                for (int j = -1; j <= 1; j++)
-                {
-                    if (x + i >= 0 && x + i < rows && y + j >= 0 && y + j < columns)
-                    {
-                        if (matrix[x + i, y + j] == '!') // Assuming '!' represents a wood piece
                         {
                             return true;
                         }

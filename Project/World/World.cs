@@ -113,8 +113,8 @@ namespace MapGame
                     }
                 }
             }
-            InitializeEnemy();
-        }
+          InitializeEnemy();
+       }
 
 
 

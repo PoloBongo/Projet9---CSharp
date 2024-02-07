@@ -1,6 +1,7 @@
 ﻿using MapEntities;
 using MapGame;
 using MenuPr;
+using Wood;
 
 namespace Project.Quest
 {
@@ -10,7 +11,6 @@ namespace Project.Quest
         public int PositionY { get; private set; }
         public string QuestText { get; private set; }
         public bool QuestAccepted { get; set; }
-        public int WoodCollected { get; private set; }
 
         private Map map;
 
@@ -25,31 +25,18 @@ namespace Project.Quest
             PositionY = y;
             QuestText = questText;
             QuestAccepted = false;
-            WoodCollected = 0;
             this.map = map;
         }
-        public void CollectWood()
-        {
-            if (WoodCollected < 5) // Supposons que le joueur ne peut ramasser que 5 morceaux de bois
-            {
-                WoodCollected++;
-                Console.WriteLine($"Morceau de bois ramassé. Vous avez maintenant {WoodCollected}/5.");
-                map.ClearWoodPiecePosition(PositionX, PositionY);
-            }
-            else
-            {
-                Console.WriteLine("Vous avez déjà ramassé suffisamment de bois.");
-            }
-        }
 
-        public void Interact()
-        {
 
-            if (QuestAccepted && WoodCollected < 5)
+        public void Interact(WoodCollector woodCollector)
+        {
+            if (QuestAccepted && woodCollector.WoodCollected < 5)
             {
-                Console.WriteLine($"{WoodCollected}/5 morceaux de bois ramassés.");
+                Console.WriteLine($"{woodCollector.WoodCollected}/5 morceaux de bois ramassés.");
                 return;
             }
+
 
             string questText = @"
  ██████╗ ██╗   ██╗███████╗████████╗███████╗███████╗
@@ -100,33 +87,17 @@ Ils seraient parfaits pour réparer les dégâts.
 
 
         }
-        public void UpdatePlayerActions(Player player, Map map)
+        public void UpdatePlayerActions(Player player, Map map, WoodCollector woodCollector)
         {
             foreach (var questNpc in map.questNPCs)
             {
                 if (questNpc.IsNear(player))
                 {
                     Console.WriteLine("NPC de quête à proximité, déclenchement de l'interaction");
-                    questNpc.Interact();
+                    questNpc.Interact(woodCollector); 
                     break;
                 }
             }
         }
-
-
-        public class WoodPiece
-        {
-            public int PositionX { get; private set; }
-            public int PositionY { get; private set; }
-
-            public WoodPiece(int x, int y)
-            {
-                PositionX = x;
-                PositionY = y;
-            }
-        }
-
-
-
     }
 }

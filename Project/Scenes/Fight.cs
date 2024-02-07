@@ -49,7 +49,7 @@ public class Fight
 
         ResetEnemyHealth(entities, sanglier, iaType);
 
-        if (sanglier)
+        /*if (sanglier)
         {
             enemie = entities.EnemiesList[4];
         }
@@ -148,7 +148,7 @@ public class Fight
                 }
                 AfficherEtatDesCombattants(allie, enemie);
             }
-        }
+        }*/
     }
 
     private EntityAbstract GetFirstAliveAlly(EntityContainer entities)
