@@ -6,6 +6,11 @@ namespace InGame
 {
     class Game
     {
+        Enemy enemy = new Enemy();
+        Allies allies = new Allies();
+        World world = new World();
+        Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
+        Shop shop = new Shop();
         const int mapRows = 20;
         const int mapColumns = 20;
 
@@ -52,10 +57,6 @@ namespace InGame
 
         private void PlayGame()
         {
-            Enemy enemy = new Enemy();
-            Allies allies = new Allies();
-            World world = new World();
-            Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
 
             string path = "../../../Entities/entity.json";
             enemy.CreateEntity(path);
@@ -115,7 +116,7 @@ namespace InGame
                     var key = Console.ReadKey(true);
                     if (key.Key == ConsoleKey.E)
                     {
-                        ShopDemo.Shop.Run();
+                        shop.Run();
                     }
                 }
             }
@@ -167,7 +168,7 @@ namespace InGame
 
         private void Shopping()
         {
-            Shop.Run();
+            shop.Run();
         }
     }
 

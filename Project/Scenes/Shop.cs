@@ -3,9 +3,9 @@
 
 namespace ShopDemo
 {
-    class Shop
+    public class Shop
     {
-        private static Dictionary<string, double> produits = new Dictionary<string, double>()
+        private Dictionary<string, double> produits = new Dictionary<string, double>()
         {
             { "Pommes", 1.50 },
             { "Bananes", 18.00 },
@@ -14,11 +14,11 @@ namespace ShopDemo
             { "Pêches", 2.25 },
         };
 
-        private static bool running = true;
-        private static int SelectedIndex = 0;
-        private static double money = 100.00;
+        private bool running = true;
+        private int SelectedIndex = 0;
+        private double money = 100.00;
 
-        public static void Run()
+        public void Run()
         {
             running = true;
             while (running)
@@ -76,7 +76,7 @@ namespace ShopDemo
 
 
 
-        private static int ChooseProduct()
+        public int ChooseProduct()
         {
             ConsoleKey keyPressed;
             do
@@ -110,7 +110,7 @@ namespace ShopDemo
         }
 
 
-        private static void DisplayProducts()
+        private void DisplayProducts()
         {
 
 

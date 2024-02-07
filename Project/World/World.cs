@@ -48,7 +48,7 @@ namespace MapGame
             return x == 0 || y == 0 || x == worldSize - 1 || y == worldSize - 1;
         }
 
-        private char[,] CreateRandomLayout(bool isBorderMap, bool isCenterMap, bool isSpecialMap, int mapX, int mapY)
+        public char[,] CreateRandomLayout(bool isBorderMap, bool isCenterMap, bool isSpecialMap, int mapX, int mapY)
         {
             char[,] layout = new char[20, 20];
             Random random = new Random();
