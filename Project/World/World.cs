@@ -14,6 +14,7 @@ namespace MapGame
         private bool CombatStart = false;
         Fight fight = new Fight();
         Random random = new Random();
+        private bool AllieHealth = false;
         List<string> alliesNames;
 
         public World()
@@ -210,7 +211,7 @@ namespace MapGame
                     y = random.Next(startY + 1, startY + height - 1);
                 } while (layout[x, y] != ' '); // Modifier pour correspondre à l'espace vide
 
-                EnemyMap newEnemyMap = new EnemyMap(1, 1, x, y);
+                EnemyMap newEnemyMap = new EnemyMap(0, 2, x, y);
                 enemyMaps.Add(newEnemyMap);
             }
         }
@@ -351,14 +352,27 @@ namespace MapGame
             return currentMap != null && currentMap.IsNextToFortressDoor(player.LOCALX, player.LOCALY);
         }
 
-
+        public void CheckHealthStartFight(EntityContainer entities) 
+        { 
+            for(int i = 0; i < entities.AlliesList.Count() ;i++) 
+            {
+                if (entities.AlliesList[i]._health > 0)
+                {
+                    AllieHealth = true;
+                }
+                else
+                {
+                    AllieHealth = false;
+                }
+            }
+        }
         public void CheckForEncounter(Player player, Allies allies, Enemy enemy)
         {
             if (enemyMaps.Count != 0)
             {
                 for (int i = 0; i < enemyMaps.Count; i++)
                 {
-                    if (enemyMaps[i].LOCALX == player.LOCALX && enemyMaps[i].WORLDX == player.WORLDX && enemyMaps[i].WORLDY == player.WORLDY && !enemyMaps[i].COMBATSTART)
+                    if (enemyMaps[i].LOCALX == player.LOCALX && enemyMaps[i].WORLDX == player.WORLDX && enemyMaps[i].WORLDY == player.WORLDY && !enemyMaps[i].COMBATSTART && AllieHealth)
                     {
                         int randChance = random.Next(100);
 
@@ -440,8 +454,7 @@ namespace MapGame
         public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
         {
             int randEnemy = random.Next(1, 19);
-
-            if (randEnemy == player.LOCALX)
+            if (randEnemy == player.LOCALX && AllieHealth )
             {
                 int randChance = random.Next(100);
                 int chanceStartCombat1 = 50;  // Par exemple, 50% de chance pour le premier type de combat
