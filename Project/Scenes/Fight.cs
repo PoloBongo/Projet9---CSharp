@@ -44,8 +44,11 @@ public class Fight
 
     public void startCombat(EntityContainer entities, bool sanglier, Player player, int iaType)
     {
-        EntityAbstract allie = GetFirstAliveAlly(entities);
+        string path = "../../../Entities/entity.json";
+
+        EntityAbstract allie = GetFirstAliveAlly(path);
         EntityAbstract enemie = entities.EnemiesList[0];
+        entities = JsonConvert.DeserializeObject<EntityContainer>(File.ReadAllText("../../../Entities/entity.json"));
 
         ResetEnemyHealth(entities, sanglier, iaType);
 
@@ -59,13 +62,15 @@ public class Fight
         bool alliesAlive = true;
         if (iaType == 1)
         {
-            while (enemie._health > 0)
+            while (enemie._health > 0 && alliesAlive)
             {
                 alliesAlive = false;
+                /* Il faut que ça prennent le health dans le json */
 
                 foreach (var ally in entities.AlliesList)
                 {
-                    if (ally._health > 0)
+                    var targetAlly = entities.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
+                    if (targetAlly != null && targetAlly._health > 0)
                     {
                         alliesAlive = true;
                         break;
@@ -74,7 +79,7 @@ public class Fight
 
                 if (!alliesAlive) { break; }
 
-                DetermineTour(allie, enemie);
+                DetermineTour(ref allie, enemie);
 
                 if (tourAlier)
                 {
@@ -90,13 +95,14 @@ public class Fight
         }
         else if (iaType == 2)
         {
-            while (enemie._health > 0)
+            while (enemie._health > 0 && alliesAlive)
             {
                 alliesAlive = false;
 
                 foreach (var ally in entities.AlliesList)
                 {
-                    if (ally._health > 0)
+                    var targetAlly = entities.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
+                    if (targetAlly != null && targetAlly._health > 0)
                     {
                         alliesAlive = true;
                         break;
@@ -105,7 +111,7 @@ public class Fight
 
                 if (!alliesAlive) { break; }
 
-                DetermineTour(allie, enemie);
+                DetermineTour(ref allie, enemie);
 
                 if (tourAlier)
                 {
@@ -126,7 +132,8 @@ public class Fight
 
                 foreach (var ally in entities.AlliesList)
                 {
-                    if (ally._health > 0)
+                    var targetAlly = entities.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
+                    if (targetAlly != null && targetAlly._health > 0)
                     {
                         alliesAlive = true;
                         break;
@@ -135,7 +142,7 @@ public class Fight
 
                 if (!alliesAlive) {  break;}
 
-                DetermineTour(allie, enemie);
+                DetermineTour(ref allie, enemie);
 
                 if (tourAlier)
                 {
@@ -160,32 +167,27 @@ public class Fight
         }
     }
 
-    private EntityAbstract GetFirstAliveAlly(EntityContainer entities)
+    private EntityAbstract GetFirstAliveAlly(string path)
     {
-        foreach (var ally in entities.AlliesList)
+        string json = File.ReadAllText(path);
+        var loadedEntities = JsonConvert.DeserializeObject<EntityContainer>(json);
+
+        if (loadedEntities != null && loadedEntities.AlliesList != null)
         {
-            if (ally._health > 0)
+            foreach (var ally in loadedEntities.AlliesList)
             {
-                return ally;
+                if (ally._health > 0)
+                {
+                    return ally;
+                }
             }
         }
         return null;
     }
 
-    private bool EnemyIsDead(EntityAbstract enemy)
-    {
-        if (enemy._health > 0)
-        {
-            return true;
-        }
-        else if (enemy._health <= 0)
-        {
-            return false;
-        }
-        return false;
-    }
 
-    private void DetermineTour(EntityAbstract allie, EntityAbstract enemie)
+
+    private void DetermineTour(ref EntityAbstract allie, EntityAbstract enemie)
     {
         tourAlier = allie._speed > enemie._speed || tourAlier;
     }
@@ -215,7 +217,7 @@ public class Fight
         }
         else
         {
-            options = new List<string> { "Changer d'allié", "Utiliser potion de stamina" };
+            options = new List<string> { "Changer d'allié", $"Utiliser potion de stamina - Dispo : {p.NBAlcool}", $"Utiliser potion de health - Dispo : {p.NBViande}" };
             selectedIndex = RunOptions(options, allie, enemie);
             switch (selectedIndex)
             {
@@ -223,8 +225,18 @@ public class Fight
                     ChangeAllie(entities, ref allie, enemie);
                     break;
                 case 1:
-                    p.RemoveAlcool(1);
-                    allie.AddStamina(20);
+                    if (p.NBAlcool > 0) 
+                    {
+                        p.RemoveAlcool(1);
+                        allie.AddStamina(20);
+                    }
+                    break;
+                case 2:
+                    if (p.NBViande > 0)
+                    {
+                        p.RemoveViande(1);
+                        allie.AddHealth(20);
+                    }
                     break;
             }
         }
@@ -238,29 +250,35 @@ public class Fight
         List<string> options;
         int selectedIndex;
 
-        options = new List<string> { "Soin", "Stamina" };
+        options = new List<string> { $"Soin Dispo : {player.NBViande}", $"Stamina Dispo : {player.NBAlcool}" };
 
         selectedIndex = RunOptions(options, allie, enemie);
         switch (selectedIndex)
         {
             case 0:
-                Soin(player, allie);
+                if (player.NBViande > 0)
+                {
+                    Soin(player, allie);
+                }
                 break;
             case 1:
-                Stamina(player, allie);
+                if (player.NBAlcool > 0)
+                {
+                    Stamina(player, allie);
+                }
                 break;
         }
     }
 
     public void Soin(Player player, EntityAbstract allie) 
     {
-        /*player.RemoveViande(1);*/
+        player.RemoveViande(1);
         allie.AddHealth(20);
     }
 
     public void Stamina(Player player, EntityAbstract allie)
     {
-        /*player.RemoveAlcool(1);*/
+        player.RemoveAlcool(1);
         allie.AddStamina(20);
     }
 
@@ -360,7 +378,9 @@ public class Fight
     {
         EntityContainer entities;
 
-        // Utilisez un bloc using pour libérer la ressource après la lecture du fichier
+        try
+    {
+        // Utiliser un bloc using pour libérer la ressource après la lecture du fichier
         using (StreamReader reader = File.OpenText(path))
         {
             string json = reader.ReadToEnd();
@@ -375,21 +395,19 @@ public class Fight
                 targetAllies._health = entity._health;
             }
         }
-        /*else if (entity is Enemy)
-        {
-            var targetEnemy = entities.AlliesList.FirstOrDefault(e => e._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
-            if (targetEnemy != null)
-            {
-                targetEnemy._health = entity._health;
-            }
-        }*/
 
-        // Utilisez à nouveau un bloc using pour libérer la ressource après l'écriture dans le fichier
+        // Utiliser à nouveau un bloc using pour libérer la ressource après l'écriture dans le fichier
         using (StreamWriter writer = File.CreateText(path))
         {
             JsonSerializer serializer = new JsonSerializer();
             serializer.Serialize(writer, entities);
         }
+    }
+    catch (IOException ex)
+    {
+        // Gérer l'exception IOException
+        Console.WriteLine($"Une erreur s'est produite lors de l'accès au fichier : {ex.Message}");
+    }
     }
 
 
@@ -612,7 +630,7 @@ public class Fight
         }
     }
 
-    private int RunOptions(List<string> options, EntityAbstract allie, EntityAbstract enemie)
+    public int RunOptions(List<string> options, EntityAbstract allie, EntityAbstract enemie)
     {
 
         ConsoleKey keyPressed;

@@ -144,6 +144,7 @@ namespace InGame
 
             Enemy enemy = new Enemy();
             Allies allies = new Allies();
+            Fight fight = new Fight();
             Console.WriteLine("\t\tLancement En Cours");
 
             World world = new World();
@@ -171,6 +172,9 @@ namespace InGame
                 int newLocalX = player.LOCALX;
                 int newLocalY = player.LOCALY;
 
+                List<string> options;
+                int selectedIndex;
+
                 switch (keyInfo.Key)
                 {
                     case ConsoleKey.UpArrow:
@@ -184,6 +188,12 @@ namespace InGame
                         break;
                     case ConsoleKey.RightArrow:
                         newLocalY++;
+                        break;
+                    case ConsoleKey.T:
+                        openInventory(player, entities, allies);
+                        break;
+                    case ConsoleKey.I:
+                        openInfo(player, entities, allies);
                         break;
                 }
                 // Gérer le changement de carte si le joueur atteint les bords de la carte actuelle
@@ -241,6 +251,58 @@ namespace InGame
             Console.ResetColor();
             Console.ReadKey(true);
             Environment.Exit(0);
+        }
+
+        private void openInventory(Player player, EntityContainer entities, EntityAbstract allies)
+        {
+            Console.Clear();
+             
+            string art = @"
+
+                 ██████╗██████╗ ███████╗██████╗ ██╗████████╗███████╗
+                ██╔════╝██╔══██╗██╔════╝██╔══██╗██║╚══██╔══╝██╔════╝
+                ██║     ██████╔╝█████╗  ██║  ██║██║   ██║   ███████╗
+                ██║     ██╔══██╗██╔══╝  ██║  ██║██║   ██║   ╚════██║
+                ╚██████╗██║  ██║███████╗██████╔╝██║   ██║   ███████║
+                 ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝   ╚═╝   ╚══════╝
+                                                    
+
+
+
+            ";
+
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(art);
+            Console.ResetColor();
+
+            world.DisplayInventoryAndTeam2(player, entities, ref allies);
+
+        }
+
+        private void openInfo(Player player, EntityContainer entities, EntityAbstract allies)
+        {
+            Console.Clear();
+
+            string art = @"
+
+                 ██████╗██████╗ ███████╗██████╗ ██╗████████╗███████╗
+                ██╔════╝██╔══██╗██╔════╝██╔══██╗██║╚══██╔══╝██╔════╝
+                ██║     ██████╔╝█████╗  ██║  ██║██║   ██║   ███████╗
+                ██║     ██╔══██╗██╔══╝  ██║  ██║██║   ██║   ╚════██║
+                ╚██████╗██║  ██║███████╗██████╔╝██║   ██║   ███████║
+                 ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝   ╚═╝   ╚══════╝
+                                                    
+
+
+
+            ";
+
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(art);
+            Console.ResetColor();
+
+            world.DisplayInfoAllies(entities);
+
         }
 
         private void Credits()

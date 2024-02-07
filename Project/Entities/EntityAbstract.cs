@@ -80,7 +80,7 @@ public abstract class EntityAbstract
                     _speed = 5,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.3f,
-                    _level = 0
+                    _level = 2
                 },
                 new EntitiesCapacities
                 {
@@ -91,7 +91,7 @@ public abstract class EntityAbstract
                     _speed = 5,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
-                    _level = 0
+                    _level = 3
                 }
             },
             _currentLevel = 1,
@@ -137,7 +137,7 @@ public abstract class EntityAbstract
                     _speed = 70,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
-                    _level = 0
+                    _level = 2
                 },
                 new EntitiesCapacities
                 {
@@ -148,7 +148,7 @@ public abstract class EntityAbstract
                     _speed = 20,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.3f,
-                    _level = 0
+                    _level = 3
                 },
                 new EntitiesCapacities
                 {
@@ -159,7 +159,7 @@ public abstract class EntityAbstract
                     _speed = 20,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.3f,
-                    _level = 0
+                    _level = 5
                 }
             },
             _currentLevel = 1,
@@ -205,7 +205,7 @@ public abstract class EntityAbstract
                     _speed = 70,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
-                    _level = 0
+                    _level = 1
                 },
                 new EntitiesCapacities
                 {
@@ -216,7 +216,7 @@ public abstract class EntityAbstract
                     _speed = 70,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
-                    _level = 0
+                    _level = 4
                 }
             },
             _currentLevel = 1,
