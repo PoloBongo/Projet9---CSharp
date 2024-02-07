@@ -450,10 +450,10 @@ namespace MapGame
                 }
             }
         }
-        public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
+        public void CheckRandEnemy(Player player, Allies allies)
         {
             int randEnemy = random.Next(1, 19);
-            if (randEnemy == player.LOCALX && AllieHealth )
+            if (randEnemy == player.LOCALX && AllieHealth && !(player.WORLDX == 1 && player.WORLDY == 1))
             {
                 int randChance = random.Next(100);
                 int chanceStartCombat1 = 50;  // Par exemple, 50% de chance pour le premier type de combat
