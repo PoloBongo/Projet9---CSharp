@@ -350,14 +350,21 @@ namespace MapGame
             return currentMap != null && currentMap.IsNextToFortressDoor(player.LOCALX, player.LOCALY);
         }
 
-
+        private bool CheckHealth() 
+        { 
+            for(int i = 0; i < EntityContainer.AlliesList.Count() ;i++) 
+            {
+                if (EntityContainer.AlliesList[i]._health > 0) return true;
+            }
+            return false;
+        }
         public void CheckForEncounter(Player player, Allies allies, Enemy enemy)
         {
             if (enemyMaps.Count != 0)
             {
                 for (int i = 0; i < enemyMaps.Count; i++)
                 {
-                    if (enemyMaps[i].LOCALX == player.LOCALX && enemyMaps[i].WORLDX == player.WORLDX && enemyMaps[i].WORLDY == player.WORLDY && !enemyMaps[i].COMBATSTART)
+                    if (enemyMaps[i].LOCALX == player.LOCALX && enemyMaps[i].WORLDX == player.WORLDX && enemyMaps[i].WORLDY == player.WORLDY && !enemyMaps[i].COMBATSTART && CheckHealth())
                     {
                         int randChance = random.Next(100);
 
@@ -439,7 +446,7 @@ namespace MapGame
         public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
         {
             int randEnemy = random.Next(1, 19);
-            if (randEnemy == player.LOCALX)
+            if (randEnemy == player.LOCALX && CheckHealth())
             {
                 int randChance = random.Next(100);
                 int chanceStartCombat1 = 50;  // Par exemple, 50% de chance pour le premier type de combat
