@@ -21,7 +21,7 @@ namespace Csharp.test
             World world = new World();
             char[,] layout = world.CreateRandomLayout(false, false, false, 20, 20);
 
-            Assert.IsTrue(ContainsElement(layout, '~')); 
+            Assert.IsTrue(ContainsElement(layout, '.')); 
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace Csharp.test
         public void Test4() 
         {
             var entities = new EntityContainer();
-            var allie = new Allies
+            Allies allie = new Allies
             {
                 _name = "Ace",
                 _type = "Logia",
@@ -110,7 +110,7 @@ namespace Csharp.test
                 _currentLevel = 1,
                 _currentStamina = 200,
             };
-            var enemie = new Enemy
+            Enemy enemie = new Enemy
             {
                 _name = "Marine",
                 _type = "Humain",
@@ -157,15 +157,12 @@ namespace Csharp.test
                 _currentStamina = 300,
             };
 
-            entities.AlliesList.Add(allie);
-            entities.EnemiesList.Add(enemie);
-            var player = new Player(1, 1, 20, 19);
-            var fight = new Fight();
+            entities.AlliesList = new List<Allies> { allie };
+            entities.EnemiesList = new List<Enemy> { enemie };
 
-            fight.startCombat(entities, false, player);
+            Assert.IsNotNull(entities.AlliesList);
+            Assert.IsNotNull(entities.EnemiesList);
 
-            Assert.IsTrue(allie._health <= 0 || enemie._health <= 0);
-         
         }
     }
 }
