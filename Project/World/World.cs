@@ -14,6 +14,7 @@ namespace MapGame
         private bool CombatStart = false;
         Fight fight = new Fight();
         Random random = new Random();
+        List<string> alliesNames;
 
         public World()
         {
@@ -34,7 +35,7 @@ namespace MapGame
                     char[,] selectedLayout = CreateRandomLayout(isBorderMap, isCenterMap, isSpecialMap, i, j);
                     worldMaps[i, j] = new Map(20, 20);
                     worldMaps[i, j].InitializeCustomMap(selectedLayout);
-                    if (i != 1 && j != 1 && i != 0 && j != 2)
+                    if (i != 1 && j != 1)
                     {
                         PlaceEnemiesRandomly(worldMaps[i, j], i, j);
                     }
@@ -439,6 +440,7 @@ namespace MapGame
         public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
         {
             int randEnemy = random.Next(1, 19);
+
             if (randEnemy == player.LOCALX)
             {
                 int randChance = random.Next(100);
@@ -446,7 +448,7 @@ namespace MapGame
 
                 if (randChance < chanceStartCombat1)
                 {
-                    fight.startCombat(allies.entitiesContainer, true, player, 1); // Passer en paramètre le type de combat
+                   fight.startCombat(allies.entitiesContainer, true, player, 1); // Passer en paramètre le type de combat
                 }
             }
         }
@@ -531,6 +533,128 @@ namespace MapGame
                 }
             }
         }
+
+        public void DisplayInventoryAndTeam2(Player player, EntityContainer entityContainer, EntityAbstract allie)
+        {
+            List<string> options;
+            int selectedIndex;
+
+            options = new List<string> { $"Viande : {player.NBViande}", $"Alcool : {player.NBAlcool}", $"Or : {player.NBGold}" };
+            selectedIndex = RunOptionsInventory(options, allie);
+
+            switch (selectedIndex)
+            {
+                case 0:
+                    if (player.NBViande > 0)
+                    {
+                        alliesNames = entityContainer.AlliesList
+                            .Select(a => a._name)
+                            .ToList();
+
+                        EntityAbstract newAllie = null;
+                        do
+                        {
+                            selectedIndex = RunOptionsInventory(alliesNames, allie);
+                            string selectedName = alliesNames[selectedIndex];
+                            newAllie = entityContainer.AlliesList.FirstOrDefault(a => a._name == selectedName);
+                        } while (newAllie == null);
+
+                        allie = newAllie;
+                        allie.AddHealth(20);
+                        player.RemoveViande(1);
+                        AddAllyJsonHealth(allie, "../../../Entities/entity.json", 20);
+                    }
+                    break;
+                case 1:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void AddAllyJsonHealth(EntityAbstract entity, string path, int healthToAdd)
+        {
+            EntityContainer entities;
+
+            // Utilisez un bloc using pour libérer la ressource après la lecture du fichier
+            using (StreamReader reader = File.OpenText(path))
+            {
+                string json = reader.ReadToEnd();
+                entities = JsonConvert.DeserializeObject<EntityContainer>(json);
+            }
+
+            if (entity is Allies)
+            {
+                var targetAllies = entities.AlliesList.FirstOrDefault(a => a._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
+                if (targetAllies != null)
+                {
+                    targetAllies._health += healthToAdd;
+                }
+            }
+
+            // Utilisez à nouveau un bloc using pour libérer la ressource après l'écriture dans le fichier
+            using (StreamWriter writer = File.CreateText(path))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(writer, entities);
+            }
+        }
+
+        public int RunOptionsInventory(List<string> options, EntityAbstract allie)
+        {
+            ConsoleKey keyPressed;
+            int selectedIndex = 0;
+            do
+            {
+                DisplayOptionsInventory(options, selectedIndex, allie);
+
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                keyPressed = keyInfo.Key;
+
+                if (keyPressed == ConsoleKey.UpArrow)
+                {
+                    selectedIndex = (selectedIndex > 0) ? selectedIndex - 1 : options.Count - 1;
+                }
+                else if (keyPressed == ConsoleKey.DownArrow)
+                {
+                    selectedIndex = (selectedIndex < options.Count - 1) ? selectedIndex + 1 : 0;
+                }
+            } while (keyPressed != ConsoleKey.Enter);
+
+            return selectedIndex;
+        }
+
+        private void DisplayOptionsInventory(List<string> options, int selectedIndex, EntityAbstract allie)
+        {
+            Console.Clear();
+            int inventoryX = 10;
+            int inventoryY = 10;
+
+            // Créez un cadre pour l'inventaire
+            DrawBox(inventoryX - 2, inventoryY - 1, 30, 15);
+
+            // Titre de l'inventaire
+            Console.SetCursorPosition(inventoryX, inventoryY++);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\t     Inventaire\n");
+            for (int i = 0; i < options.Count; i++)
+            {
+                if (i == selectedIndex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.WriteLine($"\t\t* {options[i]}");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.WriteLine($"\t\t  {options[i]}");
+                }
+            }
+            Console.ResetColor();
+        }
+
 
         public void UpdateInfoAllies(EntityContainer entityContainer, string path)
         {

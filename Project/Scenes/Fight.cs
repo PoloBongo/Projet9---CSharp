@@ -62,7 +62,7 @@ public class Fight
             while (enemie._health > 0)
             {
                 alliesAlive = false;
-
+                /* Il faut que ça prennent le health dans le json */
                 foreach (var ally in entities.AlliesList)
                 {
                     if (ally._health > 0)
@@ -375,14 +375,6 @@ public class Fight
                 targetAllies._health = entity._health;
             }
         }
-        /*else if (entity is Enemy)
-        {
-            var targetEnemy = entities.AlliesList.FirstOrDefault(e => e._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
-            if (targetEnemy != null)
-            {
-                targetEnemy._health = entity._health;
-            }
-        }*/
 
         // Utilisez à nouveau un bloc using pour libérer la ressource après l'écriture dans le fichier
         using (StreamWriter writer = File.CreateText(path))
@@ -612,7 +604,7 @@ public class Fight
         }
     }
 
-    private int RunOptions(List<string> options, EntityAbstract allie, EntityAbstract enemie)
+    public int RunOptions(List<string> options, EntityAbstract allie, EntityAbstract enemie)
     {
 
         ConsoleKey keyPressed;
