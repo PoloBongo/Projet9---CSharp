@@ -24,18 +24,18 @@ namespace InGame
         private void RunMainMenu()
         {
             string prompt = @"
-                                          .-.                              
-  .--.    ___ .-.     .--.        .-..   ( __)   .--.     .--.      .--.   
- /    \  (   )   \   /    \      /    \  (''"") /    \   /    \    /    \  
-|  .-. ;  |  .-. .  |  .-. ;    ' .-,  ;  | |  |  .-. ; |  .-. ;  |  .-. ; 
-| |  | |  | |  | |  |  | | |    | |  . |  | |  |  | | | |  |(___) |  | | | 
-| |  | |  | |  | |  |  |/  |    | |  | |  | |  |  |/  | |  |      |  |/  | 
-| |  | |  | |  | |  |  ' _.'    | |  | |  | |  |  ' _.' |  | ___  |  ' _.' 
-| '  | |  | |  | |  |  .'.-.    | |  ' |  | |  |  .'.-. |  '(   ) |  .'.-. 
-'  `-' /  | |  | |  '  `-' /    | `-'  '  | |  '  `-' / '  `-' |  '  `-' / 
- `.__.'  (___)(___)  `.__.'     | \__.'  (___)  `.__.'   `.__,'    `.__.'  
-                                | |                                        
-                               (___)                                       
+                                                                        
+
+
+             ██████╗ ███╗   ██╗███████╗    ██████╗ ██╗███████╗ ██████╗███████╗
+            ██╔═══██╗████╗  ██║██╔════╝    ██╔══██╗██║██╔════╝██╔════╝██╔════╝
+            ██║   ██║██╔██╗ ██║█████╗      ██████╔╝██║█████╗  ██║     █████╗  
+            ██║   ██║██║╚██╗██║██╔══╝      ██╔═══╝ ██║██╔══╝  ██║     ██╔══╝  
+            ╚██████╔╝██║ ╚████║███████╗    ██║     ██║███████╗╚██████╗███████╗
+             ╚═════╝ ╚═╝  ╚═══╝╚══════╝    ╚═╝     ╚═╝╚══════╝ ╚═════╝╚══════╝
+                                                                  
+                                                          
+                                      
 
 
             ";
@@ -46,8 +46,7 @@ namespace InGame
             switch (selectedIndex)
             {
                 case 0:
-                    // Narration de l'histoire
-                    NarrateStory();
+                    //NarrateStory();
                     PlayGame();
                     break;
                 case 1:
@@ -64,19 +63,6 @@ namespace InGame
 
         private void DisplayArt()
         {
-/*            string art = @"
-          ████████ ████████████ ██████    ███████   ███       ███
-         ██            ███     ███   ███  ██    ████  ██    ██
-         ███            ██    ███     ███ ██     ██    ██  ██
-          ████████      ██    ███     ███ ████████      ████
-                ███     ██    ███     ███ ███   ██       ██
-                 ██     ██     ███   ███  ██     ██     ██
-          ████████      ██       █████    ██      ██  ███
-
-
-
-
-            ";*/
             string art = @"
                 ███████╗████████╗ ██████╗ ██████╗ ██╗   ██╗    
                 ██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝    
@@ -149,18 +135,23 @@ namespace InGame
 
         private void PlayGame()
         {
+            Console.WriteLine("\t\tLancement du Jeu");
+
             Enemy enemy = new Enemy();
             Allies allies = new Allies();
+            Console.WriteLine("\t\tLancement En Cours");
+
             World world = new World();
             EntityContainer entities = new EntityContainer();
             Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
+
 
             string path = "../../../Entities/entity.json";
             enemy.CreateEntity(path, entities);
             enemy.GetInfoEntity(path);
             allies.CreateEntity(path, entities);
             allies.GetInfoEntity(path);
-
+            
             while (true)
             {
                 Console.Clear();
@@ -207,7 +198,7 @@ namespace InGame
                 if (world.IsPlayerNextToDoor(player))
                 {
 
-                    Console.BackgroundColor = ConsoleColor.DarkCyan;
+                    Console.BackgroundColor = ConsoleColor.DarkYellow;
                     Console.ForegroundColor = ConsoleColor.Black;
                     Console.WriteLine("\tAppuyez sur 'E' pour entrer");
                     Console.ResetColor();
@@ -217,11 +208,29 @@ namespace InGame
                         Shop.Run(player);
                     }
                 }
+                if (world.IsPlayerNextToFortressDoor(player))
+                {
+                    Console.BackgroundColor = ConsoleColor.DarkRed;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine("\t\t   ATTENTION : ZONE DANGEREUSE   ");
+
+                    Console.BackgroundColor = ConsoleColor.DarkYellow;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine("\t  Appuyez sur 'E' pour entrer dans la forteresse");
+                    Console.ResetColor();
+
+                    var key = Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.E)
+                    {
+                        // Déclencher un combat ou une fonction spéciale
+                        world.StartFortressBattle(player, world);
+                    }
+                }
             }
         }
         private void ExitGame()
         {
-            Console.BackgroundColor = ConsoleColor.DarkRed;
+            Console.BackgroundColor = ConsoleColor.DarkYellow;
             Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine("\t\tAppuyez sur une touche pour Quitter le Jeu");
             Console.ResetColor();
@@ -240,23 +249,25 @@ namespace InGame
             };
             string art = @"
 
-            _________                    .___.__  __   
-            \_   ___ \_______   ____   __| _/|__|/  |_ 
-            /    \  \/\_  __ \_/ __ \ / __ | |  \   __\
-            \     \____|  | \/\  ___// /_/ | |  ||  |  
-             \______  /|__|    \___  >____ | |__||__|  
-                    \/             \/     \/           
+                 ██████╗██████╗ ███████╗██████╗ ██╗████████╗███████╗
+                ██╔════╝██╔══██╗██╔════╝██╔══██╗██║╚══██╔══╝██╔════╝
+                ██║     ██████╔╝█████╗  ██║  ██║██║   ██║   ███████╗
+                ██║     ██╔══██╗██╔══╝  ██║  ██║██║   ██║   ╚════██║
+                ╚██████╗██║  ██║███████╗██████╔╝██║   ██║   ███████║
+                 ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝   ╚═╝   ╚══════╝
+                                                    
+
 
 
             ";
 
 
 
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine(art);
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\t\t\tGame Developed By: \n");
+            Console.WriteLine("\t\t\t\tGame Developed By: \n");
             Console.ResetColor();
 
             foreach (string line in credits)

@@ -10,7 +10,7 @@ namespace MapGame
         private ConsoleColor waterColor = ConsoleColor.Blue;
         private ConsoleColor playerColor = ConsoleColor.Magenta;
         private ConsoleColor enemyColor = ConsoleColor.Red;
-        private ConsoleColor doorColor = ConsoleColor.Yellow;
+        private ConsoleColor doorColor = ConsoleColor.DarkYellow;
 
         public char[,] matrix;
         private int rows;
@@ -47,30 +47,20 @@ namespace MapGame
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    ConsoleColor currentColor;
-                    if (matrix[i, j] == '@') // Joueur
+                    ConsoleColor currentColor = ConsoleColor.White;
+                    switch (matrix[i, j])
                     {
-                        currentColor = playerColor;
-                    }
-                    else if (matrix[i, j] == '~') // Eau
-                    {
-                        currentColor = waterColor;
-                    }
-                    else if (matrix[i, j] == '.') // Herbe
-                    {
-                        currentColor = grassColor;
-                    }
-                    else if (matrix[i, j] == 'O') // Ennemi
-                    {
-                        currentColor = enemyColor;
-                    }
-                    else if (matrix[i, j] == ']' || matrix[i, j] == '[' || matrix[i, j] == '―') // Portes
-                    {
-                        currentColor = doorColor;
-                    }
-                    else
-                    {
-                        currentColor = ConsoleColor.White;
+                        case '@': currentColor = playerColor; break;
+                        case '~': currentColor = waterColor; break;
+                        case '.': currentColor = grassColor; break;
+                        case 'O': currentColor = enemyColor; break;
+                        case 'H': currentColor = ConsoleColor.Gray; break; // Murs des maisons
+                        case 'F': currentColor = ConsoleColor.DarkGray; break; // Murs de la forteresse
+                        case 'D':
+                        case ']':
+                        case '[':
+                        case '―': currentColor = ConsoleColor.DarkYellow; break; // Portes
+                        case 'S': currentColor = ConsoleColor.Yellow; break; // Sable
                     }
 
                     Console.ForegroundColor = currentColor;
@@ -186,6 +176,7 @@ namespace MapGame
                 PlacePlayer(oldX, oldY);
             }
         }
+
         public bool IsNextToDoor(int x, int y)
         {
             // Vérifier les cases autour de la position du joueur
@@ -196,6 +187,24 @@ namespace MapGame
                     if (x + i >= 0 && x + i < rows && y + j >= 0 && y + j < columns)
                     {
                         if (IsDoor(x + i, y + j))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool IsNextToFortressDoor(int x, int y)
+        {
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    if (x + i >= 0 && x + i < rows && y + j >= 0 && y + j < columns)
+                    {
+                        if (matrix[x + i, y + j] == 'D')
                         {
                             return true;
                         }

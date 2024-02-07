@@ -1,8 +1,4 @@
-﻿using MapGame;
-using MapEntities;
-using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using MapEntities;
 
 namespace MapGame
 {
@@ -44,12 +40,6 @@ namespace MapGame
                 }
             }
             InitializeEnemy();
-        }
-
-        private bool IsBorderMap(int x, int y)
-        {
-            // Une carte est sur le bord si elle est sur la première ou la dernière ligne/colonne
-            return x == 0 || y == 0 || x == worldSize - 1 || y == worldSize - 1;
         }
 
         private char[,] CreateRandomLayout(bool isBorderMap, bool isCenterMap, bool isSpecialMap, int mapX, int mapY)
@@ -124,16 +114,16 @@ namespace MapGame
                     switch (random.Next(4))
                     {
                         case 0: // Porte en droite
-                            layout[houseX + houseWidth / 2, houseY] = ']'; 
+                            layout[houseX + houseWidth / 2, houseY] = ']';
                             break;
                         case 1: // Porte en gauche
-                            layout[houseX + houseWidth / 2, houseY + houseHeight - 1] = '['; 
+                            layout[houseX + houseWidth / 2, houseY + houseHeight - 1] = '[';
                             break;
                         case 2: // Porte à haut
-                            layout[houseX, houseY + houseHeight / 2] = '―'; 
+                            layout[houseX, houseY + houseHeight / 2] = '―';
                             break;
                         case 3: // Porte à bas
-                            layout[houseX + houseWidth - 1, houseY + houseHeight / 2] = '―'; 
+                            layout[houseX + houseWidth - 1, houseY + houseHeight / 2] = '―';
                             break;
                     }
                 }
@@ -141,17 +131,8 @@ namespace MapGame
 
             if (isSpecialMap)
             {
-                // Créer une forteresse ou tout autre structure spéciale
+                CreateFortress(layout);
             }
-
-            /* 
-            // S'assurer que les bords sont praticables
-            for (int i = 0; i < 20; i++)
-            {
-                layout[0, i] = layout[19, i] = '.';
-                layout[i, 0] = layout[i, 19] = '.';
-            }
-            */
 
             // Gérer les cartes de bord
             if (isBorderMap)
@@ -184,6 +165,52 @@ namespace MapGame
 
             return layout;
         }
+        private void CreateFortress(char[,] layout)
+        {
+            int fortressWidth = 10;
+            int fortressHeight = 10;
+            int startX = (20 - fortressWidth) / 2;
+            int startY = (20 - fortressHeight) / 2;
+
+            // Construire les murs de la forteresse
+            for (int x = startX; x < startX + fortressWidth; x++)
+            {
+                for (int y = startY; y < startY + fortressHeight; y++)
+                {
+                    if (x == startX || x == startX + fortressWidth - 1 || y == startY || y == startY + fortressHeight - 1)
+                    {
+                        layout[x, y] = 'F'; // 'F' pour les murs de la forteresse
+                    }
+                    else
+                    {
+                        layout[x, y] = ' '; // Espace ou autre caractère pour l'intérieur de la forteresse
+                    }
+                }
+            }
+
+            // Ajouter une porte à la forteresse
+            layout[startX + fortressWidth / 2, startY] = 'D'; // 'D' pour porte
+
+            // Placer des ennemis à l'intérieur de la forteresse
+            PlaceEnemiesInFortress(startX, startY, fortressWidth, fortressHeight, layout);
+        }
+
+        private void PlaceEnemiesInFortress(int startX, int startY, int width, int height, char[,] layout)
+        {
+            for (int i = 0; i < 5; i++) // Nombre d'ennemis
+            {
+                int x, y;
+                do
+                {
+                    x = random.Next(startX + 1, startX + width - 1);
+                    y = random.Next(startY + 1, startY + height - 1);
+                } while (layout[x, y] != ' '); // Modifier pour correspondre à l'espace vide
+
+                EnemyMap newEnemyMap = new EnemyMap(1, 1, x, y);
+                enemyMaps.Add(newEnemyMap);
+            }
+        }
+
 
         private bool AdjacentToWater(char[,] layout, int x, int y)
         {
@@ -214,6 +241,12 @@ namespace MapGame
                 return null;
             }
         }
+        private bool IsBorderMap(int x, int y)
+        {
+            // Une carte est sur le bord si elle est sur la première ou la dernière ligne/colonne
+            return x == 0 || y == 0 || x == worldSize - 1 || y == worldSize - 1;
+        }
+
 
         public void MovePlayerToNewMap(Player player)
         {
@@ -308,6 +341,12 @@ namespace MapGame
             return currentMap != null && currentMap.IsNextToDoor(player.LOCALX, player.LOCALY);
         }
 
+        public bool IsPlayerNextToFortressDoor(Player player)
+        {
+            Map currentMap = GetMapAt(player.WORLDX, player.WORLDY);
+            return currentMap != null && currentMap.IsNextToFortressDoor(player.LOCALX, player.LOCALY);
+        }
+
 
         public void CheckForEncounter(Player player, Allies allies, Enemy enemy)
         {
@@ -329,15 +368,6 @@ namespace MapGame
         {
             // Combat entre le joueur et l'ennemi
             fight.startCombat(allies.entitiesContainer, false, p);
-        }
-
-        public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
-        {
-            int randEnemy = random.Next(1, 19);
-            if (randEnemy == player.LOCALX)
-            {
-                fight.startCombat(allies.entitiesContainer, true, player);
-            }
         }
 
         private void InitializeEnemy()
@@ -371,6 +401,19 @@ namespace MapGame
                 map.PlaceEnemy(x, y);
             }
         }
+        public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
+        {
+            int randEnemy = random.Next(1, 19);
+            if (randEnemy == player.LOCALX)
+            {
+                fight.startCombat(allies.entitiesContainer, true, player);
+            }
+        }
+
+        public void StartFortressBattle(Player player, World world)
+        {
+            // Combat à la forteresse
+        }
 
         public List<EnemyMap> GetEnemyMaps()
         {
@@ -383,45 +426,59 @@ namespace MapGame
             int inventoryY = 2;
 
             // Créez un cadre pour l'inventaire
-            DrawBox(inventoryX - 2, inventoryY - 1, 30, 8);
+            DrawBox(inventoryX - 2, inventoryY - 1, 30, 15);
 
             // Titre de l'inventaire
             Console.SetCursorPosition(inventoryX, inventoryY++);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Inventaire");
+            Console.WriteLine("\t     Inventaire");
             Console.ForegroundColor = ConsoleColor.Gray;
 
             // Affiche les détails de l'inventaire
             Console.SetCursorPosition(inventoryX, inventoryY++);
-            Console.WriteLine($"Viande : {player.NBViande}");
+            Console.WriteLine($"  Viande : {player.NBViande}");
             Console.SetCursorPosition(inventoryX, inventoryY++);
-            Console.WriteLine($"Alcool : {player.NBAlcool}");
+            Console.WriteLine($"  Alcool : {player.NBAlcool}");
             Console.SetCursorPosition(inventoryX, inventoryY++);
-            Console.WriteLine($"Or    : {player.NBGold}");
+            Console.WriteLine($"  Or      : {player.NBGold}");
 
             // Séparation visuelle
             Console.SetCursorPosition(inventoryX, inventoryY++);
-            Console.WriteLine(new string('-', 20));
+            Console.WriteLine(new string('-', 30));
 
             if (entityContainer.AlliesList != null)
             {
                 // Affiche l'équipe des alliés
                 Console.SetCursorPosition(inventoryX, inventoryY++);
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Equipe");
+                Console.WriteLine("\t\tEquipe");
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.SetCursorPosition(inventoryX, inventoryY++);
 
-                Console.WriteLine($"Nombre d'alliés : {entityContainer.AlliesList.Count}");
-
-                for (int i = 0; i < entityContainer.AlliesList.Count; i++)
+                foreach (var ally in entityContainer.AlliesList)
                 {
-                    var ally = entityContainer.AlliesList[i];
                     if (ally != null)
                     {
-                        UpdateInfoAllies(entityContainer, "../../../Entities/entity.json");
-                        Console.SetCursorPosition(inventoryX, inventoryY++);
-                        Console.WriteLine($"{ally._name} - HP: {ally._health} - Stamina: {ally._stamina}");
+                        Console.SetCursorPosition(inventoryX, inventoryY);
+
+                        // Nom du personnage en couleur différente
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.Write(ally._name);
+                        Console.ResetColor();
+
+                        // HP en couleur différente
+                        Console.Write(" - HP:");
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.Write(ally._health);
+                        Console.ResetColor();
+
+                        // Stamina en couleur différente
+                        Console.Write(" - Stamina:");
+                        Console.ForegroundColor = ConsoleColor.DarkGreen;
+                        Console.WriteLine(ally._stamina);
+                        Console.ResetColor();
+
+                        inventoryY++;
                     }
                     else
                     {
@@ -430,31 +487,13 @@ namespace MapGame
                     }
                 }
             }
-            Console.ResetColor();
         }
-
-        public void UpdateInfoAllies(EntityContainer entityContainer, string path)
-        {
-            string json = File.ReadAllText(path);
-            var entities = JsonConvert.DeserializeObject<EntityContainer>(json);
-
-            foreach (var ally in entities.AlliesList)
-            {
-                var targetAlly = entityContainer.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
-                if (targetAlly != null)
-                {
-                    targetAlly._health = ally._health;
-                    targetAlly._stamina = ally._stamina;
-                }
-            }
-        }
-
 
         // Méthode pour dessiner un cadre autour de l'inventaire
         private void DrawBox(int x, int y, int width, int height)
         {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            string horizontalLine = "+" + new string('-', width - 2) + "+";
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            string horizontalLine = "+" + new string('-', width + 2) + "+";
 
             // Dessine la ligne supérieure
             Console.SetCursorPosition(x, y);
@@ -465,7 +504,7 @@ namespace MapGame
             {
                 Console.SetCursorPosition(x, y + i);
                 Console.Write("|");
-                Console.SetCursorPosition(x + width - 1, y + i);
+                Console.SetCursorPosition(x + width + 3, y + i);
                 Console.Write("|");
             }
 

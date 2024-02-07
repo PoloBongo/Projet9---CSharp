@@ -8,7 +8,7 @@ public class Allies : EntityAbstract
 {
     public override void DisplayDetails()
     {
-        Console.WriteLine($"Name : {_name} Health: {_health}, Stamina: {_stamina}, Speed: {_speed}, Level: {_level}");
+        Console.WriteLine($"Name : {_name} Health: {_health}, Stamina: {_stamina}, Speed: {_speed}, Level: {_level} - {_experience} / {_maxExerience}");
     }
 
     public override void AddHealth(int add)
