@@ -1,5 +1,7 @@
-﻿using MapEntities;
+﻿using InGame;
+using MapEntities;
 using Newtonsoft.Json;
+using System.Xml.Linq;
 
 namespace MapGame
 {
@@ -36,7 +38,7 @@ namespace MapGame
                     char[,] selectedLayout = CreateRandomLayout(isBorderMap, isCenterMap, isSpecialMap, i, j);
                     worldMaps[i, j] = new Map(20, 20);
                     worldMaps[i, j].InitializeCustomMap(selectedLayout);
-                    if (i != 1 && j != 1)
+                    if (i != 1 && j != 1 && i != 0 && j != 2)
                     {
                         PlaceEnemiesRandomly(worldMaps[i, j], i, j);
                     }
@@ -362,7 +364,7 @@ namespace MapGame
                 }
                 else
                 {
-                    AllieHealth = false;
+                    AllieHealth = true;
                 }
             }
         }
@@ -547,12 +549,12 @@ namespace MapGame
             }
         }
 
-        public void DisplayInventoryAndTeam2(Player player, EntityContainer entityContainer, EntityAbstract allie)
+        public void DisplayInventoryAndTeam2(Player player, EntityContainer entityContainer, ref EntityAbstract allie)
         {
             List<string> options;
             int selectedIndex;
 
-            options = new List<string> { $"Viande : {player.NBViande}", $"Alcool : {player.NBAlcool}", $"Or : {player.NBGold}" };
+            options = new List<string> { $"Viande : {player.NBViande}", $"Alcool : {player.NBAlcool}", $"Or : {player.NBGold}", "Fermer" };
             selectedIndex = RunOptionsInventory(options, allie);
 
             switch (selectedIndex)
@@ -575,17 +577,55 @@ namespace MapGame
                         allie = newAllie;
                         allie.AddHealth(20);
                         player.RemoveViande(1);
-                        AddAllyJsonHealth(allie, "../../../Entities/entity.json", 20);
+                        AddAllyJson(allie, "../../../Entities/entity.json", 20, "Health");
                     }
                     break;
                 case 1:
+                    if (player.NBAlcool > 0)
+                    {
+                        alliesNames = entityContainer.AlliesList
+                            .Select(a => a._name)
+                            .ToList();
+
+                        EntityAbstract newAllie = null;
+                        do
+                        {
+                            selectedIndex = RunOptionsInventory(alliesNames, allie);
+                            string selectedName = alliesNames[selectedIndex];
+                            newAllie = entityContainer.AlliesList.FirstOrDefault(a => a._name == selectedName);
+                        } while (newAllie == null);
+
+                        allie = newAllie;
+                        allie.AddStamina(20);
+                        player.RemoveAlcool(1);
+                        AddAllyJson(allie, "../../../Entities/entity.json", 20, "Stamina");
+                    }
+                    break;
+                case 3:
                     break;
                 default:
                     break;
             }
         }
 
-        private void AddAllyJsonHealth(EntityAbstract entity, string path, int healthToAdd)
+        public void DisplayInfoAllies(EntityContainer entityContainer)
+        {
+            List<string> options;
+            int selectedIndex;
+            
+            options = new List<string> { "Fermer" };
+            selectedIndex = RunOptionsInfo(options, entityContainer);
+
+            switch (selectedIndex)
+            {
+                case 0:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void AddAllyJson(EntityAbstract entity, string path, int countType, string type)
         {
             EntityContainer entities;
 
@@ -601,7 +641,14 @@ namespace MapGame
                 var targetAllies = entities.AlliesList.FirstOrDefault(a => a._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
                 if (targetAllies != null)
                 {
-                    targetAllies._health += healthToAdd;
+                    if (type == "Health")
+                    {
+                        targetAllies._health += countType;
+                    }
+                    else if (type == "Stamina")
+                    {
+                        targetAllies._stamina += countType;
+                    }
                 }
             }
 
@@ -612,6 +659,7 @@ namespace MapGame
                 serializer.Serialize(writer, entities);
             }
         }
+
 
         public int RunOptionsInventory(List<string> options, EntityAbstract allie)
         {
@@ -632,6 +680,22 @@ namespace MapGame
                 {
                     selectedIndex = (selectedIndex < options.Count - 1) ? selectedIndex + 1 : 0;
                 }
+            } while (keyPressed != ConsoleKey.Enter);
+
+            return selectedIndex;
+        }
+
+        public int RunOptionsInfo(List<string> options, EntityContainer entities)
+        {
+            ConsoleKey keyPressed;
+            int selectedIndex = 0;
+            do
+            {
+                DisplayOptionsInfo(options, selectedIndex, entities);
+
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                keyPressed = keyInfo.Key;
+
             } while (keyPressed != ConsoleKey.Enter);
 
             return selectedIndex;
@@ -668,19 +732,73 @@ namespace MapGame
             Console.ResetColor();
         }
 
+        private void DisplayOptionsInfo(List<string> options, int selectedIndex, EntityContainer entities)
+        {
+            Console.Clear();
+            entities = JsonConvert.DeserializeObject<EntityContainer>(File.ReadAllText("../../../Entities/entity.json"));
+            int inventoryX = 10;
+            int inventoryY = 10;
+
+            // Titre de l'inventaire
+            Console.SetCursorPosition(inventoryX, inventoryY++);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\t     Informations\n");
+
+            Console.WriteLine("Persoonage :\n");
+            for(int i = 0; i < entities.AlliesList.Count(); i++)
+            {
+                Console.WriteLine($"{i+1}. {entities.AlliesList[i]._name} - Level : {entities.AlliesList[i]._level}");
+                for (int j = 0; j < entities.AlliesList[i]._ListCapacities.Count(); j++)
+                {
+                    if (entities.AlliesList[i]._level >= entities.AlliesList[i]._ListCapacities[j]._level)
+                    {
+                        Console.WriteLine($"Attaque débloqué : {entities.AlliesList[i]._ListCapacities[j]._name}");
+                    }
+                    else if (entities.AlliesList[i]._level < entities.AlliesList[i]._ListCapacities[j]._level)
+                    {
+                        Console.WriteLine($"Attaque à débloqué : {entities.AlliesList[i]._ListCapacities[j]._name} - Level requis : {entities.AlliesList[i]._ListCapacities[j]._level}");
+                    }
+                }
+                Console.WriteLine("\n");
+            }
+
+
+            for (int i = 0; i < options.Count; i++)
+            {
+                if (i == selectedIndex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.WriteLine($"\t\t* {options[i]}");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.WriteLine($"\t\t  {options[i]}");
+                }
+            }
+
+
+            Console.ResetColor();
+        }
 
         public void UpdateInfoAllies(EntityContainer entityContainer, string path)
         {
-            string json = File.ReadAllText(path);
-            var entities = JsonConvert.DeserializeObject<EntityContainer>(json);
-
-            foreach (var ally in entities.AlliesList)
+            // Utilisez un bloc using pour libérer la ressource après la lecture du fichier
+            using (StreamReader reader = File.OpenText(path))
             {
-                var targetAlly = entityContainer.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
-                if (targetAlly != null)
+                string json = reader.ReadToEnd();
+                var entities = JsonConvert.DeserializeObject<EntityContainer>(json);
+
+                foreach (var ally in entities.AlliesList)
                 {
-                    targetAlly._health = ally._health;
-                    targetAlly._stamina = ally._stamina;
+                    var targetAlly = entityContainer.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
+                    if (targetAlly != null)
+                    {
+                        targetAlly._health = ally._health;
+                        targetAlly._stamina = ally._stamina;
+                    }
                 }
             }
         }

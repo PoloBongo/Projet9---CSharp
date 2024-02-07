@@ -190,7 +190,10 @@ namespace InGame
                         newLocalY++;
                         break;
                     case ConsoleKey.T:
-                        openInventory(player, entities);
+                        openInventory(player, entities, allies);
+                        break;
+                    case ConsoleKey.I:
+                        openInfo(player, entities, allies);
                         break;
                 }
                 // Gérer le changement de carte si le joueur atteint les bords de la carte actuelle
@@ -250,7 +253,7 @@ namespace InGame
             Environment.Exit(0);
         }
 
-        private void openInventory(Player player, EntityContainer entities)
+        private void openInventory(Player player, EntityContainer entities, EntityAbstract allies)
         {
             Console.Clear();
              
@@ -272,7 +275,33 @@ namespace InGame
             Console.WriteLine(art);
             Console.ResetColor();
 
-            world.DisplayInventoryAndTeam2(player, entities, allies);
+            world.DisplayInventoryAndTeam2(player, entities, ref allies);
+
+        }
+
+        private void openInfo(Player player, EntityContainer entities, EntityAbstract allies)
+        {
+            Console.Clear();
+
+            string art = @"
+
+                 ██████╗██████╗ ███████╗██████╗ ██╗████████╗███████╗
+                ██╔════╝██╔══██╗██╔════╝██╔══██╗██║╚══██╔══╝██╔════╝
+                ██║     ██████╔╝█████╗  ██║  ██║██║   ██║   ███████╗
+                ██║     ██╔══██╗██╔══╝  ██║  ██║██║   ██║   ╚════██║
+                ╚██████╗██║  ██║███████╗██████╔╝██║   ██║   ███████║
+                 ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝   ╚═╝   ╚══════╝
+                                                    
+
+
+
+            ";
+
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(art);
+            Console.ResetColor();
+
+            world.DisplayInfoAllies(entities);
 
         }
 
