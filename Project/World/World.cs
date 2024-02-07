@@ -42,11 +42,7 @@ namespace MapGame
             InitializeEnemy();
         }
 
-        private bool IsBorderMap(int x, int y)
-        {
-            // Une carte est sur le bord si elle est sur la première ou la dernière ligne/colonne
-            return x == 0 || y == 0 || x == worldSize - 1 || y == worldSize - 1;
-        }
+      
 
         public char[,] CreateRandomLayout(bool isBorderMap, bool isCenterMap, bool isSpecialMap, int mapX, int mapY)
         {
