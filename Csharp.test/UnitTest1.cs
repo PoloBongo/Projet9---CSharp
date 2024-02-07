@@ -1,13 +1,12 @@
 ﻿
 using MapEntities;
 using MapGame;
-using ShopDemo;
 namespace Csharp.test
 {
     public class Tests
     {
         [Test]
-        public void Test1()
+        public void VerifyTheMapIsNotNull()
         {
             var world = new World();
 
@@ -16,7 +15,7 @@ namespace Csharp.test
             Assert.IsNotNull(map);
         }
         [Test]
-        public void Test2()
+        public void VerrifyIfContenteAGreatEllement()
         {
             World world = new World();
             char[,] layout = world.CreateRandomLayout(false, false, false, 20, 20);
@@ -25,7 +24,7 @@ namespace Csharp.test
         }
 
         [Test]
-        public void Test3()
+        public void VerifyIfOneStructurAreCreate()
         {
             World world = new World();
 
@@ -51,7 +50,7 @@ namespace Csharp.test
         }
 
         [Test]
-        public void Test4() 
+        public void VerifyIfTheListAddElementNotNull() 
         {
             var entities = new EntityContainer();
             Allies allie = new Allies
@@ -163,6 +162,69 @@ namespace Csharp.test
             Assert.IsNotNull(entities.AlliesList);
             Assert.IsNotNull(entities.EnemiesList);
 
+        }
+        [Test]
+        public void VerifyIfTakeDamage()
+        {
+            Allies allie = new Allies
+            {
+                _name = "Ace",
+                _type = "Logia",
+                _blocked = 0,
+                _currentBlocked = 0,
+                _maxhealth = 300,
+                _health = 300.0f,
+                _stamina = 200.0f,
+                _maxStamina = 200,
+                _speed = 40,
+                _resistanceFeu = 2.0f,
+                _resistanceEau = 0.5f,
+                _resistanceVent = 0.75f,
+                _resistancePhysique = 1.5f,
+                _boostDamage = 1.0f,
+                _level = 1,
+                _ListCapacities = new List<EntitiesCapacities>
+            {
+                new EntitiesCapacities
+                {
+                    _name = "Chopped",
+                    _type = "Physique",
+                    _damage = 20.0f,
+                    _stamina = 10.0f,
+                    _speed = 5,
+                    _boostDamage = 1.0f,
+                    _criticalChance = 1.4f,
+                    _level = 0
+                },
+                 new EntitiesCapacities
+                {
+                    _name = "Fire Punch",
+                    _type = "Feu",
+                    _damage = 40.0f,
+                    _stamina = 10.0f,
+                    _speed = 5,
+                    _boostDamage = 1.0f,
+                    _criticalChance = 1.3f,
+                    _level = 0
+                },
+                new EntitiesCapacities
+                {
+                    _name = "Great Ring of Fire: Horse of the Sun",
+                    _type = "Feu",
+                    _damage = 80.0f,
+                     _stamina = 10.0f,
+                    _speed = 5,
+                    _boostDamage = 1.0f,
+                    _criticalChance = 1.2f,
+                    _level = 0
+                }
+            },
+                _currentLevel = 1,
+                _currentStamina = 200,
+            };
+
+            allie.TakeDamage(20);
+            Assert.AreEqual(280, allie._health);
         }
     }
 }
