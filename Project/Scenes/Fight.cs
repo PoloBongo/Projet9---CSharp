@@ -677,19 +677,23 @@ public class Fight
     private void DisplayHealthBar(EntityAbstract allie, EntityAbstract enemie)
     {
         Console.ForegroundColor = ConsoleColor.Blue;
-        Console.WriteLine($"Stamina de {allie._name}");
-        DrawStaminaBar(allie._stamina, allie._maxStamina);
-        Console.WriteLine();
+        if (allie != null && enemie != null)
+        {
+            Console.WriteLine($"Stamina de {allie._name}");
+            DrawStaminaBar(allie._stamina, allie._maxStamina);
 
-        Console.ForegroundColor = ConsoleColor.Blue;
-        Console.WriteLine(allie._name);
-        DrawHealthBar(allie._health, allie._maxhealth);
-        Console.WriteLine();
+            Console.WriteLine();
 
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine(enemie._name);
-        DrawHealthBar(enemie._health, enemie._maxhealth);
-        Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine(allie._name);
+            DrawHealthBar(allie._health, allie._maxhealth);
+            Console.WriteLine();
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(enemie._name);
+            DrawHealthBar(enemie._health, enemie._maxhealth);
+            Console.WriteLine();
+        }
     }
 
     static void DrawHealthBar(float currentHealth, int maxHealth)

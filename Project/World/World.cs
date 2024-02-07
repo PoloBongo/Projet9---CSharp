@@ -1,4 +1,5 @@
 ﻿using MapEntities;
+using Newtonsoft.Json;
 
 namespace MapGame
 {
@@ -358,19 +359,15 @@ namespace MapGame
                 {
                     if (enemyMaps[i].LOCALX == player.LOCALX && enemyMaps[i].WORLDX == player.WORLDX && enemyMaps[i].WORLDY == player.WORLDY && !enemyMaps[i].COMBATSTART)
                     {
-                        // Générer un nombre aléatoire entre 0 et 99
                         int randChance = random.Next(100);
 
-                        // Définir les seuils de pourcentage pour chaque type de combat
-                        int chanceStartCombat1 = 50;  // Par exemple, 50% de chance pour le premier type de combat
-                        int chanceStartCombat2 = 30;  // Par exemple, 30% de chance pour le deuxième type de combat
-                        int chanceStartCombat3 = 20;  // Par exemple, 20% de chance pour le troisième type de combat
+                        int chanceStartCombat1 = 50;
+                        int chanceStartCombat2 = 30;
+                        int chanceStartCombat3 = 20; 
 
-                        // Vérifier si le nombre aléatoire est inférieur à chaque seuil de pourcentage
                         if (randChance < chanceStartCombat1)
                         {
-                            // Gérer la rencontre entre le joueur et l'ennemi
-                            HandleEncounter(allies, enemy, player, 1); // Passer en paramètre le type de combat
+                            HandleEncounter(allies, enemy, player, 1);
                         }
                         else if (randChance < chanceStartCombat1 + chanceStartCombat2)
                         {
@@ -432,9 +429,10 @@ namespace MapGame
                         y = random.Next(20);
                     } while (map.IsWater(x, y) || map.IsPlayer(x, y) || map.matrix[x, y] == 'O');
 
-                EnemyMap newEnemyMap = new EnemyMap(positionX, positionY, x, y);
-                enemyMaps.Add(newEnemyMap);
-                map.PlaceEnemy(x, y);
+                    EnemyMap newEnemyMap = new EnemyMap(positionX, positionY, x, y);
+                    enemyMaps.Add(newEnemyMap);
+                    map.PlaceEnemy(x, y);
+                }
             }
         }
         public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
@@ -442,7 +440,13 @@ namespace MapGame
             int randEnemy = random.Next(1, 19);
             if (randEnemy == player.LOCALX)
             {
-                fight.startCombat(allies.entitiesContainer, true, player);
+                int randChance = random.Next(100);
+                int chanceStartCombat1 = 50;  // Par exemple, 50% de chance pour le premier type de combat
+
+                if (randChance < chanceStartCombat1)
+                {
+                    fight.startCombat(allies.entitiesContainer, true, player, 1); // Passer en paramètre le type de combat
+                }
             }
         }
 
@@ -491,10 +495,12 @@ namespace MapGame
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.SetCursorPosition(inventoryX, inventoryY++);
 
-                foreach (var ally in entityContainer.AlliesList)
+                for (int i = 0; i < entityContainer.AlliesList.Count; i++)
                 {
+                    var ally = entityContainer.AlliesList[i];
                     if (ally != null)
                     {
+                        UpdateInfoAllies(entityContainer, "../../../Entities/entity.json");
                         Console.SetCursorPosition(inventoryX, inventoryY);
 
                         // Nom du personnage en couleur différente
@@ -521,6 +527,22 @@ namespace MapGame
                         Console.SetCursorPosition(inventoryX, inventoryY++);
                         Console.WriteLine("Allié non initialisé");
                     }
+                }
+            }
+        }
+
+        public void UpdateInfoAllies(EntityContainer entityContainer, string path)
+        {
+            string json = File.ReadAllText(path);
+            var entities = JsonConvert.DeserializeObject<EntityContainer>(json);
+
+            foreach (var ally in entities.AlliesList)
+            {
+                var targetAlly = entityContainer.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
+                if (targetAlly != null)
+                {
+                    targetAlly._health = ally._health;
+                    targetAlly._stamina = ally._stamina;
                 }
             }
         }
