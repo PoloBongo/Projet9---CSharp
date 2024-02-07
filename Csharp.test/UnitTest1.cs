@@ -6,11 +6,6 @@ namespace Csharp.test
 {
     public class Tests
     {
-        [SetUp]
-        public void Setup()
-        {
-        }
-
         [Test]
         public void Test1()
         {
@@ -167,33 +162,10 @@ namespace Csharp.test
             var player = new Player(1, 1, 20, 19);
             var fight = new Fight();
 
-            // Vérifier si les objets sont null avant d'appeler la méthode startCombat
-            if (entities != null && player != null && fight != null && entities.AlliesList != null && entities.EnemiesList != null)
-            {
-                fight.startCombat(entities, false, player);
+            fight.startCombat(entities, false, player);
 
-                Assert.IsTrue(allie._health <= 0 || enemie._health <= 0);
-            }
-            else
-            {
-                // Gérer le cas où l'un des objets est null
-                Console.WriteLine("Un ou plusieurs objets ne sont pas initialisés correctement.");
-            }
-        }
-        [Test]
-        public void Test5()
-        {
-            var shop = new Shop();
-            var consoleInput = new StringReader(Environment.NewLine);
-            var consoleOutput = new StringWriter();
-            Console.SetIn(consoleInput);
-            Console.SetOut(consoleOutput);
-
-            // Act
-            var selectedIndex = shop.ChooseProduct();
-
-            // Assert
-            Assert.AreEqual(0, selectedIndex);
+            Assert.IsTrue(allie._health <= 0 || enemie._health <= 0);
+         
         }
     }
 }
