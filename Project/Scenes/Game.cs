@@ -46,8 +46,7 @@ namespace InGame
             switch (selectedIndex)
             {
                 case 0:
-                    // Narration de l'histoire
-                    NarrateStory();
+                    //NarrateStory();
                     PlayGame();
                     break;
                 case 1:

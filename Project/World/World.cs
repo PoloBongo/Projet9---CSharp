@@ -94,11 +94,9 @@ namespace MapGame
                 // Créer chaque maison
                 for (int house = 0; house < numberOfHouses; house++)
                 {
-                    // Choisir une taille impaire aléatoire pour la maison
-                    int houseWidth = random.Next(1, 3) * 2 + 1; // Donne un nombre impair entre 3 et 5
-                    int houseHeight = random.Next(1, 3) * 2 + 1; // Donne un nombre impair entre 3 et 5
+                    int houseWidth = random.Next(1, 3) * 2 + 1;
+                    int houseHeight = random.Next(1, 3) * 2 + 1;
 
-                    // Choisir un emplacement aléatoire pour la maison
                     int houseX, houseY;
                     bool spaceFound;
                     do
@@ -106,6 +104,13 @@ namespace MapGame
                         spaceFound = true;
                         houseX = random.Next(1, 20 - houseWidth);
                         houseY = random.Next(1, 20 - houseHeight);
+
+                        // Vérifier si la maison est dans la zone centrale
+                        if (IsInCentralZone(houseX, houseY, houseWidth, houseHeight))
+                        {
+                            spaceFound = false;
+                            continue;
+                        }
 
                         // Vérifier si l'espace est libre et sans maisons adjacentes
                         for (int x = houseX - 1; x <= houseX + houseWidth && spaceFound; x++)
@@ -183,6 +188,15 @@ namespace MapGame
             }
 
             return layout;
+        }
+
+        private bool IsInCentralZone(int x, int y, int width, int height)
+        {
+            int centralZoneSize = 5; // Taille de la zone centrale à exclure
+            int centralPoint = 10; // Point central de la carte (10,10 pour une carte 20x20)
+
+            return (x <= centralPoint + centralZoneSize && x + width >= centralPoint - centralZoneSize) &&
+                   (y <= centralPoint + centralZoneSize && y + height >= centralPoint - centralZoneSize);
         }
 
         private bool AdjacentToWater(char[,] layout, int x, int y)
@@ -382,8 +396,11 @@ namespace MapGame
             int inventoryX = 43;
             int inventoryY = 2;
 
-            // Créez un cadre pour l'inventaire
-            DrawBox(inventoryX - 2, inventoryY - 1, 30, 8);
+            // Calculez la hauteur nécessaire pour le cadre en fonction du nombre d'alliés
+            int frameHeight = 8 + (entityContainer.AlliesList != null ? entityContainer.AlliesList.Count : 0);
+
+            // Créez un cadre pour l'inventaire et l'équipe
+            DrawBox(inventoryX - 2, inventoryY - 1, 30, frameHeight);
 
             // Titre de l'inventaire
             Console.SetCursorPosition(inventoryX, inventoryY++);
@@ -410,16 +427,11 @@ namespace MapGame
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Equipe");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                Console.SetCursorPosition(inventoryX, inventoryY++);
 
-                Console.WriteLine($"Nombre d'alliés : {entityContainer.AlliesList.Count}");
-
-                for (int i = 0; i < entityContainer.AlliesList.Count; i++)
+                foreach (var ally in entityContainer.AlliesList)
                 {
-                    var ally = entityContainer.AlliesList[i];
                     if (ally != null)
                     {
-                        UpdateInfoAllies(entityContainer, "../../../Entities/entity.json");
                         Console.SetCursorPosition(inventoryX, inventoryY++);
                         Console.WriteLine($"{ally._name} - HP: {ally._health} - Stamina: {ally._stamina}");
                     }
@@ -454,7 +466,7 @@ namespace MapGame
         private void DrawBox(int x, int y, int width, int height)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            string horizontalLine = "+" + new string('-', width - 2) + "+";
+            string horizontalLine = "+" + new string('-', width + 3) + "+";
 
             // Dessine la ligne supérieure
             Console.SetCursorPosition(x, y);
@@ -465,7 +477,7 @@ namespace MapGame
             {
                 Console.SetCursorPosition(x, y + i);
                 Console.Write("|");
-                Console.SetCursorPosition(x + width - 1, y + i);
+                Console.SetCursorPosition(x + width +2, y + i);
                 Console.Write("|");
             }
 
