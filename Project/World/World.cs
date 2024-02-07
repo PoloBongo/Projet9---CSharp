@@ -1,4 +1,5 @@
 ﻿using MapEntities;
+using Newtonsoft.Json;
 
 namespace MapGame
 {
@@ -358,49 +359,80 @@ namespace MapGame
                 {
                     if (enemyMaps[i].LOCALX == player.LOCALX && enemyMaps[i].WORLDX == player.WORLDX && enemyMaps[i].WORLDY == player.WORLDY && !enemyMaps[i].COMBATSTART)
                     {
-                        // Gérer la rencontre entre le joueur et l'ennemi
-                        HandleEncounter(allies, enemy, player);
+                        int randChance = random.Next(100);
+
+                        int chanceStartCombat1 = 50;
+                        int chanceStartCombat2 = 30;
+                        int chanceStartCombat3 = 20; 
+
+                        if (randChance < chanceStartCombat1)
+                        {
+                            HandleEncounter(allies, enemy, player, 1);
+                        }
+                        else if (randChance < chanceStartCombat1 + chanceStartCombat2)
+                        {
+                            HandleEncounter(allies, enemy, player, 2);
+                        }
+                        else if (randChance < chanceStartCombat1 + chanceStartCombat2 + chanceStartCombat3)
+                        {
+                            HandleEncounter(allies, enemy, player, 3);
+                        }
+
                         enemyMaps[i].COMBATSTART = true;
                     }
                 }
             }
         }
 
-        private void HandleEncounter(Allies allies, Enemy enemy, Player p)
+        private void HandleEncounter(Allies allies, Enemy enemy, Player p, int combatType)
         {
             // Combat entre le joueur et l'ennemi
-            fight.startCombat(allies.entitiesContainer, false, p);
+            fight.startCombat(allies.entitiesContainer, false, p, combatType);
         }
 
         private void InitializeEnemy()
         {
-            int enemyLocalX = random.Next(1, 19);
-            int enemyLocalY = random.Next(1, 19);
+            // Générer un nombre aléatoire entre 0 et 99
+            int randChance = random.Next(100);
+            int chanceSpawnEnemy = 70; // Par exemple, 70% de chance de faire apparaître un ennemi lors de l'initialisation
 
-            EnemyMap newEnemyMap = new EnemyMap(1, 1, enemyLocalX, enemyLocalY);
-            enemyMaps.Add(newEnemyMap);
+            // Vérifier si le nombre aléatoire est inférieur au seuil de pourcentage
+            if (randChance < chanceSpawnEnemy)
+            {
+                int enemyLocalX = random.Next(1, 19);
+                int enemyLocalY = random.Next(1, 19);
 
-            Map centerMap = worldMaps[1, 1];
-            centerMap.PlaceEnemy(newEnemyMap.LOCALX, newEnemyMap.LOCALY);
+                EnemyMap newEnemyMap = new EnemyMap(1, 1, enemyLocalX, enemyLocalY);
+                enemyMaps.Add(newEnemyMap);
+
+                Map centerMap = worldMaps[1, 1];
+                centerMap.PlaceEnemy(newEnemyMap.LOCALX, newEnemyMap.LOCALY);
+            }
         }
 
         private void PlaceEnemiesRandomly(Map map, int positionX, int positionY)
         {
-            Random random = new Random();
-            int numberOfEnemies = random.Next(1, 3);
+            int chanceSpawnEnemy = 50; // Par exemple, 50% de chance de placer un ennemi aléatoire
 
-            for (int i = 0; i < numberOfEnemies; i++)
+            for (int i = 0; i < 3; i++) // Vous pouvez ajuster le nombre d'ennemis à placer
             {
-                int x, y;
-                do
-                {
-                    x = random.Next(20);
-                    y = random.Next(20);
-                } while (map.IsWater(x, y) || map.IsPlayer(x, y) || map.matrix[x, y] == 'O');
+                // Générer un nombre aléatoire entre 0 et 99 pour chaque ennemi
+                int randChance = random.Next(100);
 
-                EnemyMap newEnemyMap = new EnemyMap(positionX, positionY, x, y);
-                enemyMaps.Add(newEnemyMap);
-                map.PlaceEnemy(x, y);
+                // Vérifier si le nombre aléatoire est inférieur au seuil de pourcentage
+                if (randChance < chanceSpawnEnemy)
+                {
+                    int x, y;
+                    do
+                    {
+                        x = random.Next(20);
+                        y = random.Next(20);
+                    } while (map.IsWater(x, y) || map.IsPlayer(x, y) || map.matrix[x, y] == 'O');
+
+                    EnemyMap newEnemyMap = new EnemyMap(positionX, positionY, x, y);
+                    enemyMaps.Add(newEnemyMap);
+                    map.PlaceEnemy(x, y);
+                }
             }
         }
         public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
@@ -408,7 +440,13 @@ namespace MapGame
             int randEnemy = random.Next(1, 19);
             if (randEnemy == player.LOCALX)
             {
-                fight.startCombat(allies.entitiesContainer, true, player);
+                int randChance = random.Next(100);
+                int chanceStartCombat1 = 50;  // Par exemple, 50% de chance pour le premier type de combat
+
+                if (randChance < chanceStartCombat1)
+                {
+                    fight.startCombat(allies.entitiesContainer, true, player, 1); // Passer en paramètre le type de combat
+                }
             }
         }
 
@@ -457,10 +495,12 @@ namespace MapGame
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.SetCursorPosition(inventoryX, inventoryY++);
 
-                foreach (var ally in entityContainer.AlliesList)
+                for (int i = 0; i < entityContainer.AlliesList.Count; i++)
                 {
+                    var ally = entityContainer.AlliesList[i];
                     if (ally != null)
                     {
+                        UpdateInfoAllies(entityContainer, "../../../Entities/entity.json");
                         Console.SetCursorPosition(inventoryX, inventoryY);
 
                         // Nom du personnage en couleur différente
@@ -487,6 +527,22 @@ namespace MapGame
                         Console.SetCursorPosition(inventoryX, inventoryY++);
                         Console.WriteLine("Allié non initialisé");
                     }
+                }
+            }
+        }
+
+        public void UpdateInfoAllies(EntityContainer entityContainer, string path)
+        {
+            string json = File.ReadAllText(path);
+            var entities = JsonConvert.DeserializeObject<EntityContainer>(json);
+
+            foreach (var ally in entities.AlliesList)
+            {
+                var targetAlly = entityContainer.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
+                if (targetAlly != null)
+                {
+                    targetAlly._health = ally._health;
+                    targetAlly._stamina = ally._stamina;
                 }
             }
         }
