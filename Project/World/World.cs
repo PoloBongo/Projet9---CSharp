@@ -210,7 +210,7 @@ namespace MapGame
                     y = random.Next(startY + 1, startY + height - 1);
                 } while (layout[x, y] != ' '); // Modifier pour correspondre à l'espace vide
 
-                EnemyMap newEnemyMap = new EnemyMap(1, 1, x, y);
+                EnemyMap newEnemyMap = new EnemyMap(0, 2, x, y);
                 enemyMaps.Add(newEnemyMap);
             }
         }
