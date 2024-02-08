@@ -47,14 +47,12 @@ namespace MapGame
         {
             WoodPieces.RemoveAll(woodPiece => woodPiece.PositionX == x && woodPiece.PositionY == y);
 
-            Console.Write("cc");
             if (matrix[x, y] == '!')
             {
-                matrix[x, y] = '.'; 
-
-      
+                matrix[x, y] = '.';
             }
         }
+
 
 
 
@@ -98,11 +96,18 @@ namespace MapGame
 
         public void DrawNPCs()
         {
+            // Parcourir chaque PNJ
             foreach (var npc in questNPCs)
             {
-                matrix[npc.PositionX, npc.PositionY] = '?';
+                // Vérifier si la position du PNJ est sur de l'herbe
+                if (IsGrass(npc.PositionX, npc.PositionY))
+                {
+                    matrix[npc.PositionX, npc.PositionY] = '?'; // Placer le PNJ sur de l'herbe
+                }
             }
         }
+
+
 
         public void InitializeCustomMap(char[,] layout)
         {

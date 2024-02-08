@@ -67,7 +67,7 @@ namespace Wood
 
 
 
-
+ 
 
         public void CollectWood(Map map, bool check)
         {
@@ -75,7 +75,6 @@ namespace Wood
             {
                 woodCollected++;
                 Console.WriteLine($"Morceau de bois ramassé. Vous avez maintenant {woodCollected}/5.");
-
                 // Récupérer les coordonnées du morceau de bois
                 var woodPieceCoordinates = map.WoodPieces;
                 for (int i = 0; i < woodPieceCoordinates.Count(); i++)
@@ -87,8 +86,8 @@ namespace Wood
 
                         // Remplacer le morceau de bois par de l'herbe sur la carte
                         map.ClearWoodPiecePosition(woodPieceCoordinates[i].PositionX, woodPieceCoordinates[i].PositionY);
-                        Console.WriteLine($"Suppression du morceau de bois de la carte : {woodPieceCoordinates[i].PositionX}, {woodPieceCoordinates[i].PositionY}");
-                        break;
+//*                        Console.WriteLine($"Suppression du morceau de bois de la carte : {woodPieceCoordinates[i].PositionX}, {woodPieceCoordinates[i].PositionY}")
+//*                        break;
                     }
                 }
 
@@ -99,6 +98,6 @@ namespace Wood
                 Console.WriteLine("Vous avez déjà ramassé suffisamment de bois.");
             }
         }
-    }
+     }
 }
 

@@ -11,6 +11,9 @@ namespace Project.Quest
         public int PositionY { get; private set; }
         public string QuestText { get; private set; }
         public bool QuestAccepted { get; set; }
+        public bool QuestCompleted { get; private set; }
+        public bool HasInteracted { get; private set; }
+
 
         private Map map;
 
@@ -29,13 +32,32 @@ namespace Project.Quest
         }
 
 
-        public void Interact(WoodCollector woodCollector)
+        public void Interact(WoodCollector woodCollector, Player player)
         {
-            if (QuestAccepted && woodCollector.WoodCollected < 5)
+            if (HasInteracted)
+            {
+                Console.WriteLine("Vous avez déjà interagi avec ce NPC pour cette quête.");
+                return;
+            }
+
+            if (QuestAccepted && !QuestCompleted && woodCollector.WoodCollected < 5)
             {
                 Console.WriteLine($"{woodCollector.WoodCollected}/5 morceaux de bois ramassés.");
                 return;
             }
+
+            if (woodCollector.WoodCollected >= 5)
+            {
+                Console.WriteLine("Félicitations ! Vous avez ramassé suffisamment de bois pour aider le NPC.");
+                player.NBGold += 100;
+                Console.WriteLine("Le NPC vous donne 100 pièces d'or pour votre aide.");
+                QuestCompleted = true; // Marquer la quête comme terminée
+                Console.WriteLine("Merci beaucoup de m'avoir aidé !");
+                QuestAccepted = false; // Réinitialiser la quête
+                HasInteracted = true; // Marquer l'interaction avec le NPC
+                return;
+            }
+
 
 
             string questText = @"
@@ -94,7 +116,7 @@ Ils seraient parfaits pour réparer les dégâts.
                 if (questNpc.IsNear(player))
                 {
                     Console.WriteLine("NPC de quête à proximité, déclenchement de l'interaction");
-                    questNpc.Interact(woodCollector); 
+                    questNpc.Interact(woodCollector,player); 
                     break;
                 }
             }

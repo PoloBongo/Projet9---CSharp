@@ -195,13 +195,12 @@ namespace InGame
                 }
 
                 // Interaction avec les PNJ
-                // Interaction avec les PNJ
                 for (int i = 0; i < questNPCs.Count; i++)
                 {
                     var questNpc = questNPCs[i];
                     if (questNpc.IsNear(player))
                     {
-                        questNpc.Interact(woodCollector); 
+                        questNpc.Interact(woodCollector,player); 
                         break;
                     }
                 }
