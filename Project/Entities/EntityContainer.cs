@@ -5,13 +5,13 @@
 
     public List<Allies> GetAlliesAlive()
     {
-        List<Allies> alliesAlive = AlliesList.Where(a => a._health > 0).ToList();
+        List<Allies> alliesAlive = AlliesList.Where(a => a.health > 0).ToList();
         return alliesAlive;
     }
 
     public List<Enemy> GetAvailableEnemies()
     {
-        List<Enemy> enemyAlive = EnemiesList.Where(e => e._health > 0).ToList();
+        List<Enemy> enemyAlive = EnemiesList.Where(e => e.health > 0).ToList();
         return enemyAlive;
     }
 }

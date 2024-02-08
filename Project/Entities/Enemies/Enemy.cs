@@ -6,52 +6,52 @@ using System.Reflection.PortableExecutable;
 public class Enemy : EntityAbstract
 {
     Random random = new Random();
-    public string _difficultyIA;
+    public string difficultyIA;
     public override void DisplayDetails()
     {
-        Console.WriteLine($"Name : {_name} Health: {_health}, Stamina: {_stamina}, Speed: {_speed}, Level: {_level}");
+        Console.WriteLine($"Name : {name} Health: {health}, Stamina: {stamina}, Speed: {speed}, Level: {level}");
     }
 
     public override void AddHealth(int add)
     {
-        _health += add;
+        health += add;
     }
 
     public override void TakeDamage(float damage)
     {
-        _health -= damage;
+        health -= damage;
     }
 
     public override void AddStamina(int add)
     {
-        _stamina += add;
+        stamina += add;
     }
 
     public override void LessStamina(float less)
     {
-        _stamina -= less;
+        stamina -= less;
     }
     public override void AddExperience(int add)
     {
-        _experience += add;
+        experience += add;
     }
 
     public override void AddLevel()
     {
-        if (_experience >= _maxExerience)
+        if (experience >= maxExerience)
         {
-            int tmp = _experience - _maxExerience;
-            _experience = 0;
-            _experience = tmp;
-            _level++;
-            _maxExerience = 100 * _level;
+            int tmp = experience - maxExerience;
+            experience = 0;
+            experience = tmp;
+            level++;
+            maxExerience = 100 * level;
         }
     }
 
     public override void Loot(Player p)
     {
         int nbLoot = random.Next(1, 3);
-        if (_name == "Marine")
+        if (name == "Marine")
         {
             p.AddAlcool(nbLoot);
             Console.BackgroundColor = ConsoleColor.DarkCyan;
@@ -59,7 +59,7 @@ public class Enemy : EntityAbstract
             Console.WriteLine($"\tTu as recuperé {nbLoot} bouteille(s) d'alcool(s)");
             Console.ResetColor();
         }
-        if (_name == "Sanglier")
+        if (name == "Sanglier")
         {
             p.AddViande(nbLoot);
             Console.BackgroundColor = ConsoleColor.DarkCyan;
