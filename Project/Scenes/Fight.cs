@@ -12,7 +12,6 @@ public class Fight
     private bool firstSwitch = false;
     Random random = new Random();
     List<string> alliesNames;
-    private bool fleeSelected = true;
     public void ResetEnemyHealth(EntityContainer entities, bool sanglier, int iaType)
     {
         EntityAbstract enemy = null;
@@ -45,7 +44,6 @@ public class Fight
 
     public void startCombat(EntityContainer entities, bool sanglier, Player player, int iaType)
     {
-        fleeSelected = true;
         string path = "../../../Entities/entity.json";
 
         EntityAbstract allie = GetFirstAliveAlly(path);
@@ -63,12 +61,9 @@ public class Fight
 
             AfficherEtatDesCombattants(allie, enemie);
 
-            bool alliesAlive = true;
-            bool alliesStamina = true;
-
             if (iaType == 1)
             {
-                while (enemie._health > 0 && alliesAlive)
+                while (enemie._health > 0)
                 {
 
                     DetermineTour(ref allie, enemie);
@@ -87,7 +82,7 @@ public class Fight
             }
             else if (iaType == 2)
             {
-                while (enemie._health > 0 && alliesAlive)
+                while (enemie._health > 0)
                 {
 
                     DetermineTour(ref allie, enemie);
@@ -105,7 +100,7 @@ public class Fight
             }
             else if (iaType == 3)
             {
-                while (enemie._health > 0 && alliesAlive)
+                while (enemie._health > 0)
                 {
 
                     DetermineTour(ref allie, enemie);
@@ -159,22 +154,23 @@ public class Fight
 
     private void HandleAllieTurn(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie, Player p)
     {
+        bool canAttack = false;
         List<string> options;
         int selectedIndex;
 
         bool foundAlliesToReplace = false;
 
-        if (allie._health > 0 && allie._stamina > 0)
+        if (allie._health > 0.0 && allie._stamina > 0.0)
         {
             foundAlliesToReplace = true;
         }
 
-        // Si l'allié actuel n'est pas en vie ou n'a pas de stamina, chercher un allié en vie
+        // cherche un allié qui est en vie et qui a du stamina zbi la mouche
         if (!foundAlliesToReplace)
         {
             foreach (EntityAbstract ally in entities.AlliesList)
             {
-                if (ally._health > 0 && ally._stamina > 0)
+                if (ally._health > 0.0 && ally._stamina > 0.0)
                 {
                     allie = ally;
                     foundAlliesToReplace = true;
@@ -183,15 +179,46 @@ public class Fight
             }
         }
 
-        // Si aucun allié en vie n'est trouvé, afficher "Tu as perdu"
+        // tu loose si il en trouve aucun
         if (!foundAlliesToReplace)
         {
-            options = new List<string> { "Tu as perdu" };
-            selectedIndex = RunOptions(options, allie, enemie);
-            return; // Sortir de la méthode après avoir affiché "Tu as perdu"
+            if (p.NBAlcool > 0)
+            {
+                for (int i = 0; i < allie._ListCapacities.Count(); i++)
+                {
+                    if (allie._stamina <= allie._ListCapacities[i]._stamina && allie._level >= allie._ListCapacities[i]._level)
+                    {
+                        canAttack = true;
+                    }
+                }
+                if (canAttack)
+                {
+                    options = new List<string> { "Plus assez de mana, prends-en dans ton inventaire!" };
+                    selectedIndex = RunOptions(options, allie, enemie);
+                    switch (selectedIndex)
+                    {
+                        case 0:
+                            playerInventory(p, allie, enemie);
+                            break;
+                    }
+                }
+                else
+                {
+                    options = new List<string> { "Tu as perdu" };
+                    selectedIndex = RunOptions(options, allie, enemie);
+                    return;
+                }
+            }
+            else
+            {
+                options = new List<string> { "Tu as perdu" };
+                selectedIndex = RunOptions(options, allie, enemie);
+                return;
+            }
         }
-
-        options = new List<string> { "Changer d'allié", "Attaquer", "Inventory", "Fuir le Combat" };
+        else
+        {
+            options = new List<string> { "Changer d'allié", "Attaquer", "Inventory" };
             selectedIndex = RunOptions(options, allie, enemie);
             switch (selectedIndex)
             {
@@ -205,46 +232,11 @@ public class Fight
                 case 2:
                     playerInventory(p, allie, enemie);
                     break;
-                case 3:
-                    fleeSelected = false;
-                    break;
             }
+        }
 
         CheckHealth(enemie, allie, p);
         tourAlier = false;
-    }
-
-    private int CheckStaminaAllie(EntityAbstract allie, EntityContainer entities, EntityAbstract enemy, Player p)
-    {
-        bool hasStamina = false;
-        for (int i = 0; i < allie._ListCapacities.Count(); i++)
-        {
-            if (allie._stamina >= allie._ListCapacities[i]._stamina)
-            {
-                CheckHealthAllie(allie, entities, enemy, p);
-                return 0;
-            }
-            else
-            {
-                foreach (var ally in entities.AlliesList)
-                {
-                    if (ally._stamina >= 10)
-                    {
-                        hasStamina = true;
-                        ChangeAllie(entities, ref allie, enemy);
-                    }
-                }
-            }
-        }
-
-        if(hasStamina)
-        {
-            return 1;
-        }
-        else
-        {
-            return 2;
-        }
     }
 
     public void playerInventory(Player player, EntityAbstract allie, EntityAbstract enemie)
@@ -444,7 +436,14 @@ public class Fight
             var targetAllies = entities.AlliesList.FirstOrDefault(a => a._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
             if (targetAllies != null)
             {
-                targetAllies._health = entity._health;
+                if (entity._health < 0)
+                {
+                    targetAllies._health = 0.0f;
+                }
+                else
+                {
+                    targetAllies._health = entity._health;
+                }
             }
         }
 
