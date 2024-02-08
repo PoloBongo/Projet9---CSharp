@@ -256,23 +256,7 @@ namespace InGame
         {
             Console.Clear();
              
-            string art = @"
-
-                 ██████╗██████╗ ███████╗██████╗ ██╗████████╗███████╗
-                ██╔════╝██╔══██╗██╔════╝██╔══██╗██║╚══██╔══╝██╔════╝
-                ██║     ██████╔╝█████╗  ██║  ██║██║   ██║   ███████╗
-                ██║     ██╔══██╗██╔══╝  ██║  ██║██║   ██║   ╚════██║
-                ╚██████╗██║  ██║███████╗██████╔╝██║   ██║   ███████║
-                 ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝   ╚═╝   ╚══════╝
-                                                    
-
-
-
-            ";
-
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine(art);
-            Console.ResetColor();
+            
 
             world.DisplayInventoryAndTeam2(player, entities, ref allies);
 
@@ -282,23 +266,7 @@ namespace InGame
         {
             Console.Clear();
 
-            string art = @"
-
-                 ██████╗██████╗ ███████╗██████╗ ██╗████████╗███████╗
-                ██╔════╝██╔══██╗██╔════╝██╔══██╗██║╚══██╔══╝██╔════╝
-                ██║     ██████╔╝█████╗  ██║  ██║██║   ██║   ███████╗
-                ██║     ██╔══██╗██╔══╝  ██║  ██║██║   ██║   ╚════██║
-                ╚██████╗██║  ██║███████╗██████╔╝██║   ██║   ███████║
-                 ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝   ╚═╝   ╚══════╝
-                                                    
-
-
-
-            ";
-
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine(art);
-            Console.ResetColor();
+            
 
             world.DisplayInfoAllies(entities);
 

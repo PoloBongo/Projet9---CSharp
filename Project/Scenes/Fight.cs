@@ -179,7 +179,7 @@ public class Fight
             }
         }
 
-        // tu loose si il en trouve aucun
+        // tu loose s'il en trouve aucun
         if (!foundAlliesToReplace)
         {
             if (p.NBAlcool > 0)

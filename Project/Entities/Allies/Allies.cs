@@ -71,5 +71,5 @@ public class Allies : EntityAbstract
             }
         }
     }
-    public override void Loot(Player p){}
+    public override void Loot(Player player){}
 }

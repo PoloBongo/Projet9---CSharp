@@ -43,7 +43,6 @@ namespace MapGame
                     }
                 }
             }
-            //InitializeEnemy();
         }
 
       
@@ -196,30 +195,8 @@ namespace MapGame
             }
 
             // Ajouter une porte à la forteresse
-            layout[startX + fortressWidth / 2, startY] = 'D'; // 'D' pour porte
-
-            // Placer des ennemis à l'intérieur de la forteresse
-            PlaceEnemiesInFortress(startX, startY, fortressWidth, fortressHeight, layout);
+            layout[startX + fortressWidth / 2, startY] = 'D';
         }
-
-        private void PlaceEnemiesInFortress(int startX, int startY, int width, int height, char[,] layout)
-        {
-            for (int i = 0; i < 5; i++) // Nombre d'ennemis
-            {
-                int x, y;
-                do
-                {
-                    x = random.Next(startX + 1, startX + width - 1);
-                    y = random.Next(startY + 1, startY + height - 1);
-                } while (layout[x, y] != ' '); // Modifier pour correspondre à l'espace vide
-
-               /* EnemyMap newEnemyMap = new EnemyMap(0, 2, x, y);
-                
-                enemyMaps.Add(newEnemyMap);*/
-            }
-        }
-
-
         private bool AdjacentToWater(char[,] layout, int x, int y)
         {
             for (int i = -1; i <= 1; i++)
@@ -404,13 +381,7 @@ namespace MapGame
             int randEnemy = random.Next(1, 19);
             if (randEnemy == player.LOCALX && !(player.WORLDX == 1 && player.WORLDY == 1))
             {
-                int randChance = random.Next(100);
-                int chanceStartCombat1 = 50;  // Par exemple, 50% de chance pour le premier type de combat
-
-                if (randChance < chanceStartCombat1)
-                {
-                   fight.StartCombat(allies.entitiesContainer, true, player, 1); // Passer en paramètre le type de combat
-                }
+                fight.StartCombat(allies.entitiesContainer, true, player, 1); // Passer en paramètre le type de combat
             }
         }
 
