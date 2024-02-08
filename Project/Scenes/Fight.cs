@@ -17,21 +17,21 @@ public class Fight
         EntityAbstract enemy = null;
         if (sanglier)
         {
-            enemy = entities.EnemiesList.FirstOrDefault(e => e.name == "Sanglier");
+            enemy = entities.enemiesList.FirstOrDefault(e => e.name == "Sanglier");
         }
         else
         {
             if (iaType == 1)
             {
-                enemy = entities.EnemiesList.FirstOrDefault(e => e.name == "Marine");
+                enemy = entities.enemiesList.FirstOrDefault(e => e.name == "Marine");
             }
             else if (iaType == 2)
             {
-                enemy = entities.EnemiesList.FirstOrDefault(e => e.name == "Amarial Sengoku");
+                enemy = entities.enemiesList.FirstOrDefault(e => e.name == "Amarial Sengoku");
             }
             else if (iaType == 3)
             {
-                enemy = entities.EnemiesList.FirstOrDefault(e => e.name == "Kobby");
+                enemy = entities.enemiesList.FirstOrDefault(e => e.name == "Kobby");
             }
         }
 
@@ -47,7 +47,7 @@ public class Fight
         string path = "../../../Entities/entity.json";
 
         EntityAbstract allie = GetFirstAliveAlly(path);
-        EntityAbstract enemie = entities.EnemiesList[0];
+        EntityAbstract enemie = entities.enemiesList[0];
         entities = JsonConvert.DeserializeObject<EntityContainer>(File.ReadAllText("../../../Entities/entity.json"));
 
         if (allie != null)
@@ -56,7 +56,7 @@ public class Fight
 
             if (sanglier)
             {
-                enemie = entities.EnemiesList[4];
+                enemie = entities.enemiesList[4];
             }
 
             AfficherEtatDesCombattants(allie, enemie);
@@ -134,9 +134,9 @@ public class Fight
         string json = File.ReadAllText(path);
         var loadedEntities = JsonConvert.DeserializeObject<EntityContainer>(json);
 
-        if (loadedEntities != null && loadedEntities.AlliesList != null)
+        if (loadedEntities != null && loadedEntities.alliesList != null)
         {
-            foreach (var ally in loadedEntities.AlliesList)
+            foreach (var ally in loadedEntities.alliesList)
             {
                 if (ally.health > 0 && ally.stamina > 0)
                 {
@@ -168,7 +168,7 @@ public class Fight
         // cherche un allié qui est en vie et qui a du stamina zbi la mouche
         if (!foundAlliesToReplace)
         {
-            foreach (EntityAbstract ally in entities.AlliesList)
+            foreach (EntityAbstract ally in entities.alliesList)
             {
                 if (ally.health > 0.0 && ally.stamina > 0.0)
                 {
@@ -332,14 +332,14 @@ public class Fight
 
     private void ChangeAllie(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie)
     {
-        List<string> alliesNames = entities.AlliesList
+        List<string> alliesNames = entities.alliesList
             .Where(a => a.currentBlocked != 1 && a.health > 0)
             .Select(a => a.name)
             .ToList();
 
         int selectedIndex = RunOptionsSwitch(alliesNames, ref allie, enemie);
         string selectedName = alliesNames[selectedIndex];
-        EntityAbstract newAllie = entities.AlliesList.FirstOrDefault(a => a.name == selectedName);
+        EntityAbstract newAllie = entities.alliesList.FirstOrDefault(a => a.name == selectedName);
 
         allie = newAllie;
         AfficherEtatDesCombattants(allie, enemie);
@@ -433,7 +433,7 @@ public class Fight
 
         if (entity is Allies)
         {
-            var targetAllies = entities.AlliesList.FirstOrDefault(a => a.name.Equals(entity.name, StringComparison.OrdinalIgnoreCase));
+            var targetAllies = entities.alliesList.FirstOrDefault(a => a.name.Equals(entity.name, StringComparison.OrdinalIgnoreCase));
             if (targetAllies != null)
             {
                 if (entity.health < 0)
@@ -571,32 +571,32 @@ public class Fight
         int UpAttackIndex = -1;
         float damageUp = float.MinValue;
 
-        for (int i = 0; i < enemies.EnemiesList.Count(); i++)
+        for (int i = 0; i < enemies.enemiesList.Count(); i++)
         {
-            if (enemies.EnemiesList[i].difficultyIA == "Hard" && enemies.EnemiesList[i].health > 0)
+            if (enemies.enemiesList[i].difficultyIA == "Hard" && enemies.enemiesList[i].health > 0)
             {
-                for (int j = 0; j < enemies.EnemiesList[i].listCapacities.Count(); j++)
+                for (int j = 0; j < enemies.enemiesList[i].listCapacities.Count(); j++)
                 {
                     float damage = 0;
 
-                    switch (enemies.EnemiesList[i].listCapacities[j].type)
+                    switch (enemies.enemiesList[i].listCapacities[j].type)
                     {
                         /* Check toutes ces capacités et renvoi l'attaque qui fera le plus mal au player */
                         case "Eau":
-                            damage = enemies.EnemiesList[i].listCapacities[j].damage / allie.resistanceEau;
-                            attackInfo.Add(enemies.EnemiesList[i].listCapacities[j].name, damage);
+                            damage = enemies.enemiesList[i].listCapacities[j].damage / allie.resistanceEau;
+                            attackInfo.Add(enemies.enemiesList[i].listCapacities[j].name, damage);
                             break;
                         case "Feu":
-                            damage = enemies.EnemiesList[i].listCapacities[j].damage / allie.resistanceFeu;
-                            attackInfo.Add(enemies.EnemiesList[i].listCapacities[j].name, damage);
+                            damage = enemies.enemiesList[i].listCapacities[j].damage / allie.resistanceFeu;
+                            attackInfo.Add(enemies.enemiesList[i].listCapacities[j].name, damage);
                             break;
                         case "Vent":
-                            damage = enemies.EnemiesList[i].listCapacities[j].damage / allie.resistanceVent;
-                            attackInfo.Add(enemies.EnemiesList[i].listCapacities[j].name, damage);
+                            damage = enemies.enemiesList[i].listCapacities[j].damage / allie.resistanceVent;
+                            attackInfo.Add(enemies.enemiesList[i].listCapacities[j].name, damage);
                             break;
                         case "Physique":
-                            damage = enemies.EnemiesList[i].listCapacities[j].damage / allie.resistancePhysique;
-                            attackInfo.Add(enemies.EnemiesList[i].listCapacities[j].name, damage);
+                            damage = enemies.enemiesList[i].listCapacities[j].damage / allie.resistancePhysique;
+                            attackInfo.Add(enemies.enemiesList[i].listCapacities[j].name, damage);
                             break;
                     }
                     if (damage > damageUp)
@@ -620,16 +620,16 @@ public class Fight
 
         if (UpAttackIndex != -1)
         {
-            enemy = enemies.EnemiesList[UpAttackIndex];
+            enemy = enemies.enemiesList[UpAttackIndex];
             ChangeEnemy(allie, ref enemy);
         }
     }
 
     private void CheckHealthAllie(EntityAbstract allie, EntityContainer entities, EntityAbstract enemy, Player p)
     {
-        for(int i = 0; i < entities.AlliesList.Count(); i++)
+        for(int i = 0; i < entities.alliesList.Count(); i++)
         {
-            if (allie.health < 0 && entities.AlliesList[i].health > 0)
+            if (allie.health < 0 && entities.alliesList[i].health > 0)
             {
                 HandleAllieTurn(entities, ref allie, enemy, p);
             }

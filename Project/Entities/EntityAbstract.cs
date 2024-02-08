@@ -476,16 +476,16 @@ public abstract class EntityAbstract
 
         entitiesContainer = new EntityContainer
         {
-            AlliesList = new List<Allies> { allies, allies2, allies3 },
-            EnemiesList = new List<Enemy> { enemy, enemy, enemy3, enemy4, enemy5 },
+            alliesList = new List<Allies> { allies, allies2, allies3 },
+            enemiesList = new List<Enemy> { enemy, enemy, enemy3, enemy4, enemy5 },
         };
 
         // Check le nb d'allié pour l'hud
-        foreach (var addAllies in entitiesContainer.AlliesList)
+        foreach (var addAllies in entitiesContainer.alliesList)
         {
-            if (!entities.AlliesList.Any(noDoublons => noDoublons.name == addAllies.name))
+            if (!entities.alliesList.Any(noDoublons => noDoublons.name == addAllies.name))
             {
-                entities.AlliesList.Add(addAllies);
+                entities.alliesList.Add(addAllies);
             }
         }
 
@@ -529,7 +529,7 @@ public abstract class EntityAbstract
         string json = File.ReadAllText(path);
         EntityContainer entities = JsonConvert.DeserializeObject<EntityContainer>(json);
 
-        foreach (var ally in entities.AlliesList)
+        foreach (var ally in entities.alliesList)
         {
             ally.currentLevel = ally.level;
         }
@@ -542,7 +542,7 @@ public abstract class EntityAbstract
         string json = File.ReadAllText(path);
         EntityContainer entities = JsonConvert.DeserializeObject<EntityContainer>(json);
 
-        foreach (var ally in entities.AlliesList)
+        foreach (var ally in entities.alliesList)
         {
             ally.currentStamina = ally.stamina;
         }
@@ -555,7 +555,7 @@ public abstract class EntityAbstract
         string json = File.ReadAllText(path);
         EntityContainer entities = JsonConvert.DeserializeObject<EntityContainer>(json);
 
-        foreach (var ally in entities.AlliesList)
+        foreach (var ally in entities.alliesList)
         {
             ally.currentBlocked = ally.blocked;
         }
@@ -566,7 +566,7 @@ public abstract class EntityAbstract
 
     public void UpdateJsonLevel(EntityContainer entities, string path)
     {
-        var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
+        var targetAlliesUpdate = entities.alliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
 
         if (targetAlliesUpdate != null)
         {
@@ -580,7 +580,7 @@ public abstract class EntityAbstract
 
     public void UpdateJsonStamina(EntityContainer entities, string path)
     {
-        var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
+        var targetAlliesUpdate = entities.alliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
 
         if (targetAlliesUpdate != null)
         {
@@ -599,7 +599,7 @@ public abstract class EntityAbstract
 
     public void UpdateJsonBlocked(EntityContainer entities, string path, int value)
     {
-        var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
+        var targetAlliesUpdate = entities.alliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
 
         if (targetAlliesUpdate != null)
         {

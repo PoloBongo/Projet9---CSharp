@@ -31,7 +31,7 @@ public class Allies : EntityAbstract
         string path = "../../../Entities/entity.json";
         stamina -= less;
         var entities = GetInfoEntityUpdateLevel(path);
-        var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
+        var targetAlliesUpdate = entities.alliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
 
         if (targetAlliesUpdate != null)
         {
@@ -62,7 +62,7 @@ public class Allies : EntityAbstract
             Console.ResetColor();
 
             var entities = GetInfoEntityUpdateLevel(path);
-            var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
+            var targetAlliesUpdate = entities.alliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
                 
             if (targetAlliesUpdate != null)
             {

@@ -451,7 +451,7 @@ namespace MapGame
             Console.SetCursorPosition(inventoryX, inventoryY++);
             Console.WriteLine(new string('-', 30));
 
-            if (entityContainer.AlliesList != null)
+            if (entityContainer.alliesList != null)
             {
                 // Affiche l'équipe des alliés
                 Console.SetCursorPosition(inventoryX, inventoryY++);
@@ -460,9 +460,9 @@ namespace MapGame
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.SetCursorPosition(inventoryX, inventoryY++);
 
-                for (int i = 0; i < entityContainer.AlliesList.Count; i++)
+                for (int i = 0; i < entityContainer.alliesList.Count; i++)
                 {
-                    var ally = entityContainer.AlliesList[i];
+                    var ally = entityContainer.alliesList[i];
                     if (ally != null)
                     {
                         UpdateInfoAllies(entityContainer, "../../../Entities/entity.json");
@@ -509,7 +509,7 @@ namespace MapGame
                 case 0:
                     if (player.NBViande > 0)
                     {
-                        alliesNames = entityContainer.AlliesList
+                        alliesNames = entityContainer.alliesList
                             .Select(a => a.name)
                             .ToList();
 
@@ -518,7 +518,7 @@ namespace MapGame
                         {
                             selectedIndex = RunOptionsInventory(alliesNames, allie);
                             string selectedName = alliesNames[selectedIndex];
-                            newAllie = entityContainer.AlliesList.FirstOrDefault(a => a.name == selectedName);
+                            newAllie = entityContainer.alliesList.FirstOrDefault(a => a.name == selectedName);
                         } while (newAllie == null);
 
                         allie = newAllie;
@@ -530,7 +530,7 @@ namespace MapGame
                 case 1:
                     if (player.NBAlcool > 0)
                     {
-                        alliesNames = entityContainer.AlliesList
+                        alliesNames = entityContainer.alliesList
                             .Select(a => a.name)
                             .ToList();
 
@@ -539,7 +539,7 @@ namespace MapGame
                         {
                             selectedIndex = RunOptionsInventory(alliesNames, allie);
                             string selectedName = alliesNames[selectedIndex];
-                            newAllie = entityContainer.AlliesList.FirstOrDefault(a => a.name == selectedName);
+                            newAllie = entityContainer.alliesList.FirstOrDefault(a => a.name == selectedName);
                         } while (newAllie == null);
 
                         allie = newAllie;
@@ -585,7 +585,7 @@ namespace MapGame
 
             if (entity is Allies)
             {
-                var targetAllies = entities.AlliesList.FirstOrDefault(a => a.name.Equals(entity.name, StringComparison.OrdinalIgnoreCase));
+                var targetAllies = entities.alliesList.FirstOrDefault(a => a.name.Equals(entity.name, StringComparison.OrdinalIgnoreCase));
                 if (targetAllies != null)
                 {
                     if (type == "Health")
@@ -692,18 +692,18 @@ namespace MapGame
             Console.WriteLine("\t     Informations\n");
 
             Console.WriteLine("Persoonage :\n");
-            for(int i = 0; i < entities.AlliesList.Count(); i++)
+            for(int i = 0; i < entities.alliesList.Count(); i++)
             {
-                Console.WriteLine($"{i+1}. {entities.AlliesList[i].name} - Level : {entities.AlliesList[i].level}");
-                for (int j = 0; j < entities.AlliesList[i].listCapacities.Count(); j++)
+                Console.WriteLine($"{i+1}. {entities.alliesList[i].name} - Level : {entities.alliesList[i].level}");
+                for (int j = 0; j < entities.alliesList[i].listCapacities.Count(); j++)
                 {
-                    if (entities.AlliesList[i].level >= entities.AlliesList[i].listCapacities[j].level)
+                    if (entities.alliesList[i].level >= entities.alliesList[i].listCapacities[j].level)
                     {
-                        Console.WriteLine($"Attaque débloqué : {entities.AlliesList[i].listCapacities[j].name}");
+                        Console.WriteLine($"Attaque débloqué : {entities.alliesList[i].listCapacities[j].name}");
                     }
-                    else if (entities.AlliesList[i].level < entities.AlliesList[i].listCapacities[j].level)
+                    else if (entities.alliesList[i].level < entities.alliesList[i].listCapacities[j].level)
                     {
-                        Console.WriteLine($"Attaque à débloqué : {entities.AlliesList[i].listCapacities[j].name} - Level requis : {entities.AlliesList[i].listCapacities[j].level}");
+                        Console.WriteLine($"Attaque à débloqué : {entities.alliesList[i].listCapacities[j].name} - Level requis : {entities.alliesList[i].listCapacities[j].level}");
                     }
                 }
                 Console.WriteLine("\n");
@@ -738,9 +738,9 @@ namespace MapGame
                 string json = reader.ReadToEnd();
                 var entities = JsonConvert.DeserializeObject<EntityContainer>(json);
 
-                foreach (var ally in entities.AlliesList)
+                foreach (var ally in entities.alliesList)
                 {
-                    var targetAlly = entityContainer.AlliesList.FirstOrDefault(a => a.name.Equals(ally.name, StringComparison.OrdinalIgnoreCase));
+                    var targetAlly = entityContainer.alliesList.FirstOrDefault(a => a.name.Equals(ally.name, StringComparison.OrdinalIgnoreCase));
                     if (targetAlly != null)
                     {
                         if (ally.health < 0)

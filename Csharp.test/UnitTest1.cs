@@ -156,11 +156,11 @@ namespace Csharp.test
                 currentStamina = 300,
             };
 
-            entities.AlliesList = new List<Allies> { allie };
-            entities.EnemiesList = new List<Enemy> { enemie };
+            entities.alliesList = new List<Allies> { allie };
+            entities.enemiesList = new List<Enemy> { enemie };
 
-            Assert.IsNotNull(entities.AlliesList);
-            Assert.IsNotNull(entities.EnemiesList);
+            Assert.IsNotNull(entities.alliesList);
+            Assert.IsNotNull(entities.enemiesList);
 
         }
         [Test]
@@ -354,10 +354,10 @@ namespace Csharp.test
                 currentStamina = 300,
             };
 
-            entities.AlliesList = new List<Allies> { allie1, allies2  };
+            entities.alliesList = new List<Allies> { allie1, allies2  };
 
-            entities.AlliesList[1].AddHealth(20);
-            Assert.AreEqual(520, entities.AlliesList[1].health);
+            entities.alliesList[1].AddHealth(20);
+            Assert.AreEqual(520, entities.alliesList[1].health);
         }
     }
 }
