@@ -232,9 +232,6 @@ public class Fight
                 case 2:
                     playerInventory(p, allie, enemie);
                     break;
-                case 2:
-                    playerInventory(p, allie, enemie);
-                    break;
             }
         }
 
@@ -267,7 +264,7 @@ public class Fight
         }
     }
 
-    public void Soin(Player player, EntityAbstract allie) 
+    public void Soin(Player player, EntityAbstract allie)
     {
         player.RemoveViande(1);
         allie.AddHealth(20);
@@ -349,7 +346,7 @@ public class Fight
     }
 
 
-    private void ChangeEnemy( EntityAbstract allie, ref EntityAbstract enemie)
+    private void ChangeEnemy(EntityAbstract allie, ref EntityAbstract enemie)
     {
         EntityAbstract newEnemy = enemie;
 
@@ -377,7 +374,7 @@ public class Fight
         {
             ManageDamageByType(selectedIndex, allie, enemie);
         }
-        
+
         AfficherEtatDesCombattants(allie, enemie);
     }
 
@@ -427,41 +424,41 @@ public class Fight
 
         try
         {
-        // Utiliser un bloc using pour libérer la ressource après la lecture du fichier
-        using (StreamReader reader = File.OpenText(path))
-        {
-            string json = reader.ReadToEnd();
-            entities = JsonConvert.DeserializeObject<EntityContainer>(json);
-        }
-
-        if (entity is Allies)
-        {
-            var targetAllies = entities.AlliesList.FirstOrDefault(a => a._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
-            if (targetAllies != null)
+            // Utiliser un bloc using pour libérer la ressource après la lecture du fichier
+            using (StreamReader reader = File.OpenText(path))
             {
-                if (entity._health < 0)
+                string json = reader.ReadToEnd();
+                entities = JsonConvert.DeserializeObject<EntityContainer>(json);
+            }
+
+            if (entity is Allies)
+            {
+                var targetAllies = entities.AlliesList.FirstOrDefault(a => a._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
+                if (targetAllies != null)
                 {
-                    targetAllies._health = 0.0f;
-                }
-                else
-                {
-                    targetAllies._health = entity._health;
+                    if (entity._health < 0)
+                    {
+                        targetAllies._health = 0.0f;
+                    }
+                    else
+                    {
+                        targetAllies._health = entity._health;
+                    }
                 }
             }
-        }
 
-        // Utiliser à nouveau un bloc using pour libérer la ressource après l'écriture dans le fichier
-        using (StreamWriter writer = File.CreateText(path))
-        {
-            JsonSerializer serializer = new JsonSerializer();
-            serializer.Serialize(writer, entities);
+            // Utiliser à nouveau un bloc using pour libérer la ressource après l'écriture dans le fichier
+            using (StreamWriter writer = File.CreateText(path))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(writer, entities);
+            }
         }
-    }
-    catch (IOException ex)
-    {
-        // Gérer l'exception IOException
-        Console.WriteLine($"Une erreur s'est produite lors de l'accès au fichier : {ex.Message}");
-    }
+        catch (IOException ex)
+        {
+            // Gérer l'exception IOException
+            Console.WriteLine($"Une erreur s'est produite lors de l'accès au fichier : {ex.Message}");
+        }
     }
 
 
@@ -486,75 +483,6 @@ public class Fight
                 enemie.AddStamina(staminaAmount);
                 Console.WriteLine($"{enemie._name} regagne {staminaAmount} points d'endurance!");
                 break;
-        }
-
-        string path = "../../../Entities/entity.json";
-        UpdateJsonHealth(allie, path);
-
-        CheckHealth(enemie, allie, p);
-        tourAlier = true;
-    }
-
-    private void HandleEnemyTurnIADificil(EntityAbstract allie, EntityAbstract enemie, EntityContainer entities, Player p)
-    {
-        IACalculMaxDamage(allie, enemie);
-
-        string path = "../../../Entities/entity.json";
-        UpdateJsonHealth(allie, path);
-
-        CheckHealth(enemie, allie, p);
-        tourAlier = true;
-    }
-
-    private void IACalculMaxDamage(EntityAbstract allie, EntityAbstract enemie)
-    {
-        int UpAttackIndex = -1;
-        float damageUp = float.MinValue;
-
-        for (int i = 0; i < enemie._ListCapacities.Count(); i++)
-        {
-            float damage = 0;
-            switch (enemie._ListCapacities[i]._type)
-            {
-                /* Check toutes ces capacités et renvoi l'attaque qui fera le plus mal au player */
-                case "Eau":
-                    damage = enemie._ListCapacities[i]._damage / allie._resistanceEau;
-                    break;
-                case "Feu":
-                    damage = enemie._ListCapacities[i]._damage / allie._resistanceFeu;
-                    break;
-                case "Vent":
-                    damage = enemie._ListCapacities[i]._damage / allie._resistanceVent;
-                    break;
-                case "Physique":
-                    damage = enemie._ListCapacities[i]._damage / allie._resistancePhysique;
-                    break;
-            }
-
-            if (damage > damageUp)
-            {
-                damageUp = damage;
-                UpAttackIndex = i;
-            }
-        }
-
-        if (UpAttackIndex != -1)
-        {
-            allie.TakeDamage(damageUp);
-        }
-    }
-
-    private void HandleEnemyTurnIAHard(EntityAbstract allie, ref EntityAbstract enemy, ref EntityContainer enemies, Player p)
-    {
-        /* Si le player n'a pas changé de perso ou que ce n'est pas le début du tour alors l'IA attaque */
-        if (allieSwitch)
-        {
-            allieSwitch = false;
-            IAHardCalculSwitchEnemy(allie, ref enemy, ref enemies, p);
-        }
-        else
-        {
-            IACalculMaxDamage(allie, enemy);
         }
 
         string path = "../../../Entities/entity.json";
@@ -699,7 +627,7 @@ public class Fight
 
     private void CheckHealthAllie(EntityAbstract allie, EntityContainer entities, EntityAbstract enemy, Player p)
     {
-        for(int i = 0; i < entities.AlliesList.Count(); i++)
+        for (int i = 0; i < entities.AlliesList.Count(); i++)
         {
             if (allie._health < 0 && entities.AlliesList[i]._health > 0)
             {
@@ -823,7 +751,7 @@ public class Fight
 
     static void DrawHealthBar(float currentHealth, int maxHealth)
     {
-        int maxHealthImplicit = maxHealth ; 
+        int maxHealthImplicit = maxHealth;
         int barWidth = 40;
 
         currentHealth = Math.Max(currentHealth, 0);

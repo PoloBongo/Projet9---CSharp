@@ -4,6 +4,9 @@ using MenuPr;
 using ShopDemo;
 using System.Numerics;
 using System;
+using Project.Quest;
+using Wood;
+
 namespace InGame
 {
     class Game
@@ -44,7 +47,7 @@ namespace InGame
 
 
             ";
-            string[] options = { "Jouer", "Crédits","Shop", "Quitter" };
+            string[] options = { "Jouer", "Crédits", "Shop", "Quitter" };
             Menu mainMenu = new Menu(prompt, options);
             int selectedIndex = mainMenu.Run();
 
@@ -152,23 +155,23 @@ namespace InGame
             Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
             List<QuestNPC> questNPCs = world.GetQuestNPCs();
 
-            Map map = world.GetMapAt(player.WORLDX, player.WORLDY);
-
-            List<WoodPiece> woodPiecesList = new List<WoodPiece>();
-            WoodCollector woodCollector = new WoodCollector(player.WORLDX, player.WORLDY, player.LOCALX, player.LOCALY, 0, map, woodPiecesList);
 
             string path = "../../../Entities/entity.json";
             enemy.CreateEntity(path, entities);
             enemy.GetInfoEntity(path);
             allies.CreateEntity(path, entities);
             allies.GetInfoEntity(path);
-            
+
             while (true)
             {
                 Console.Clear();
                 world.CheckForEncounter(player, allies, enemy);
                 world.CheckRandEnemy(player, allies);
                 Map currentMap = world.GetMapAt(player.WORLDX, player.WORLDY);
+
+                List<WoodPiece> woodPiecesList = new List<WoodPiece>();
+                WoodCollector woodCollector = new WoodCollector(player.WORLDX, player.WORLDY, player.LOCALX, player.LOCALY, 0, currentMap, woodPiecesList);
+
                 currentMap.PrintMap();
                 world.DisplayInventoryAndTeam(player, entities);
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
@@ -200,7 +203,6 @@ namespace InGame
                         openInfo(player, entities, allies);
                         break;
                 }
-                }
 
                 // Interaction avec les PNJ
                 for (int i = 0; i < questNPCs.Count; i++)
@@ -208,12 +210,10 @@ namespace InGame
                     var questNpc = questNPCs[i];
                     if (questNpc.IsNear(player))
                     {
-                        questNpc.Interact(woodCollector,player); 
+                        questNpc.Interact(woodCollector, player);
                         break;
                     }
                 }
-
-
 
                 if (world.IsNextToWood(player))
                 {
@@ -222,13 +222,9 @@ namespace InGame
                     if (key.Key == ConsoleKey.E)
                     {
                         // Collecter du bois via le collecteur de bois
-                        woodCollector.CollectWood(map,true);
+                        woodCollector.CollectWood(currentMap, true);
                     }
                 }
-
-
-
-
 
                 // Gérer le changement de carte si le joueur atteint les bords de la carte actuelle
                 if (newLocalX < 0 || newLocalX >= mapRows || newLocalY < 0 || newLocalY >= mapColumns)
@@ -290,7 +286,7 @@ namespace InGame
         private void openInventory(Player player, EntityContainer entities, EntityAbstract allies)
         {
             Console.Clear();
-             
+
             string art = @"
 
                  ██████╗██████╗ ███████╗██████╗ ██╗████████╗███████╗

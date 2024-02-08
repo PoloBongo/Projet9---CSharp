@@ -377,6 +377,31 @@ namespace MapGame
                 }
             }
         }
+        public bool IsNextToWood(Player player)
+        {
+            if (player == null)
+            {
+                throw new ArgumentNullException(nameof(player));
+            }
+
+            Map currentMap = GetMapAt(player.WORLDX, player.WORLDY);
+            int playerLocalX = player.LOCALX;
+            int playerLocalY = player.LOCALY;
+
+            // Vérifier les cases autour de la position du joueur
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    if (currentMap.IsWood(playerLocalX + i, playerLocalY + j))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         public bool IsPlayerNextToDoor(Player player)
         {
             Map currentMap = GetMapAt(player.WORLDX, player.WORLDY);

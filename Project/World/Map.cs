@@ -293,44 +293,6 @@ namespace MapGame
             return false;
         }
 
-
-        public bool IsNextToFortressDoor(int x, int y)
-        {
-            for (int i = -1; i <= 1; i++)
-            {
-                for (int j = -1; j <= 1; j++)
-                {
-                    if (x + i >= 0 && x + i < rows && y + j >= 0 && y + j < columns)
-                    {
-                        if (matrix[x + i, y + j] == 'D')
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-        public bool IsNextToDoor(int x, int y)
-        {
-            // Vérifier les cases autour de la position du joueur
-            for (int i = -1; i <= 1; i++)
-            {
-                for (int j = -1; j <= 1; j++)
-                {
-                    if (x + i >= 0 && x + i < rows && y + j >= 0 && y + j < columns)
-                    {
-                        if (IsDoor(x + i, y + j))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
         public bool IsNextToFortressDoor(int x, int y)
         {
             for (int i = -1; i <= 1; i++)
