@@ -430,7 +430,7 @@ namespace MapGame
 
         private void PlaceEnemiesRandomly(Map map, int positionX, int positionY)
         {
-            int chanceSpawnEnemy = 75; // Par exemple, 50% de chance de placer un ennemi aléatoire
+            int chanceSpawnEnemy = 90; // Par exemple, 50% de chance de placer un ennemi aléatoire
 
             for (int i = 0; i < 3; i++) // Vous pouvez ajuster le nombre d'ennemis à placer
             {

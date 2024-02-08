@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Numerics;
 using static System.Net.Mime.MediaTypeNames;
 
 public class Fight
@@ -11,7 +12,7 @@ public class Fight
     private bool firstSwitch = false;
     Random random = new Random();
     List<string> alliesNames;
-
+    private bool fleeSelected = true;
     public void ResetEnemyHealth(EntityContainer entities, bool sanglier, int iaType)
     {
         EntityAbstract enemy = null;
@@ -44,6 +45,7 @@ public class Fight
 
     public void startCombat(EntityContainer entities, bool sanglier, Player player, int iaType)
     {
+        fleeSelected = true;
         string path = "../../../Entities/entity.json";
 
         EntityAbstract allie = GetFirstAliveAlly(path);
@@ -60,24 +62,12 @@ public class Fight
         AfficherEtatDesCombattants(allie, enemie);
 
         bool alliesAlive = true;
+        bool alliesStamina = true;
         if (iaType == 1)
         {
-            while (enemie._health > 0 && alliesAlive)
+            while (enemie._health > 0 && alliesAlive && fleeSelected)
             {
-                alliesAlive = false;
-                /* Il faut que ça prennent le health dans le json */
-
-                foreach (var ally in entities.AlliesList)
-                {
-                    var targetAlly = entities.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
-                    if (targetAlly != null && targetAlly._health > 0)
-                    {
-                        alliesAlive = true;
-                        break;
-                    }
-                }
-
-                if (!alliesAlive) { break; }
+                CheckAlliesAlliveAndHasStamina(alliesAlive, alliesStamina, entities, player);
 
                 DetermineTour(ref allie, enemie);
 
@@ -95,21 +85,9 @@ public class Fight
         }
         else if (iaType == 2)
         {
-            while (enemie._health > 0 && alliesAlive)
+            while (enemie._health > 0 && alliesAlive && fleeSelected)
             {
-                alliesAlive = false;
-
-                foreach (var ally in entities.AlliesList)
-                {
-                    var targetAlly = entities.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
-                    if (targetAlly != null && targetAlly._health > 0)
-                    {
-                        alliesAlive = true;
-                        break;
-                    }
-                }
-
-                if (!alliesAlive) { break; }
+                CheckAlliesAlliveAndHasStamina(alliesAlive, alliesStamina, entities, player);
 
                 DetermineTour(ref allie, enemie);
 
@@ -126,21 +104,10 @@ public class Fight
         }
         else if (iaType == 3)
         {
-            while (enemie._health > 0 && alliesAlive)
+            while (enemie._health > 0 && alliesAlive && fleeSelected)
             {
-                alliesAlive = false;
-
-                foreach (var ally in entities.AlliesList)
-                {
-                    var targetAlly = entities.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
-                    if (targetAlly != null && targetAlly._health > 0)
-                    {
-                        alliesAlive = true;
-                        break;
-                    }
-                }
-
-                if (!alliesAlive) {  break;}
+                CheckAlliesAlliveAndHasStamina(alliesAlive, alliesStamina, entities, player);
+                
 
                 DetermineTour(ref allie, enemie);
 
@@ -185,7 +152,41 @@ public class Fight
         return null;
     }
 
+    private bool CheckAlliesAlliveAndHasStamina(bool alliesAlive, bool alliesStamina, EntityContainer entities, Player player)
+    {
 
+        foreach (var ally in entities.AlliesList)
+        {
+            var targetAlly = entities.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
+            if (targetAlly != null && targetAlly._health > 0)
+            {
+                alliesAlive = true;
+                break;
+            }
+        }
+
+        if (!alliesAlive)
+        {
+            return false; // Si aucun allié n'est en vie, retourner false
+        }
+
+        foreach (var ally in entities.AlliesList)
+        {
+            var targetAllyStamina = entities.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
+            if (targetAllyStamina != null && targetAllyStamina._stamina > 0)
+            {
+                alliesStamina = true;
+                break;
+            }
+        }
+
+        if (!alliesStamina && player.NBAlcool <= 0)
+        {
+            return false; // Si aucun allié n'a de stamina et que le joueur n'a pas d'alcool, retourner false
+        }
+
+        return true; // Si les conditions sont satisfaites, retourner true
+    }
 
     private void DetermineTour(ref EntityAbstract allie, EntityAbstract enemie)
     {
@@ -197,9 +198,9 @@ public class Fight
         List<string> options;
         int selectedIndex;
 
-        if (CheckStaminaAllie(allie, entities))
+        if (CheckStaminaAllie(allie, entities, enemie, p) == 0)
         {
-            options = new List<string> { "Changer d'allié", "Attaquer", "Inventory" };
+            options = new List<string> { "Changer d'allié", "Attaquer", "Inventory", "Fuir le Combat" };
             selectedIndex = RunOptions(options, allie, enemie);
             switch (selectedIndex)
             {
@@ -213,36 +214,85 @@ public class Fight
                 case 2:
                     playerInventory(p, allie, enemie);
                     break;
+                case 3:
+                    fleeSelected = false;
+                    break;
             }
         }
-        else
+        else if (CheckStaminaAllie(allie, entities, enemie, p) == 1)
         {
-            options = new List<string> { "Changer d'allié", $"Utiliser potion de stamina - Dispo : {p.NBAlcool}", $"Utiliser potion de health - Dispo : {p.NBViande}" };
+            options = new List<string> { $"Utiliser potion de stamina - Dispo : {p.NBAlcool}", $"Utiliser potion de health - Dispo : {p.NBViande}" };
             selectedIndex = RunOptions(options, allie, enemie);
+
             switch (selectedIndex)
             {
                 case 0:
-                    ChangeAllie(entities, ref allie, enemie);
-                    break;
-                case 1:
-                    if (p.NBAlcool > 0) 
+                    if (p.NBAlcool > 0)
                     {
                         p.RemoveAlcool(1);
                         allie.AddStamina(20);
                     }
                     break;
-                case 2:
+                case 1:
                     if (p.NBViande > 0)
                     {
                         p.RemoveViande(1);
                         allie.AddHealth(20);
                     }
                     break;
+                default:
+                    break;
+            }
+        }
+        else if (CheckStaminaAllie(allie, entities, enemie, p) == 2)
+        {
+            options = new List<string> { $"Vous avez perdu, quitter le combat !" };
+            selectedIndex = RunOptions(options, allie, enemie);
+
+            switch (selectedIndex)
+            {
+                case 0:
+                    break;
+                default:
+                    break;
             }
         }
 
         CheckHealth(enemie, allie, p);
         tourAlier = false;
+    }
+
+    private int CheckStaminaAllie(EntityAbstract allie, EntityContainer entities, EntityAbstract enemy, Player p)
+    {
+        bool hasStamina = false;
+        for (int i = 0; i < allie._ListCapacities.Count(); i++)
+        {
+            if (allie._stamina >= allie._ListCapacities[i]._stamina)
+            {
+                CheckHealthAllie(allie, entities, enemy, p);
+                return 0;
+            }
+            else
+            {
+                foreach (var ally in entities.AlliesList)
+                {
+                    if (ally._stamina >= 10)
+                    {
+                        hasStamina = true;
+                        ChangeAllie(entities, ref allie, enemy);
+                    }
+                }
+            }
+        }
+
+        if(hasStamina)
+        {
+            return 1;
+        }
+        else
+        {
+            return 2;
+        }
     }
 
     public void playerInventory(Player player, EntityAbstract allie, EntityAbstract enemie)
@@ -285,21 +335,30 @@ public class Fight
     private void ChangeAllie(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie)
     {
         alliesNames = entities.AlliesList
-            .Where(a => a._currentBlocked != 1)
+            .Where(a => a._currentBlocked != 1 && a._health > 0)
             .Select(a => a._name)
             .ToList();
+
+        alliesNames.Add("Fuir le Combat");
 
         EntityAbstract newAllie = null;
         do
         {
-            int selectedIndex = RunOptions(alliesNames, allie, enemie);
+            int selectedIndex = RunOptionsSwitch(alliesNames, allie, enemie, entities);
+            if (selectedIndex == alliesNames.Count() - 1)
+            {
+                fleeSelected = false;
+                break;
+            }
             string selectedName = alliesNames[selectedIndex];
             newAllie = entities.AlliesList.FirstOrDefault(a => a._name == selectedName);
         } while (newAllie == null);
 
-        allie = newAllie;
-        Console.WriteLine($"Vous avez choisi l'allié : {allie._name}");
-        AfficherEtatDesCombattants(allie, enemie);
+        if (fleeSelected)
+        {
+            allie = newAllie;
+            AfficherEtatDesCombattants(allie, enemie);
+        }
     }
 
     private void ChangeEnemy( EntityAbstract allie, ref EntityAbstract enemie)
@@ -574,29 +633,6 @@ public class Fight
         }
     }
 
-    private bool CheckStaminaAllie(EntityAbstract allie, EntityContainer entities)
-    {
-        for (int i = 0; i < allie._ListCapacities.Count(); i++)
-        {
-            if (allie._stamina >= allie._ListCapacities[i]._stamina)
-            {
-                return true;
-            }
-        }
-        /* A LAISSER SI VOUS VOULEZ QUE QUAND L ALLIE N'A PLUS DE STAMINA QU'IL SOIT REMVOE DE LA LISTE DE SELECTION DES ALLIES*/
-/*        var entitie = allie.GetInfoEntityUpdateBlocked("../../../Entities/entity.json");
-        var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(allie._name, StringComparison.OrdinalIgnoreCase));
-
-        if (targetAlliesUpdate != null)
-        {
-            targetAlliesUpdate._blocked = allie._blocked;
-            allie.UpdateJsonBlocked(entities, "../../../Entities/entity.json", 1);
-        }*/
-        /* FIN */
-
-        return false;
-    }
-
     private void CheckHealthAllie(EntityAbstract allie, EntityContainer entities, EntityAbstract enemy, Player p)
     {
         for(int i = 0; i < entities.AlliesList.Count(); i++)
@@ -655,6 +691,30 @@ public class Fight
         return selectedIndex;
     }
 
+    public int RunOptionsSwitch(List<string> options, EntityAbstract allie, EntityAbstract enemie, EntityContainer entities)
+    {
+
+        ConsoleKey keyPressed;
+        int selectedIndex = 0;
+        do
+        {
+            DisplayOptionsSwitch(options, selectedIndex, allie, enemie, entities);
+
+            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+            keyPressed = keyInfo.Key;
+
+            if (keyPressed == ConsoleKey.UpArrow)
+            {
+                selectedIndex = (selectedIndex > 0) ? selectedIndex - 1 : options.Count - 1;
+            }
+            else if (keyPressed == ConsoleKey.DownArrow)
+            {
+                selectedIndex = (selectedIndex < options.Count - 1) ? selectedIndex + 1 : 0;
+            }
+        } while (keyPressed != ConsoleKey.Enter);
+
+        return selectedIndex;
+    }
 
     private void AfficherEtatDesCombattants(EntityAbstract allie, EntityAbstract enemie)
     {
@@ -696,6 +756,36 @@ public class Fight
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.WriteLine($"  {options[i]}");
+            }
+        }
+        Console.ResetColor();
+    }
+
+    private void DisplayOptionsSwitch(List<string> options, int selectedIndex, EntityAbstract allie, EntityAbstract enemie, EntityContainer entities)
+    {
+        // fix le soucis que je suis obligé d'appuyer 46 fois pour switch de allies
+        AfficherEtatDesCombattants(allie, enemie);
+
+        Console.WriteLine("Veuillez choisir une option :\n");
+
+        List<string> displayedAllies = new List<string>();
+
+        for (int i = 0; i < options.Count(); i++)
+        {
+            for(int j = 0; j < entities.AlliesList.Count(); j++)
+            {
+                    if (i == selectedIndex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.WriteLine($"* {options[i]} - Vie : {entities.AlliesList[j]._health} - Stamina : {entities.AlliesList[j]._stamina}\n");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.WriteLine($"* {options[i]}");
+                    }
             }
         }
         Console.ResetColor();
