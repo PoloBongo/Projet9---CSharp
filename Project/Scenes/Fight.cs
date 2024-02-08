@@ -379,7 +379,7 @@ public class Fight
         EntityContainer entities;
 
         try
-    {
+        {
         // Utiliser un bloc using pour libérer la ressource après la lecture du fichier
         using (StreamReader reader = File.OpenText(path))
         {
