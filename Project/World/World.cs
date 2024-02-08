@@ -213,8 +213,9 @@ namespace MapGame
                     y = random.Next(startY + 1, startY + height - 1);
                 } while (layout[x, y] != ' '); // Modifier pour correspondre à l'espace vide
 
-                EnemyMap newEnemyMap = new EnemyMap(0, 2, x, y);
-                enemyMaps.Add(newEnemyMap);
+               /* EnemyMap newEnemyMap = new EnemyMap(0, 2, x, y);
+                
+                enemyMaps.Add(newEnemyMap);*/
             }
         }
 
@@ -468,9 +469,10 @@ namespace MapGame
             }
         }
 
-        public void StartFortressBattle(Player player, World world)
+        public void StartFortressBattle(Player player, Allies allies)
         {
             // Combat à la forteresse
+            fight.startCombat(allies.entitiesContainer, false, player, 3);
         }
 
         public List<EnemyMap> GetEnemyMaps()

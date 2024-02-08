@@ -238,7 +238,7 @@ namespace InGame
                     if (key.Key == ConsoleKey.E)
                     {
                         // Déclencher un combat ou une fonction spéciale
-                        world.StartFortressBattle(player, world);
+                        world.StartFortressBattle(player, allies);
                     }
                 }
             }
