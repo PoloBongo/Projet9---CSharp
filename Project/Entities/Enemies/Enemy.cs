@@ -1,7 +1,5 @@
 ﻿
 using MapEntities;
-using Newtonsoft.Json;
-using System.Reflection.PortableExecutable;
 
 public class Enemy : EntityAbstract
 {

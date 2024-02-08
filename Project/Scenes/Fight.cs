@@ -1,9 +1,5 @@
 ﻿using MapEntities;
 using Newtonsoft.Json;
-using System;
-using System.IO;
-using System.Numerics;
-using static System.Net.Mime.MediaTypeNames;
 
 public class Fight
 {
@@ -11,10 +7,11 @@ public class Fight
     private bool allieSwitch = false;
     private bool firstSwitch = false;
     Random random = new Random();
-    List<string> alliesNames;
+
     public void ResetEnemyHealth(EntityContainer entities, bool sanglier, int iaType)
     {
         EntityAbstract enemy = null;
+
         if (sanglier)
         {
             enemy = entities.enemiesList.FirstOrDefault(e => e.name == "Sanglier");
@@ -23,11 +20,11 @@ public class Fight
         {
             if (iaType == 1)
             {
-                enemy = entities.enemiesList.FirstOrDefault(e => e.name == "Marine");
+                enemy = entities.enemiesList.FirstOrDefault(e => e.name == "Sanglier");
             }
             else if (iaType == 2)
             {
-                enemy = entities.enemiesList.FirstOrDefault(e => e.name == "Amarial Sengoku");
+                enemy = entities.enemiesList.FirstOrDefault(e => e.name == "Marine");
             }
             else if (iaType == 3)
             {
@@ -48,7 +45,7 @@ public class Fight
 
         EntityAbstract allie = GetFirstAliveAlly(path);
         EntityAbstract enemie = entities.enemiesList[0];
-        entities = JsonConvert.DeserializeObject<EntityContainer>(File.ReadAllText("../../../Entities/entity.json"));
+
 
         if (allie != null)
         {
@@ -56,11 +53,12 @@ public class Fight
 
             if (sanglier)
             {
-                enemie = entities.enemiesList[4];
+                enemie = entities.enemiesList[3];
             }
 
-            AfficherEtatDesCombattants(allie, enemie);
+            ShowStatusOfFighters(allie, enemie);
 
+            // IA easy
             if (iaType == 1)
             {
                 while (enemie.health > 0)
@@ -74,12 +72,13 @@ public class Fight
                     }
                     else
                     {
-                        HandleEnemyTurnIARandom(allie, enemie, entities, player);
+                        HandleEnemyTurnIAEasy(allie, enemie, entities, player);
 
                     }
-                    AfficherEtatDesCombattants(allie, enemie);
+                    ShowStatusOfFighters(allie, enemie);
                 }
             }
+            // IA Normal
             else if (iaType == 2)
             {
                 while (enemie.health > 0)
@@ -93,11 +92,12 @@ public class Fight
                     }
                     else
                     {
-                        HandleEnemyTurnIADificil(allie, enemie, entities, player);
+                        HandleEnemyTurnIANormal(allie, enemie, entities, player);
                     }
-                    AfficherEtatDesCombattants(allie, enemie);
+                    ShowStatusOfFighters(allie, enemie);
                 }
             }
+            // IA Hard
             else if (iaType == 3)
             {
                 while (enemie.health > 0)
@@ -122,13 +122,14 @@ public class Fight
                         }
 
                     }
-                    AfficherEtatDesCombattants(allie, enemie);
+                    ShowStatusOfFighters(allie, enemie);
                 }
 
             }
         }
     }
 
+    // Renvoie le premier allié en vie
     private EntityAbstract GetFirstAliveAlly(string path)
     {
         string json = File.ReadAllText(path);
@@ -152,7 +153,7 @@ public class Fight
         tourAlier = allie.speed > enemie.speed || tourAlier;
     }
 
-    private void HandleAllieTurn(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie, Player p)
+    private bool HandleAllieTurn(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie, Player p)
     {
         bool canAttack = false;
         List<string> options;
@@ -165,7 +166,7 @@ public class Fight
             foundAlliesToReplace = true;
         }
 
-        // cherche un allié qui est en vie et qui a du stamina zbi la mouche
+        // cherche un allié qui est en vie et qui a du stamina
         if (!foundAlliesToReplace)
         {
             foreach (EntityAbstract ally in entities.alliesList)
@@ -206,14 +207,14 @@ public class Fight
                 {
                     options = new List<string> { "Tu as perdu" };
                     selectedIndex = RunOptions(options, allie, enemie);
-                    return;
+                    return false;
                 }
             }
             else
             {
                 options = new List<string> { "Tu as perdu" };
                 selectedIndex = RunOptions(options, allie, enemie);
-                return;
+                return false;
             }
         }
         else
@@ -237,14 +238,16 @@ public class Fight
 
         CheckHealth(enemie, allie, p);
         tourAlier = false;
+        return true;
     }
 
+    // Inventaire en combat, le player peux use des items
     public void playerInventory(Player player, EntityAbstract allie, EntityAbstract enemie)
     {
         List<string> options;
         int selectedIndex;
 
-        options = new List<string> { $"Soin Dispo : {player.NBViande}", $"Stamina Dispo : {player.NBAlcool}" };
+        options = new List<string> { $"Soin Disponible : {player.NBViande}", $"Stamina Disponible : {player.NBAlcool}" };
 
         selectedIndex = RunOptions(options, allie, enemie);
         switch (selectedIndex)
@@ -252,7 +255,7 @@ public class Fight
             case 0:
                 if (player.NBViande > 0)
                 {
-                    Soin(player, allie);
+                    Health(player, allie);
                 }
                 break;
             case 1:
@@ -264,7 +267,7 @@ public class Fight
         }
     }
 
-    public void Soin(Player player, EntityAbstract allie) 
+    public void Health(Player player, EntityAbstract allie) 
     {
         player.RemoveViande(1);
         allie.AddHealth(20);
@@ -276,6 +279,7 @@ public class Fight
         allie.AddStamina(20);
     }
 
+    // récupère l'index choisi par le player
     public int RunOptionsSwitch(List<string> options, ref EntityAbstract allie, EntityAbstract enemie)
     {
         ConsoleKey keyPressed;
@@ -306,10 +310,9 @@ public class Fight
         return selectedIndex;
     }
 
-
     private void DisplayOptionsSwitch(List<string> options, int selectedIndex, ref EntityAbstract allie, EntityAbstract enemie)
     {
-        AfficherEtatDesCombattants(allie, enemie);
+        ShowStatusOfFighters(allie, enemie);
 
         Console.WriteLine("Veuillez choisir un allié en utilisant son index :");
         for (int i = 0; i < options.Count; i++)
@@ -332,8 +335,9 @@ public class Fight
 
     private void ChangeAllie(EntityContainer entities, ref EntityAbstract allie, EntityAbstract enemie)
     {
+        // va chercher tout les alliés dans le json qui ont de la vie
         List<string> alliesNames = entities.alliesList
-            .Where(a => a.currentBlocked != 1 && a.health > 0)
+            .Where(a => a.health > 0)
             .Select(a => a.name)
             .ToList();
 
@@ -342,20 +346,20 @@ public class Fight
         EntityAbstract newAllie = entities.alliesList.FirstOrDefault(a => a.name == selectedName);
 
         allie = newAllie;
-        AfficherEtatDesCombattants(allie, enemie);
+        ShowStatusOfFighters(allie, enemie);
     }
 
 
     private void ChangeEnemy( EntityAbstract allie, ref EntityAbstract enemie)
     {
+        // l'ia va cahnger automatiquement d'enemie
         EntityAbstract newEnemy = enemie;
-
-        Console.WriteLine($"Vous avez choisi l'allié : {newEnemy.name}");
-        AfficherEtatDesCombattants(allie, newEnemy);
+        ShowStatusOfFighters(allie, newEnemy);
     }
 
     private void AttackEnemy(EntityAbstract allie, EntityAbstract enemie)
     {
+        // affiche les capacités pour attaqué l'énemie en fonction du stamina restant
         Console.WriteLine($"Choisis la capacité que tu veux utiliser pour attaquer :\n");
         List<string> displayedCapacities = new List<string>();
 
@@ -374,12 +378,14 @@ public class Fight
         {
             ManageDamageByType(selectedIndex, allie, enemie);
         }
-        
-        AfficherEtatDesCombattants(allie, enemie);
+
+        ShowStatusOfFighters(allie, enemie);
     }
 
     private void ManageDamageByType(int selectedIndex, EntityAbstract allie, EntityAbstract enemie)
     {
+        // GESTION DES DEGATS EN FONCTION DE LA RESITANCE DE CHAQUE TYPE DE FRUIT DU DEMON //
+
         /* Si l'enemy est de type Humain alors je lui fait 50% de dégât en plus*/
         if (allie.type == "Logia" && enemie.type == "Humain")
         {
@@ -420,50 +426,53 @@ public class Fight
 
     private void UpdateJsonHealth(EntityAbstract entity, string path)
     {
+        // Update le health de l'allié target dans le json
         EntityContainer entities;
 
         try
         {
-        // Utiliser un bloc using pour libérer la ressource après la lecture du fichier
-        using (StreamReader reader = File.OpenText(path))
-        {
-            string json = reader.ReadToEnd();
-            entities = JsonConvert.DeserializeObject<EntityContainer>(json);
-        }
-
-        if (entity is Allies)
-        {
-            var targetAllies = entities.alliesList.FirstOrDefault(a => a.name.Equals(entity.name, StringComparison.OrdinalIgnoreCase));
-            if (targetAllies != null)
+            // Pour éviter les crash json, on libère la ressource après utlisation
+            using (StreamReader reader = File.OpenText(path))
             {
-                if (entity.health < 0)
+                string json = reader.ReadToEnd();
+                entities = JsonConvert.DeserializeObject<EntityContainer>(json);
+            }
+
+            if (entity is Allies)
+            {
+                var targetAllies = entities.alliesList.FirstOrDefault(a => a.name.Equals(entity.name, StringComparison.OrdinalIgnoreCase));
+                if (targetAllies != null)
                 {
-                    targetAllies.health = 0.0f;
-                }
-                else
-                {
-                    targetAllies.health = entity.health;
+                    if (entity.health < 0)
+                    {
+                        targetAllies.health = 0.0f;
+                    }
+                    else
+                    {
+                        targetAllies.health = entity.health;
+                    }
                 }
             }
-        }
 
-        // Utiliser à nouveau un bloc using pour libérer la ressource après l'écriture dans le fichier
-        using (StreamWriter writer = File.CreateText(path))
+            // Pour éviter les crash json, on libère la ressource après utlisation
+            using (StreamWriter writer = File.CreateText(path))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(writer, entities);
+                writer.Close();
+            }
+        }
+        catch (IOException ex)
         {
-            JsonSerializer serializer = new JsonSerializer();
-            serializer.Serialize(writer, entities);
+            // exception de crash
+            Console.WriteLine($"Une erreur s'est produite lors de l'accès au fichier : {ex.Message}");
         }
     }
-    catch (IOException ex)
-    {
-        // Gérer l'exception IOException
-        Console.WriteLine($"Une erreur s'est produite lors de l'accès au fichier : {ex.Message}");
-    }
-    }
 
 
-    private void HandleEnemyTurnIARandom(EntityAbstract allie, EntityAbstract enemie, EntityContainer entities, Player p)
+    private void HandleEnemyTurnIAEasy(EntityAbstract allie, EntityAbstract enemie, EntityContainer entities, Player p)
     {
+        // l'ia easy attaque avec des randoms
         int nombreAleatoire = random.Next(1, 4);
         int randomAttackEnemy = random.Next(0, 2);
 
@@ -492,8 +501,9 @@ public class Fight
         tourAlier = true;
     }
 
-    private void HandleEnemyTurnIADificil(EntityAbstract allie, EntityAbstract enemie, EntityContainer entities, Player p)
+    private void HandleEnemyTurnIANormal(EntityAbstract allie, EntityAbstract enemie, EntityContainer entities, Player p)
     {
+        // IA Normal
         IACalculMaxDamage(allie, enemie);
 
         string path = "../../../Entities/entity.json";
@@ -505,6 +515,7 @@ public class Fight
 
     private void IACalculMaxDamage(EntityAbstract allie, EntityAbstract enemie)
     {
+        // L'IA va calculer constamment la meilleur attaque qu'elle va pouvoir infliger au player
         int UpAttackIndex = -1;
         float damageUp = float.MinValue;
 
@@ -564,6 +575,7 @@ public class Fight
 
     private void IAHardCalculSwitchEnemy(EntityAbstract allie, ref EntityAbstract enemy, ref EntityContainer enemies, Player p)
     {
+        // L'IA Hard va décider elle-même si elle va switch de perso ou pas ( elle switchera si elle n'a pas l'attaque nécessaire par exmeple )
         Console.WriteLine("IA Hard");
 
         Dictionary<string, float> attackInfo = new Dictionary<string, float>();
@@ -607,16 +619,6 @@ public class Fight
                 }
             }
         }
-
-        /* Détecter le changement de perso allié, si il change alors appellé cette fonction pour que l'ia garde l'avantage sinon elle attaque avec ces spell qui font le plus de dégâts */
-
-        foreach (KeyValuePair<string, float> attackEntry in attackInfo)
-        {
-            Console.WriteLine("Nom de l'attaque : " + attackEntry.Key + ", Dommages : " + attackEntry.Value);
-        }
-
-        Console.WriteLine("ATTAQUE LA PLUS PUISSANTE : " + damageUp);
-        Console.WriteLine("POSITION DU PERSO : " + UpAttackIndex);
 
         if (UpAttackIndex != -1)
         {
@@ -683,7 +685,7 @@ public class Fight
         return selectedIndex;
     }
 
-    private void AfficherEtatDesCombattants(EntityAbstract allie, EntityAbstract enemie)
+    private void ShowStatusOfFighters(EntityAbstract allie, EntityAbstract enemie)
     {
         Console.Clear();
         Console.WriteLine(@"
@@ -707,7 +709,7 @@ public class Fight
 
     private void DisplayOptions(List<string> options, int selectedIndex, EntityAbstract allie, EntityAbstract enemie)
     {
-        AfficherEtatDesCombattants(allie, enemie);
+        ShowStatusOfFighters(allie, enemie);
 
         Console.WriteLine("Veuillez choisir une option :");
         for (int i = 0; i < options.Count; i++)
@@ -751,6 +753,7 @@ public class Fight
 
     static void DrawHealthBar(float currentHealth, int maxHealth)
     {
+        // dessine la bar de health
         int maxHealthImplicit = maxHealth ; 
         int barWidth = 40;
 
@@ -786,6 +789,7 @@ public class Fight
 
     static void DrawStaminaBar(float currentHealth, int maxHealth)
     {
+        // dessine la bar de stamina
         int maxHealthImplicit = maxHealth;
         int barWidth = 40;
 

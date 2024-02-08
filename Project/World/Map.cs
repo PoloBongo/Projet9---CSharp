@@ -1,8 +1,4 @@
-﻿
-using MapEntities;
-using MapGame;
-
-namespace MapGame
+﻿namespace MapGame
 {
     public class Map
     {
