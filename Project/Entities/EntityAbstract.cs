@@ -100,7 +100,7 @@ public abstract class EntityAbstract
 
         Allies allies2 = new Allies
         {
-            _name = "Luffy",
+            _name = "Monkey D.Luffy",
             _type = "Paramecia",
             _blocked = 0,
             _currentBlocked = 0,
@@ -583,10 +583,15 @@ public abstract class EntityAbstract
             targetAlliesUpdate._currentStamina = _stamina;
         }
 
-        // Maj du JSON avec la modif du stamina
-        string updatedJson = JsonConvert.SerializeObject(entities);
-        File.WriteAllText(path, updatedJson);
+        using (StreamWriter writer = File.CreateText(path))
+        {
+            string updatedJson = JsonConvert.SerializeObject(entities);
+            writer.Write(updatedJson);
+        }
     }
+
+
+
 
     public void UpdateJsonBlocked(EntityContainer entities, string path, int value)
     {
@@ -598,8 +603,11 @@ public abstract class EntityAbstract
         }
 
         // Maj du JSON avec la modif du blocked
-        string updatedJson = JsonConvert.SerializeObject(entities);
-        File.WriteAllText(path, updatedJson);
+        using (StreamWriter writer = File.CreateText(path))
+        {
+            string updatedJson = JsonConvert.SerializeObject(entities);
+            writer.Write(updatedJson);
+        }
     }
 
 }
