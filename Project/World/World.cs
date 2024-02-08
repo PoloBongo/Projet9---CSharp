@@ -105,11 +105,11 @@ namespace MapGame
                         {
                             Console.WriteLine("Erreur : questNPCs n'est pas initialisé.");
                         }
-                        else
+/*                        else
                         {
                             Map map = worldMaps[i, j]; // Obtenez la carte à la position actuelle
-                            questNPCs.Add(new QuestNPC(10, 10, "Test", map));
-                        }
+                            questNPCs.Add(new QuestNPC(1, 1, "Test", map));
+                        }*/
                     }
                 }
             }

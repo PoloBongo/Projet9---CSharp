@@ -19,7 +19,8 @@ namespace Project.Quest
 
         public bool IsNear(Player player)
         {
-            return Math.Abs(PositionX - player.LOCALX) <= 2 && Math.Abs(PositionY - player.LOCALY) <= 2;
+            Console.WriteLine(PositionX);
+            return Math.Abs(PositionX - player.LOCALX) <= 1 && Math.Abs(PositionY - player.LOCALY) <= 1;
         }
 
         public QuestNPC(int x, int y, string questText, Map map)

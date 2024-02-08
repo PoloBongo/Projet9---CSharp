@@ -90,8 +90,8 @@ namespace MapGame
 
         public void CreateQuestNPCs()
         {
-            questNPCs.Add(new QuestNPC(10, 10, "Tuer trois ennemis", this)); 
-            questNPCs.Add(new QuestNPC(15, 15, "Ramasser 5 morceaux de bois", this));
+            questNPCs.Add(new QuestNPC(1, 1, "Tuer trois ennemis", this));
+            questNPCs.Add(new QuestNPC(2, 2, "Ramasser 5 morceaux de bois", this));
         }
 
         public void DrawNPCs()

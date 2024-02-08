@@ -80,6 +80,7 @@ namespace Wood
                 for (int i = 0; i < woodPieceCoordinates.Count(); i++)
                 {
                     Console.WriteLine($"Suppression du morceau de bois de la carte : {woodPieceCoordinates[i].PositionX}");
+                    
                     if (check)
                     {
 
@@ -89,6 +90,7 @@ namespace Wood
 //*                        Console.WriteLine($"Suppression du morceau de bois de la carte : {woodPieceCoordinates[i].PositionX}, {woodPieceCoordinates[i].PositionY}")
 //*                        break;
                     }
+                    break;
                 }
 
 
