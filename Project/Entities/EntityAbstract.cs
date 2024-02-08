@@ -6,6 +6,7 @@ public abstract class EntityAbstract
 {
     public string _name;
     public string _type;
+    public int _index;
     public int _blocked;
     public int _currentBlocked;
     public int _maxhealth;
@@ -45,10 +46,11 @@ public abstract class EntityAbstract
         {
             _name = "Ace",
             _type = "Logia",
+            _index = 0,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 300,
-            _health = 300.0f,
+            _health = 100.0f,
             _stamina = 200.0f,
             _maxStamina = 200,
             _speed = 40,
@@ -102,10 +104,11 @@ public abstract class EntityAbstract
         {
             _name = "Monkey D.Luffy",
             _type = "Paramecia",
+            _index = 1,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 500,
-            _health = 500.0f,
+            _health = 100.0f,
             _stamina = 300.0f,
             _maxStamina = 300,
             _speed = 50,
@@ -122,7 +125,7 @@ public abstract class EntityAbstract
                     _name = "Jet Pistol",
                     _type = "Physique",
                     _damage = 20.0f,
-                    _stamina = 20.0f,
+                    _stamina = 10.0f,
                     _speed = 20,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.4f,
@@ -170,10 +173,11 @@ public abstract class EntityAbstract
         {
             _name = "Jimbey",
             _type = "Logia",
+            _index = 2,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 500,
-            _health = 500.0f,
+            _health = 100.0f,
             _stamina = 300.0f,
             _maxStamina = 300,
             _speed = 50,
@@ -190,7 +194,7 @@ public abstract class EntityAbstract
                     _name = "Fish-Man Karate",
                     _type = "Physique",
                     _damage = 20.0f,
-                    _stamina = 20.0f,
+                    _stamina = 10.0f,
                     _speed = 20,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,

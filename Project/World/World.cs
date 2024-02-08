@@ -16,7 +16,6 @@ namespace MapGame
         private bool CombatStart = false;
         Fight fight = new Fight();
         Random random = new Random();
-        private bool AllieHealth = false;
         List<string> alliesNames;
 
         public World()
@@ -355,46 +354,17 @@ namespace MapGame
             return currentMap != null && currentMap.IsNextToFortressDoor(player.LOCALX, player.LOCALY);
         }
 
-        public void CheckHealthStartFight(EntityContainer entities) 
-        { 
-            for(int i = 0; i < entities.AlliesList.Count() ;i++) 
-            {
-                if (entities.AlliesList[i]._health > 0)
-                {
-                    AllieHealth = true;
-                }
-                else
-                {
-                    AllieHealth = true;
-                }
-            }
-        }
         public void CheckForEncounter(Player player, Allies allies, Enemy enemy)
         {
             if (enemyMaps.Count != 0)
             {
                 for (int i = 0; i < enemyMaps.Count; i++)
                 {
-                    if (enemyMaps[i].LOCALX == player.LOCALX && enemyMaps[i].WORLDX == player.WORLDX && enemyMaps[i].WORLDY == player.WORLDY && !enemyMaps[i].COMBATSTART && AllieHealth)
+                    if (enemyMaps[i].LOCALX == player.LOCALX && enemyMaps[i].WORLDX == player.WORLDX && enemyMaps[i].WORLDY == player.WORLDY && !enemyMaps[i].COMBATSTART)
                     {
                         int randChance = random.Next(100);
 
-                        int chanceStartCombat1 = 50;
-                        int chanceStartCombat2 = 30;
-                        int chanceStartCombat3 = 20; 
-
-                        if (randChance < chanceStartCombat1)
-                        {
-                            HandleEncounter(allies, enemy, player, 1);
-                        }
-                        else if (randChance < chanceStartCombat1 + chanceStartCombat2)
-                        {
-                            HandleEncounter(allies, enemy, player, 2);
-                        }
-                        else if (randChance < chanceStartCombat1 + chanceStartCombat2 + chanceStartCombat3)
-                        {
-                            HandleEncounter(allies, enemy, player, 3);
-                        }
+                        HandleEncounter(allies, enemy, player, 2);
 
                         enemyMaps[i].COMBATSTART = true;
                     }
@@ -430,7 +400,7 @@ namespace MapGame
 
         private void PlaceEnemiesRandomly(Map map, int positionX, int positionY)
         {
-            int chanceSpawnEnemy = 75; // Par exemple, 50% de chance de placer un ennemi aléatoire
+            int chanceSpawnEnemy = 90; // Par exemple, 50% de chance de placer un ennemi aléatoire
 
             for (int i = 0; i < 3; i++) // Vous pouvez ajuster le nombre d'ennemis à placer
             {
@@ -457,7 +427,7 @@ namespace MapGame
         public void CheckRandEnemy(Player player, Allies allies)
         {
             int randEnemy = random.Next(1, 19);
-            if (randEnemy == player.LOCALX && AllieHealth && !(player.WORLDX == 1 && player.WORLDY == 1))
+            if (randEnemy == player.LOCALX && !(player.WORLDX == 1 && player.WORLDY == 1))
             {
                 int randChance = random.Next(100);
                 int chanceStartCombat1 = 50;  // Par exemple, 50% de chance pour le premier type de combat
