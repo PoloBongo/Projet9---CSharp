@@ -1,7 +1,5 @@
-﻿using InGame;
-using MapEntities;
+﻿using MapEntities;
 using Newtonsoft.Json;
-using System.Xml.Linq;
 
 namespace MapGame
 {
@@ -61,15 +59,14 @@ namespace MapGame
             if (!isCenterMap && !isSpecialMap)
             {
                 // Déterminer le nombre de lacs à créer
-                int numberOfLakes = random.Next(3, 5); // Entre 3 et 5 lacs
+                int numberOfLakes = random.Next(3, 5);
 
-                // Créer chaque lac
                 for (int lake = 0; lake < numberOfLakes; lake++)
                 {
-                    // Choisir un point de départ pour le lac
+
                     int lakeStartX = random.Next(3, 17);
                     int lakeStartY = random.Next(3, 17);
-                    // Déterminer la taille du lac
+                    
                     int lakeWidth = random.Next(5, 10);
                     int lakeHeight = random.Next(3, 9);
 
@@ -83,22 +80,21 @@ namespace MapGame
 
             if (isCenterMap)
             {
-                // Déterminer le nombre de maisons à créer
+                // Set le nombre de maisons à placer/créer
                 int numberOfHouses = random.Next(4, 6);
 
                 // Créer chaque maison
                 for (int house = 0; house < numberOfHouses; house++)
                 {
-                    // Choisir une taille impaire aléatoire pour la maison
-                    int houseWidth = random.Next(1, 3) * 2 + 1; // Donne un nombre impair entre 3 et 5
-                    int houseHeight = random.Next(1, 3) * 2 + 1; // Donne un nombre impair entre 3 et 5
+                    int houseWidth = random.Next(1, 3) * 2 + 1;
+                    int houseHeight = random.Next(1, 3) * 2 + 1;
 
-                    // Choisir un emplacement aléatoire pour la maison
                     int houseX, houseY;
                     bool spaceFound;
                     do
                     {
                         spaceFound = true;
+                        // set des emplacements aléatoires pour les maisons
                         houseX = random.Next(1, 20 - houseWidth);
                         houseY = random.Next(1, 20 - houseHeight);
 
@@ -340,8 +336,6 @@ namespace MapGame
                 {
                     if (enemyMaps[i].LOCALX == player.LOCALX && enemyMaps[i].WORLDX == player.WORLDX && enemyMaps[i].WORLDY == player.WORLDY && !enemyMaps[i].COMBATSTART)
                     {
-                        int randChance = random.Next(100);
-
                         HandleEncounter(allies, enemy, player, 2);
 
                         enemyMaps[i].COMBATSTART = true;
@@ -575,6 +569,7 @@ namespace MapGame
             {
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Serialize(writer, entities);
+                writer.Close();
             }
         }
 
@@ -622,11 +617,38 @@ namespace MapGame
         private void DisplayOptionsInventory(List<string> options, int selectedIndex, EntityAbstract allie)
         {
             Console.Clear();
+
+            string inventory = @"
+
+
+ ______                                            __                                   
+/      |                                          /  |                                  
+$$$$$$/  _______   __     __  ______   _______   _$$ |_     ______    ______   __    __ 
+  $$ |  /       \ /  \   /  |/      \ /       \ / $$   |   /      \  /      \ /  |  /  |
+  $$ |  $$$$$$$  |$$  \ /$$//$$$$$$  |$$$$$$$  |$$$$$$/   /$$$$$$  |/$$$$$$  |$$ |  $$ |
+  $$ |  $$ |  $$ | $$  /$$/ $$    $$ |$$ |  $$ |  $$ | __ $$ |  $$ |$$ |  $$/ $$ |  $$ |
+ _$$ |_ $$ |  $$ |  $$ $$/  $$$$$$$$/ $$ |  $$ |  $$ |/  |$$ \__$$ |$$ |      $$ \__$$ |
+/ $$   |$$ |  $$ |   $$$/   $$       |$$ |  $$ |  $$  $$/ $$    $$/ $$ |      $$    $$ |
+$$$$$$/ $$/   $$/     $/     $$$$$$$/ $$/   $$/    $$$$/   $$$$$$/  $$/        $$$$$$$ |
+                                                                              /  \__$$ |
+                                                                              $$    $$/ 
+                                                                               $$$$$$/  
+
+                                                    
+
+
+
+            ";
+
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(inventory);
+            Console.ResetColor();
+
             int inventoryX = 10;
-            int inventoryY = 10;
+            int inventoryY = 20;
 
             // Créez un cadre pour l'inventaire
-            DrawBox(inventoryX - 2, inventoryY - 1, 30, 15);
+            DrawBox(inventoryX - 2, inventoryY - 5, 30, 15);
 
             // Titre de l'inventaire
             Console.SetCursorPosition(inventoryX, inventoryY++);
@@ -653,9 +675,33 @@ namespace MapGame
         private void DisplayOptionsInfo(List<string> options, int selectedIndex, EntityContainer entities)
         {
             Console.Clear();
+
+            string informations = @"
+
+
+ ______             ______                                               __      __                               
+/      |           /      \                                             /  |    /  |                              
+$$$$$$/  _______  /$$$$$$  |______    ______   _____  ____    ______   _$$ |_   $$/   ______   _______    _______ 
+  $$ |  /       \ $$ |_ $$//      \  /      \ /     \/    \  /      \ / $$   |  /  | /      \ /       \  /       |
+  $$ |  $$$$$$$  |$$   |  /$$$$$$  |/$$$$$$  |$$$$$$ $$$$  | $$$$$$  |$$$$$$/   $$ |/$$$$$$  |$$$$$$$  |/$$$$$$$/ 
+  $$ |  $$ |  $$ |$$$$/   $$ |  $$ |$$ |  $$/ $$ | $$ | $$ | /    $$ |  $$ | __ $$ |$$ |  $$ |$$ |  $$ |$$      \ 
+ _$$ |_ $$ |  $$ |$$ |    $$ \__$$ |$$ |      $$ | $$ | $$ |/$$$$$$$ |  $$ |/  |$$ |$$ \__$$ |$$ |  $$ | $$$$$$  |
+/ $$   |$$ |  $$ |$$ |    $$    $$/ $$ |      $$ | $$ | $$ |$$    $$ |  $$  $$/ $$ |$$    $$/ $$ |  $$ |/     $$/ 
+$$$$$$/ $$/   $$/ $$/      $$$$$$/  $$/       $$/  $$/  $$/  $$$$$$$/    $$$$/  $$/  $$$$$$/  $$/   $$/ $$$$$$$/  
+
+                                                    
+
+
+
+            ";
+
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(informations);
+            Console.ResetColor();
+
             entities = JsonConvert.DeserializeObject<EntityContainer>(File.ReadAllText("../../../Entities/entity.json"));
             int inventoryX = 10;
-            int inventoryY = 10;
+            int inventoryY = 15;
 
             // Titre de l'inventaire
             Console.SetCursorPosition(inventoryX, inventoryY++);
@@ -663,9 +709,9 @@ namespace MapGame
             Console.WriteLine("\t     Informations\n");
 
             Console.WriteLine("Persoonage :\n");
-            for(int i = 0; i < entities.alliesList.Count(); i++)
+            for (int i = 0; i < entities.alliesList.Count(); i++)
             {
-                Console.WriteLine($"{i+1}. {entities.alliesList[i].name} - Level : {entities.alliesList[i].level}");
+                Console.WriteLine($"{i + 1}. {entities.alliesList[i].name} - Level : {entities.alliesList[i].level}");
                 for (int j = 0; j < entities.alliesList[i].listCapacities.Count(); j++)
                 {
                     if (entities.alliesList[i].level >= entities.alliesList[i].listCapacities[j].level)

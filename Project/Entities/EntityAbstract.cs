@@ -1,14 +1,13 @@
 ﻿
 using MapEntities;
 using Newtonsoft.Json;
+using System.IO;
+using System.IO.Pipes;
 
 public abstract class EntityAbstract
 {
     public string name;
     public string type;
-    public int index;
-    public int blocked;
-    public int currentBlocked;
     public int maxhealth;
     public float health;
     public float stamina;
@@ -46,9 +45,6 @@ public abstract class EntityAbstract
         {
             name = "Ace",
             type = "Logia",
-            index = 0,
-            blocked = 0,
-            currentBlocked = 0,
             maxhealth = 300,
             health = 300.0f,
             stamina = 200.0f,
@@ -104,10 +100,7 @@ public abstract class EntityAbstract
         {
             name = "Monkey D.Luffy",
             type = "Paramecia",
-            index = 1,
-            blocked = 0,
-            currentBlocked = 0,
-            maxhealth = 500,
+            maxhealth = 300,
             health = 300.0f,
             stamina = 300.0f,
             maxStamina = 300,
@@ -173,11 +166,8 @@ public abstract class EntityAbstract
         {
             name = "Jimbey",
             type = "Logia",
-            index = 2,
-            blocked = 0,
-            currentBlocked = 0,
-            maxhealth = 500,
-            health = 300.0f,
+            maxhealth = 400,
+            health = 400.0f,
             stamina = 300.0f,
             maxStamina = 300,
             speed = 50,
@@ -232,8 +222,6 @@ public abstract class EntityAbstract
             name = "Marine",
             type = "Humain",
             difficultyIA = "Normal",
-            blocked = 0,
-            currentBlocked = 0,
             maxhealth = 500,
             health = 500.0f,
             stamina = 300.0f,
@@ -276,76 +264,9 @@ public abstract class EntityAbstract
 
         Enemy enemy2 = new Enemy
         {
-            name = "Amarial Sengoku",
-            type = "Zoan",
-            difficultyIA = "Dificil",
-            blocked = 0,
-            currentBlocked = 0,
-            maxhealth = 500,
-            health = 500.0f,
-            stamina = 300.0f,
-            maxStamina = 300,
-            speed = 50,
-            resistanceFeu = 1.5f,
-            resistanceEau = 1.5f,
-            resistanceVent = 1.5f,
-            resistancePhysique = 1.5f,
-            boostDamage = 1.0f,
-            level = 1,
-            listCapacities = new List<EntitiesCapacities>
-                    {
-                        new EntitiesCapacities
-                        {
-                            name = "Geyser of Purification",
-                            type = "Eau",
-                            damage = 30.0f,
-                            stamina = 20.0f,
-                            speed = 20,
-                            criticalChance = 1.2f,
-                            level = 0
-                        },
-                        new EntitiesCapacities
-                        {
-                            name = "Buddhist Inferno",
-                            type = "Feu",
-                            damage = 30.0f,
-                            stamina = 20.0f,
-                            speed = 20,
-                            criticalChance = 1.2f,
-                            level = 0
-                        },
-                        new EntitiesCapacities
-                        {
-                            name = "Haki",
-                            type = "Vent",
-                            damage = 50.0f,
-                            stamina = 20.0f,
-                            speed = 20,
-                            criticalChance = 1.2f,
-                            level = 0
-                        },
-                        new EntitiesCapacities
-                        {
-                            name = "Daibutsu",
-                            type = "Physique",
-                            damage = 100.0f,
-                            stamina = 100.0f,
-                            speed = 70,
-                            criticalChance = 1.2f,
-                            level = 0
-                        }
-                    },
-            currentLevel = 1,
-            currentStamina = 300,
-        };
-
-        Enemy enemy3 = new Enemy
-        {
             name = "Kobby",
             type = "Paramecia",
             difficultyIA = "Hard",
-            blocked = 0,
-            currentBlocked = 0,
             maxhealth = 500,
             health = 500.0f,
             stamina = 300.0f,
@@ -384,13 +305,11 @@ public abstract class EntityAbstract
             currentStamina = 300,
         };
 
-        Enemy enemy4 = new Enemy
+        Enemy enemy3 = new Enemy
         {
             name = "Doflamingo",
             type = "Paramecia",
             difficultyIA = "Hard",
-            blocked = 0,
-            currentBlocked = 0,
             maxhealth = 500,
             health = 500.0f,
             stamina = 300.0f,
@@ -429,13 +348,11 @@ public abstract class EntityAbstract
             currentStamina = 300,
         };
 
-        Enemy enemy5 = new Enemy
+        Enemy enemy4 = new Enemy
         {
             name = "Sanglier",
             type = "Humain",
             difficultyIA = "Normal",
-            blocked = 0,
-            currentBlocked = 0,
             maxhealth = 100,
             health = 100.0f,
             stamina = 300.0f,
@@ -477,7 +394,7 @@ public abstract class EntityAbstract
         entitiesContainer = new EntityContainer
         {
             alliesList = new List<Allies> { allies, allies2, allies3 },
-            enemiesList = new List<Enemy> { enemy, enemy, enemy3, enemy4, enemy5 },
+            enemiesList = new List<Enemy> { enemy, enemy2, enemy3, enemy4 },
         };
 
         // Check le nb d'allié pour l'hud
@@ -550,20 +467,6 @@ public abstract class EntityAbstract
         return entities;
     }
 
-    public EntityContainer GetInfoEntityUpdateBlocked(string path)
-    {
-        string json = File.ReadAllText(path);
-        EntityContainer entities = JsonConvert.DeserializeObject<EntityContainer>(json);
-
-        foreach (var ally in entities.alliesList)
-        {
-            ally.currentBlocked = ally.blocked;
-        }
-
-        return entities;
-    }
-
-
     public void UpdateJsonLevel(EntityContainer entities, string path)
     {
         var targetAlliesUpdate = entities.alliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
@@ -574,8 +477,12 @@ public abstract class EntityAbstract
         }
 
         // Maj du JSON avec la modif du level
-        string updatedJson = JsonConvert.SerializeObject(entities);
-        File.WriteAllText(path, updatedJson);
+        using (StreamWriter writer = File.CreateText(path))
+        {
+            string updatedJson = JsonConvert.SerializeObject(entities);
+            writer.Write(updatedJson);
+            writer.Close();
+        }
     }
 
     public void UpdateJsonStamina(EntityContainer entities, string path)
@@ -591,27 +498,9 @@ public abstract class EntityAbstract
         {
             string updatedJson = JsonConvert.SerializeObject(entities);
             writer.Write(updatedJson);
+            writer.Close();
         }
-    }
-
-
-
-
-    public void UpdateJsonBlocked(EntityContainer entities, string path, int value)
-    {
-        var targetAlliesUpdate = entities.alliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
-
-        if (targetAlliesUpdate != null)
-        {
-            targetAlliesUpdate.currentBlocked = value;
-        }
-
-        // Maj du JSON avec la modif du blocked
-        using (StreamWriter writer = File.CreateText(path))
-        {
-            string updatedJson = JsonConvert.SerializeObject(entities);
-            writer.Write(updatedJson);
-        }
+        
     }
 
 }

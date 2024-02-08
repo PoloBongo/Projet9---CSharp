@@ -2,8 +2,7 @@
 using MapEntities;
 using MenuPr;
 using ShopDemo;
-using System.Numerics;
-using System;
+
 namespace InGame
 {
     class Game
@@ -255,8 +254,6 @@ namespace InGame
         private void openInventory(Player player, EntityContainer entities, EntityAbstract allies)
         {
             Console.Clear();
-             
-            
 
             world.DisplayInventoryAndTeam2(player, entities, ref allies);
 
@@ -265,8 +262,6 @@ namespace InGame
         private void openInfo(Player player, EntityContainer entities, EntityAbstract allies)
         {
             Console.Clear();
-
-            
 
             world.DisplayInfoAllies(entities);
 
