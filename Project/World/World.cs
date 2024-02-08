@@ -768,7 +768,14 @@ namespace MapGame
                     var targetAlly = entityContainer.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
                     if (targetAlly != null)
                     {
-                        targetAlly._health = ally._health;
+                        if (ally._health < 0)
+                        {
+                            ally._health = 0.0f;
+                        }
+                        else
+                        {
+                            targetAlly._health = ally._health;
+                        }
                         targetAlly._stamina = ally._stamina;
                     }
                 }
