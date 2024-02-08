@@ -6,6 +6,7 @@ public abstract class EntityAbstract
 {
     public string _name;
     public string _type;
+    public int _index;
     public int _blocked;
     public int _currentBlocked;
     public int _maxhealth;
@@ -45,6 +46,7 @@ public abstract class EntityAbstract
         {
             _name = "Ace",
             _type = "Logia",
+            _index = 0,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 300,
@@ -102,6 +104,7 @@ public abstract class EntityAbstract
         {
             _name = "Monkey D.Luffy",
             _type = "Paramecia",
+            _index = 1,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 500,
@@ -170,6 +173,7 @@ public abstract class EntityAbstract
         {
             _name = "Jimbey",
             _type = "Logia",
+            _index = 2,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 500,
