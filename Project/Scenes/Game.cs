@@ -2,17 +2,16 @@
 using MapEntities;
 using MenuPr;
 using ShopDemo;
-using Project.Quest;
-using Wood;
-
+using System.Numerics;
+using System;
 namespace InGame
 {
     class Game
     {
         Enemy enemy = new Enemy();
         Allies allies = new Allies();
-        World world = new World();
         Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
+        World world = new World();
         Shop shop = new Shop();
         const int mapRows = 20;
         const int mapColumns = 20;
@@ -45,7 +44,7 @@ namespace InGame
 
 
             ";
-            string[] options = { "Play", "Credit", "Shop", "Exit" };
+            string[] options = { "Jouer", "Crédits","Shop", "Quitter" };
             Menu mainMenu = new Menu(prompt, options);
             int selectedIndex = mainMenu.Run();
 
@@ -145,6 +144,7 @@ namespace InGame
 
             Enemy enemy = new Enemy();
             Allies allies = new Allies();
+            Fight fight = new Fight();
             Console.WriteLine("\t\tLancement En Cours");
 
             World world = new World();
@@ -162,14 +162,12 @@ namespace InGame
             enemy.GetInfoEntity(path);
             allies.CreateEntity(path, entities);
             allies.GetInfoEntity(path);
-
-
+            
             while (true)
             {
                 Console.Clear();
                 world.CheckForEncounter(player, allies, enemy);
-                world.CheckRandEnemy(player, allies, enemy);
-
+                world.CheckRandEnemy(player, allies);
                 Map currentMap = world.GetMapAt(player.WORLDX, player.WORLDY);
                 currentMap.PrintMap();
                 world.DisplayInventoryAndTeam(player, entities);
@@ -177,6 +175,9 @@ namespace InGame
 
                 int newLocalX = player.LOCALX;
                 int newLocalY = player.LOCALY;
+
+                List<string> options;
+                int selectedIndex;
 
                 switch (keyInfo.Key)
                 {
@@ -192,6 +193,13 @@ namespace InGame
                     case ConsoleKey.RightArrow:
                         newLocalY++;
                         break;
+                    case ConsoleKey.T:
+                        openInventory(player, entities, allies);
+                        break;
+                    case ConsoleKey.I:
+                        openInfo(player, entities, allies);
+                        break;
+                }
                 }
 
                 // Interaction avec les PNJ
@@ -235,7 +243,6 @@ namespace InGame
                     player.LOCALY = newLocalY;
                 }
 
- 
                 // Vérifier si le joueur est à côté d'une porte
                 if (world.IsPlayerNextToDoor(player))
                 {
@@ -265,7 +272,7 @@ namespace InGame
                     if (key.Key == ConsoleKey.E)
                     {
                         // Déclencher un combat ou une fonction spéciale
-                        world.StartFortressBattle(player, world);
+                        world.StartFortressBattle(player, allies);
                     }
                 }
             }
@@ -278,6 +285,58 @@ namespace InGame
             Console.ResetColor();
             Console.ReadKey(true);
             Environment.Exit(0);
+        }
+
+        private void openInventory(Player player, EntityContainer entities, EntityAbstract allies)
+        {
+            Console.Clear();
+             
+            string art = @"
+
+                 ██████╗██████╗ ███████╗██████╗ ██╗████████╗███████╗
+                ██╔════╝██╔══██╗██╔════╝██╔══██╗██║╚══██╔══╝██╔════╝
+                ██║     ██████╔╝█████╗  ██║  ██║██║   ██║   ███████╗
+                ██║     ██╔══██╗██╔══╝  ██║  ██║██║   ██║   ╚════██║
+                ╚██████╗██║  ██║███████╗██████╔╝██║   ██║   ███████║
+                 ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝   ╚═╝   ╚══════╝
+                                                    
+
+
+
+            ";
+
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(art);
+            Console.ResetColor();
+
+            world.DisplayInventoryAndTeam2(player, entities, ref allies);
+
+        }
+
+        private void openInfo(Player player, EntityContainer entities, EntityAbstract allies)
+        {
+            Console.Clear();
+
+            string art = @"
+
+                 ██████╗██████╗ ███████╗██████╗ ██╗████████╗███████╗
+                ██╔════╝██╔══██╗██╔════╝██╔══██╗██║╚══██╔══╝██╔════╝
+                ██║     ██████╔╝█████╗  ██║  ██║██║   ██║   ███████╗
+                ██║     ██╔══██╗██╔══╝  ██║  ██║██║   ██║   ╚════██║
+                ╚██████╗██║  ██║███████╗██████╔╝██║   ██║   ███████║
+                 ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝   ╚═╝   ╚══════╝
+                                                    
+
+
+
+            ";
+
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(art);
+            Console.ResetColor();
+
+            world.DisplayInfoAllies(entities);
+
         }
 
         private void Credits()
@@ -333,12 +392,9 @@ namespace InGame
             RunMainMenu();
         }
 
-
-
-       private void Shopping()
+        private void Shopping()
         {
             //Shop.Run(player);
         }
     }
-
 }

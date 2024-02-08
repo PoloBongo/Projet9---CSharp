@@ -1,4 +1,7 @@
-﻿using MapEntities;
+﻿using InGame;
+using MapEntities;
+using Newtonsoft.Json;
+using System.Xml.Linq;
 using Newtonsoft.Json;
 using Project.Quest;
 using static Project.Quest.QuestNPC;
@@ -16,6 +19,7 @@ namespace MapGame
         private bool CombatStart = false;
         Fight fight = new Fight();
         Random random = new Random();
+        List<string> alliesNames;
 
         private List<QuestNPC> questNPCs;
 
@@ -62,63 +66,22 @@ namespace MapGame
             {
                 for (int j = 0; j < worldSize; j++)
                 {
-                    // Vérifiez si les indices i et j sont valides
-                    if (i < 0 || i >= worldSize || j < 0 || j >= worldSize)
-                    {
-                        Console.WriteLine("Erreur : indices i ou j hors limites.");
-                        continue; // Passez à l'itération suivante de la boucle
-                    }
-
                     bool isBorderMap = IsBorderMap(i, j);
                     bool isCenterMap = (i == 1 && j == 1);
                     bool isSpecialMap = (i == 0 && j == 2);
                     char[,] selectedLayout = CreateRandomLayout(isBorderMap, isCenterMap, isSpecialMap, i, j);
-
-                    // Vérifiez si worldMaps[i, j] est null avant de l'initialiser
-                    if (worldMaps[i, j] == null)
-                    {
-                        worldMaps[i, j] = new Map(20, 20);
-                    }
-
-                    // Vérifiez à nouveau si worldMaps[i, j] est null avant d'appeler InitializeCustomMap
-                    if (worldMaps[i, j] != null)
-                    {
-                        worldMaps[i, j].InitializeCustomMap(selectedLayout);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Erreur : worldMaps[{i}, {j}] est null.");
-                        continue; // Passez à l'itération suivante de la boucle
-                    }
-
-                    if (!(i == 1 && j == 1) && !(i == 0 && j == 2))
+                    worldMaps[i, j] = new Map(20, 20);
+                    worldMaps[i, j].InitializeCustomMap(selectedLayout);
+                    if (i != 1 && j != 1 && i != 0 && j != 2)
                     {
                         PlaceEnemiesRandomly(worldMaps[i, j], i, j);
                     }
-                    if (i == 1 && j == 1)
-                    {
-                        if (worldMaps[i, j] == null)
-                        {
-                            Console.WriteLine($"Erreur : La carte à la position ({i}, {j}) n'est pas initialisée.");
-                        }
-                        else if (questNPCs == null)
-                        {
-                            Console.WriteLine("Erreur : questNPCs n'est pas initialisé.");
-                        }
-/*                        else
-                        {
-                            Map map = worldMaps[i, j]; // Obtenez la carte à la position actuelle
-                            questNPCs.Add(new QuestNPC(1, 1, "Test", map));
-                        }*/
-                    }
                 }
             }
-          InitializeEnemy();
-       }
+            //InitializeEnemy();
+        }
 
-
-
-
+      
 
         public char[,] CreateRandomLayout(bool isBorderMap, bool isCenterMap, bool isSpecialMap, int mapX, int mapY)
         {
@@ -284,8 +247,9 @@ namespace MapGame
                     y = random.Next(startY + 1, startY + height - 1);
                 } while (layout[x, y] != ' '); // Modifier pour correspondre à l'espace vide
 
-                EnemyMap newEnemyMap = new EnemyMap(1, 1, x, y);
-                enemyMaps.Add(newEnemyMap);
+               /* EnemyMap newEnemyMap = new EnemyMap(0, 2, x, y);
+                
+                enemyMaps.Add(newEnemyMap);*/
             }
         }
 
@@ -413,32 +377,6 @@ namespace MapGame
                 }
             }
         }
-
-        public bool IsNextToWood(Player player)
-        {
-            if (player == null)
-            {
-                throw new ArgumentNullException(nameof(player));
-            }
-
-            Map currentMap = GetMapAt(player.WORLDX, player.WORLDY);
-            int playerLocalX = player.LOCALX;
-            int playerLocalY = player.LOCALY;
-
-            // Vérifier les cases autour de la position du joueur
-            for (int i = -1; i <= 1; i++)
-            {
-                for (int j = -1; j <= 1; j++)
-                {
-                    if (currentMap.IsWood(playerLocalX + i, playerLocalY + j))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
         public bool IsPlayerNextToDoor(Player player)
         {
             Map currentMap = GetMapAt(player.WORLDX, player.WORLDY);
@@ -451,7 +389,6 @@ namespace MapGame
             return currentMap != null && currentMap.IsNextToFortressDoor(player.LOCALX, player.LOCALY);
         }
 
-
         public void CheckForEncounter(Player player, Allies allies, Enemy enemy)
         {
             if (enemyMaps.Count != 0)
@@ -462,22 +399,7 @@ namespace MapGame
                     {
                         int randChance = random.Next(100);
 
-                        int chanceStartCombat1 = 50;
-                        int chanceStartCombat2 = 30;
-                        int chanceStartCombat3 = 20; 
-
-                        if (randChance < chanceStartCombat1)
-                        {
-                            HandleEncounter(allies, enemy, player, 1);
-                        }
-                        else if (randChance < chanceStartCombat1 + chanceStartCombat2)
-                        {
-                            HandleEncounter(allies, enemy, player, 2);
-                        }
-                        else if (randChance < chanceStartCombat1 + chanceStartCombat2 + chanceStartCombat3)
-                        {
-                            HandleEncounter(allies, enemy, player, 3);
-                        }
+                        HandleEncounter(allies, enemy, player, 2);
 
                         enemyMaps[i].COMBATSTART = true;
                     }
@@ -491,7 +413,7 @@ namespace MapGame
             fight.startCombat(allies.entitiesContainer, false, p, combatType);
         }
 
-        private void InitializeEnemy()
+        /*private void InitializeEnemy()
         {
             // Générer un nombre aléatoire entre 0 et 99
             int randChance = random.Next(100);
@@ -509,11 +431,11 @@ namespace MapGame
                 Map centerMap = worldMaps[1, 1];
                 centerMap.PlaceEnemy(newEnemyMap.LOCALX, newEnemyMap.LOCALY);
             }
-        }
+        }*/
 
         private void PlaceEnemiesRandomly(Map map, int positionX, int positionY)
         {
-            int chanceSpawnEnemy = 50; // Par exemple, 50% de chance de placer un ennemi aléatoire
+            int chanceSpawnEnemy = 90; // Par exemple, 50% de chance de placer un ennemi aléatoire
 
             for (int i = 0; i < 3; i++) // Vous pouvez ajuster le nombre d'ennemis à placer
             {
@@ -533,27 +455,29 @@ namespace MapGame
                     EnemyMap newEnemyMap = new EnemyMap(positionX, positionY, x, y);
                     enemyMaps.Add(newEnemyMap);
                     map.PlaceEnemy(x, y);
+
                 }
             }
         }
-        public void CheckRandEnemy(Player player, Allies allies, Enemy enemy)
+        public void CheckRandEnemy(Player player, Allies allies)
         {
             int randEnemy = random.Next(1, 19);
-            if (randEnemy == player.LOCALX)
+            if (randEnemy == player.LOCALX && !(player.WORLDX == 1 && player.WORLDY == 1))
             {
                 int randChance = random.Next(100);
                 int chanceStartCombat1 = 50;  // Par exemple, 50% de chance pour le premier type de combat
 
                 if (randChance < chanceStartCombat1)
                 {
-                    fight.startCombat(allies.entitiesContainer, true, player, 1); // Passer en paramètre le type de combat
+                   fight.startCombat(allies.entitiesContainer, true, player, 1); // Passer en paramètre le type de combat
                 }
             }
         }
 
-        public void StartFortressBattle(Player player, World world)
+        public void StartFortressBattle(Player player, Allies allies)
         {
             // Combat à la forteresse
+            fight.startCombat(allies.entitiesContainer, false, player, 3);
         }
 
         public List<EnemyMap> GetEnemyMaps()
@@ -632,18 +556,263 @@ namespace MapGame
             }
         }
 
+        public void DisplayInventoryAndTeam2(Player player, EntityContainer entityContainer, ref EntityAbstract allie)
+        {
+            List<string> options;
+            int selectedIndex;
+
+            options = new List<string> { $"Viande : {player.NBViande}", $"Alcool : {player.NBAlcool}", $"Or : {player.NBGold}", "Fermer" };
+            selectedIndex = RunOptionsInventory(options, allie);
+
+            switch (selectedIndex)
+            {
+                case 0:
+                    if (player.NBViande > 0)
+                    {
+                        alliesNames = entityContainer.AlliesList
+                            .Select(a => a._name)
+                            .ToList();
+
+                        EntityAbstract newAllie = null;
+                        do
+                        {
+                            selectedIndex = RunOptionsInventory(alliesNames, allie);
+                            string selectedName = alliesNames[selectedIndex];
+                            newAllie = entityContainer.AlliesList.FirstOrDefault(a => a._name == selectedName);
+                        } while (newAllie == null);
+
+                        allie = newAllie;
+                        allie.AddHealth(20);
+                        player.RemoveViande(1);
+                        AddAllyJson(allie, "../../../Entities/entity.json", 20, "Health");
+                    }
+                    break;
+                case 1:
+                    if (player.NBAlcool > 0)
+                    {
+                        alliesNames = entityContainer.AlliesList
+                            .Select(a => a._name)
+                            .ToList();
+
+                        EntityAbstract newAllie = null;
+                        do
+                        {
+                            selectedIndex = RunOptionsInventory(alliesNames, allie);
+                            string selectedName = alliesNames[selectedIndex];
+                            newAllie = entityContainer.AlliesList.FirstOrDefault(a => a._name == selectedName);
+                        } while (newAllie == null);
+
+                        allie = newAllie;
+                        allie.AddStamina(20);
+                        player.RemoveAlcool(1);
+                        AddAllyJson(allie, "../../../Entities/entity.json", 20, "Stamina");
+                    }
+                    break;
+                case 3:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void DisplayInfoAllies(EntityContainer entityContainer)
+        {
+            List<string> options;
+            int selectedIndex;
+            
+            options = new List<string> { "Fermer" };
+            selectedIndex = RunOptionsInfo(options, entityContainer);
+
+            switch (selectedIndex)
+            {
+                case 0:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void AddAllyJson(EntityAbstract entity, string path, int countType, string type)
+        {
+            EntityContainer entities;
+
+            // Utilisez un bloc using pour libérer la ressource après la lecture du fichier
+            using (StreamReader reader = File.OpenText(path))
+            {
+                string json = reader.ReadToEnd();
+                entities = JsonConvert.DeserializeObject<EntityContainer>(json);
+            }
+
+            if (entity is Allies)
+            {
+                var targetAllies = entities.AlliesList.FirstOrDefault(a => a._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
+                if (targetAllies != null)
+                {
+                    if (type == "Health")
+                    {
+                        targetAllies._health += countType;
+                    }
+                    else if (type == "Stamina")
+                    {
+                        targetAllies._stamina += countType;
+                    }
+                }
+            }
+
+            // Utilisez à nouveau un bloc using pour libérer la ressource après l'écriture dans le fichier
+            using (StreamWriter writer = File.CreateText(path))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(writer, entities);
+            }
+        }
+
+
+        public int RunOptionsInventory(List<string> options, EntityAbstract allie)
+        {
+            ConsoleKey keyPressed;
+            int selectedIndex = 0;
+            do
+            {
+                DisplayOptionsInventory(options, selectedIndex, allie);
+
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                keyPressed = keyInfo.Key;
+
+                if (keyPressed == ConsoleKey.UpArrow)
+                {
+                    selectedIndex = (selectedIndex > 0) ? selectedIndex - 1 : options.Count - 1;
+                }
+                else if (keyPressed == ConsoleKey.DownArrow)
+                {
+                    selectedIndex = (selectedIndex < options.Count - 1) ? selectedIndex + 1 : 0;
+                }
+            } while (keyPressed != ConsoleKey.Enter);
+
+            return selectedIndex;
+        }
+
+        public int RunOptionsInfo(List<string> options, EntityContainer entities)
+        {
+            ConsoleKey keyPressed;
+            int selectedIndex = 0;
+            do
+            {
+                DisplayOptionsInfo(options, selectedIndex, entities);
+
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                keyPressed = keyInfo.Key;
+
+            } while (keyPressed != ConsoleKey.Enter);
+
+            return selectedIndex;
+        }
+
+        private void DisplayOptionsInventory(List<string> options, int selectedIndex, EntityAbstract allie)
+        {
+            Console.Clear();
+            int inventoryX = 10;
+            int inventoryY = 10;
+
+            // Créez un cadre pour l'inventaire
+            DrawBox(inventoryX - 2, inventoryY - 1, 30, 15);
+
+            // Titre de l'inventaire
+            Console.SetCursorPosition(inventoryX, inventoryY++);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\t     Inventaire\n");
+            for (int i = 0; i < options.Count; i++)
+            {
+                if (i == selectedIndex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.WriteLine($"\t\t* {options[i]}");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.WriteLine($"\t\t  {options[i]}");
+                }
+            }
+            Console.ResetColor();
+        }
+
+        private void DisplayOptionsInfo(List<string> options, int selectedIndex, EntityContainer entities)
+        {
+            Console.Clear();
+            entities = JsonConvert.DeserializeObject<EntityContainer>(File.ReadAllText("../../../Entities/entity.json"));
+            int inventoryX = 10;
+            int inventoryY = 10;
+
+            // Titre de l'inventaire
+            Console.SetCursorPosition(inventoryX, inventoryY++);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\t     Informations\n");
+
+            Console.WriteLine("Persoonage :\n");
+            for(int i = 0; i < entities.AlliesList.Count(); i++)
+            {
+                Console.WriteLine($"{i+1}. {entities.AlliesList[i]._name} - Level : {entities.AlliesList[i]._level}");
+                for (int j = 0; j < entities.AlliesList[i]._ListCapacities.Count(); j++)
+                {
+                    if (entities.AlliesList[i]._level >= entities.AlliesList[i]._ListCapacities[j]._level)
+                    {
+                        Console.WriteLine($"Attaque débloqué : {entities.AlliesList[i]._ListCapacities[j]._name}");
+                    }
+                    else if (entities.AlliesList[i]._level < entities.AlliesList[i]._ListCapacities[j]._level)
+                    {
+                        Console.WriteLine($"Attaque à débloqué : {entities.AlliesList[i]._ListCapacities[j]._name} - Level requis : {entities.AlliesList[i]._ListCapacities[j]._level}");
+                    }
+                }
+                Console.WriteLine("\n");
+            }
+
+
+            for (int i = 0; i < options.Count; i++)
+            {
+                if (i == selectedIndex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.WriteLine($"\t\t* {options[i]}");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.WriteLine($"\t\t  {options[i]}");
+                }
+            }
+
+
+            Console.ResetColor();
+        }
+
         public void UpdateInfoAllies(EntityContainer entityContainer, string path)
         {
-            string json = File.ReadAllText(path);
-            var entities = JsonConvert.DeserializeObject<EntityContainer>(json);
-
-            foreach (var ally in entities.AlliesList)
+            // Utilisez un bloc using pour libérer la ressource après la lecture du fichier
+            using (StreamReader reader = File.OpenText(path))
             {
-                var targetAlly = entityContainer.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
-                if (targetAlly != null)
+                string json = reader.ReadToEnd();
+                var entities = JsonConvert.DeserializeObject<EntityContainer>(json);
+
+                foreach (var ally in entities.AlliesList)
                 {
-                    targetAlly._health = ally._health;
-                    targetAlly._stamina = ally._stamina;
+                    var targetAlly = entityContainer.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
+                    if (targetAlly != null)
+                    {
+                        if (ally._health < 0)
+                        {
+                            ally._health = 0.0f;
+                        }
+                        else
+                        {
+                            targetAlly._health = ally._health;
+                        }
+                        targetAlly._stamina = ally._stamina;
+                    }
                 }
             }
         }

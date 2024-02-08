@@ -6,6 +6,7 @@ public abstract class EntityAbstract
 {
     public string _name;
     public string _type;
+    public int _index;
     public int _blocked;
     public int _currentBlocked;
     public int _maxhealth;
@@ -45,6 +46,7 @@ public abstract class EntityAbstract
         {
             _name = "Ace",
             _type = "Logia",
+            _index = 0,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 300,
@@ -80,9 +82,9 @@ public abstract class EntityAbstract
                     _speed = 5,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.3f,
-                    _level = 0
+                    _level = 2
                 },
-                new EntitiesCapacities
+                 new EntitiesCapacities
                 {
                     _name = "Great Ring of Fire: Horse of the Sun",
                     _type = "Feu",
@@ -91,7 +93,7 @@ public abstract class EntityAbstract
                     _speed = 5,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
-                    _level = 0
+                    _level = 3
                 }
             },
             _currentLevel = 1,
@@ -100,12 +102,13 @@ public abstract class EntityAbstract
 
         Allies allies2 = new Allies
         {
-            _name = "Luffy",
+            _name = "Monkey D.Luffy",
             _type = "Paramecia",
+            _index = 1,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 500,
-            _health = 500.0f,
+            _health = 300.0f,
             _stamina = 300.0f,
             _maxStamina = 300,
             _speed = 50,
@@ -122,7 +125,7 @@ public abstract class EntityAbstract
                     _name = "Jet Pistol",
                     _type = "Physique",
                     _damage = 20.0f,
-                    _stamina = 20.0f,
+                    _stamina = 10.0f,
                     _speed = 20,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.4f,
@@ -137,7 +140,7 @@ public abstract class EntityAbstract
                     _speed = 70,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
-                    _level = 0
+                    _level = 2
                 },
                 new EntitiesCapacities
                 {
@@ -148,7 +151,7 @@ public abstract class EntityAbstract
                     _speed = 20,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.3f,
-                    _level = 0
+                    _level = 3
                 },
                 new EntitiesCapacities
                 {
@@ -159,7 +162,7 @@ public abstract class EntityAbstract
                     _speed = 20,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.3f,
-                    _level = 0
+                    _level = 5
                 }
             },
             _currentLevel = 1,
@@ -170,10 +173,11 @@ public abstract class EntityAbstract
         {
             _name = "Jimbey",
             _type = "Logia",
+            _index = 2,
             _blocked = 0,
             _currentBlocked = 0,
             _maxhealth = 500,
-            _health = 500.0f,
+            _health = 300.0f,
             _stamina = 300.0f,
             _maxStamina = 300,
             _speed = 50,
@@ -190,7 +194,7 @@ public abstract class EntityAbstract
                     _name = "Fish-Man Karate",
                     _type = "Physique",
                     _damage = 20.0f,
-                    _stamina = 20.0f,
+                    _stamina = 10.0f,
                     _speed = 20,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
@@ -205,7 +209,7 @@ public abstract class EntityAbstract
                     _speed = 70,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
-                    _level = 0
+                    _level = 1
                 },
                 new EntitiesCapacities
                 {
@@ -216,7 +220,7 @@ public abstract class EntityAbstract
                     _speed = 70,
                     _boostDamage = 1.0f,
                     _criticalChance = 1.2f,
-                    _level = 0
+                    _level = 4
                 }
             },
             _currentLevel = 1,
@@ -583,10 +587,15 @@ public abstract class EntityAbstract
             targetAlliesUpdate._currentStamina = _stamina;
         }
 
-        // Maj du JSON avec la modif du stamina
-        string updatedJson = JsonConvert.SerializeObject(entities);
-        File.WriteAllText(path, updatedJson);
+        using (StreamWriter writer = File.CreateText(path))
+        {
+            string updatedJson = JsonConvert.SerializeObject(entities);
+            writer.Write(updatedJson);
+        }
     }
+
+
+
 
     public void UpdateJsonBlocked(EntityContainer entities, string path, int value)
     {
@@ -598,8 +607,11 @@ public abstract class EntityAbstract
         }
 
         // Maj du JSON avec la modif du blocked
-        string updatedJson = JsonConvert.SerializeObject(entities);
-        File.WriteAllText(path, updatedJson);
+        using (StreamWriter writer = File.CreateText(path))
+        {
+            string updatedJson = JsonConvert.SerializeObject(entities);
+            writer.Write(updatedJson);
+        }
     }
 
 }
