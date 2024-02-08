@@ -1,5 +1,6 @@
 ﻿
 using MapGame;
+using Wood;
 
 namespace Wood
 {
@@ -20,15 +21,15 @@ namespace Wood
         private int woodCollected;
         private int worldX;
         private int worldY;
-        private Map map;
+        /*private Map map;*/
         private List<WoodPiece> woodPieces;
 
         public WoodCollector(int worldX, int worldY, int localX, int localY, int initialWoodCollected, Map map, List<WoodPiece> woodPieces)
         {
-            this.worldX = worldX;
-            this.worldY = worldY;
+            this.worldX = localX;
+            this.worldY = localY;
             woodCollected = initialWoodCollected;
-            this.map = map;
+            /*this.map = map;*/
             this.woodPieces = woodPieces;
         }
 
@@ -68,7 +69,7 @@ namespace Wood
 
 
 
-        public void CollectWood()
+        public void CollectWood(Map map, bool check)
         {
             if (woodCollected < 5)
             {
@@ -77,16 +78,16 @@ namespace Wood
 
                 // Récupérer les coordonnées du morceau de bois
                 var woodPieceCoordinates = map.WoodPieces;
-                foreach (var woodPiece in woodPieceCoordinates)
+                for (int i = 0; i < woodPieceCoordinates.Count(); i++)
                 {
-                    int woodPieceX = woodPiece.PositionX;
-                    int woodPieceY = woodPiece.PositionY;
-
-                    if (woodPieceX == worldX && woodPieceY == worldY)
+                    Console.WriteLine($"Suppression du morceau de bois de la carte : {woodPieceCoordinates[i].PositionX}");
+                    if (check)
                     {
+
+
                         // Remplacer le morceau de bois par de l'herbe sur la carte
-                        map.ClearWoodPiecePosition(woodPieceX, woodPieceY);
-                        Console.WriteLine($"Suppression du morceau de bois de la carte : {woodPieceX}, {woodPieceY}");
+                        map.ClearWoodPiecePosition(woodPieceCoordinates[i].PositionX, woodPieceCoordinates[i].PositionY);
+                        Console.WriteLine($"Suppression du morceau de bois de la carte : {woodPieceCoordinates[i].PositionX}, {woodPieceCoordinates[i].PositionY}");
                         break;
                     }
                 }
@@ -100,3 +101,4 @@ namespace Wood
         }
     }
 }
+

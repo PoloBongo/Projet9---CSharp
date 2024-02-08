@@ -45,12 +45,14 @@ namespace MapGame
 
         public void ClearWoodPiecePosition(int x, int y)
         {
+            WoodPieces.RemoveAll(woodPiece => woodPiece.PositionX == x && woodPiece.PositionY == y);
+
+            Console.Write("cc");
             if (matrix[x, y] == '!')
             {
                 matrix[x, y] = '.'; 
 
-                // Supprimer le morceau de bois de la liste WoodPieces
-                WoodPieces.RemoveAll(woodPiece => woodPiece.PositionX == x && woodPiece.PositionY == y);
+      
             }
         }
 
@@ -206,9 +208,9 @@ namespace MapGame
 
         public void DrawWoodPieces()
         {
-            foreach (var woodPiece in WoodPieces)
+            for(int i = 0; i < WoodPieces.Count(); i++)
             {
-                matrix[woodPiece.PositionX, woodPiece.PositionY] = '!';
+                matrix[WoodPieces[i].PositionX, WoodPieces[i].PositionY] = '!';
             }
         }
 

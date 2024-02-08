@@ -17,7 +17,6 @@ namespace InGame
         const int mapRows = 20;
         const int mapColumns = 20;
 
-        WoodCollector woodCollector;
 
         public void Start()
         {
@@ -216,7 +215,7 @@ namespace InGame
                     if (key.Key == ConsoleKey.E)
                     {
                         // Collecter du bois via le collecteur de bois
-                        woodCollector.CollectWood();
+                        woodCollector.CollectWood(map,true);
                     }
                 }
 
