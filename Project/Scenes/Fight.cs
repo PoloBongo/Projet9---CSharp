@@ -59,6 +59,12 @@ public class Fight
                 enemie = entities.EnemiesList[4];
             }
 
+            if (sanglier)
+            {
+                enemie = entities.EnemiesList[4];
+                player.SangliersTues++;
+            }
+
             AfficherEtatDesCombattants(allie, enemie);
 
             if (iaType == 1)

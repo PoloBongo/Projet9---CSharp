@@ -17,6 +17,8 @@ namespace MapGame
         private int columns;
 
         public List<QuestNPC> questNPCs = new List<QuestNPC>();
+        public List<QuestNPC2> questNPCs2 = new List<QuestNPC2>();
+
         public List<WoodPiece> WoodPieces { get; private set; }
 
         public Map(int rows, int columns)
@@ -90,9 +92,10 @@ namespace MapGame
 
         public void CreateQuestNPCs()
         {
-            questNPCs.Add(new QuestNPC(1, 1, "Tuer trois ennemis", this));
             questNPCs.Add(new QuestNPC(2, 2, "Ramasser 5 morceaux de bois", this));
+            questNPCs2.Add(new QuestNPC2(3, 3, "Tuer 5 sangliers", this));
         }
+
 
         public void DrawNPCs()
         {

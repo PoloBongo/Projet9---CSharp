@@ -13,12 +13,20 @@ namespace MapEntities
         private int nbAlcool = 1;
         private int nbGold = 100;
 
+        private int sangliersTues = 0;
+
         public Player(int worldX, int worldY, int localX, int localY)
         {
             WorldX = worldX;
             WorldY = worldY;
             LocalX = localX;
             LocalY = localY;
+        }
+
+        public int SangliersTues 
+        {
+            get => sangliersTues;
+            set => sangliersTues = value;
         }
 
         public int NBViande

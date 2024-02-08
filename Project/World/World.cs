@@ -867,5 +867,7 @@ namespace MapGame
 
             Console.ResetColor();
         }
+
+
     }
 }

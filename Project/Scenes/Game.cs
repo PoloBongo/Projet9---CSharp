@@ -169,6 +169,7 @@ namespace InGame
                 world.CheckRandEnemy(player, allies);
                 Map currentMap = world.GetMapAt(player.WORLDX, player.WORLDY);
 
+
                 List<WoodPiece> woodPiecesList = new List<WoodPiece>();
                 WoodCollector woodCollector = new WoodCollector(player.WORLDX, player.WORLDY, player.LOCALX, player.LOCALY, 0, currentMap, woodPiecesList);
 
@@ -202,29 +203,32 @@ namespace InGame
                     case ConsoleKey.I:
                         openInfo(player, entities, allies);
                         break;
-                }
-
-                // Interaction avec les PNJ
-                for (int i = 0; i < questNPCs.Count; i++)
-                {
-                    var questNpc = questNPCs[i];
-                    if (questNpc.IsNear(player))
-                    {
-                        questNpc.Interact(woodCollector, player);
+                    case ConsoleKey.F: // Interaction avec les PNJ (touche F)
+                        foreach (var questNpc in questNPCs)
+                        {
+                            if (questNpc.IsNear(player))
+                            {
+                                questNpc.Interact(woodCollector, player);
+                                break;
+                            }
+                        }
                         break;
-                    }
+                    case ConsoleKey.E: // Interaction pour ramasser du bois (touche E)
+                        if (world.IsNextToWood(player))
+                        {
+                            Console.WriteLine("\tAppuyez sur 'E' pour ramasser le bois");
+                            var key = Console.ReadKey(true);
+                            if (key.Key == ConsoleKey.E)
+                            {
+                                // Collecter du bois via le collecteur de bois
+                                woodCollector.CollectWood(currentMap, true);
+                            }
+                        }
+                        break;
                 }
+            
 
-                if (world.IsNextToWood(player))
-                {
-                    Console.WriteLine("\tAppuyez sur 'E' pour ramasser le bois");
-                    var key = Console.ReadKey(true);
-                    if (key.Key == ConsoleKey.E)
-                    {
-                        // Collecter du bois via le collecteur de bois
-                        woodCollector.CollectWood(currentMap, true);
-                    }
-                }
+
 
                 // Gérer le changement de carte si le joueur atteint les bords de la carte actuelle
                 if (newLocalX < 0 || newLocalX >= mapRows || newLocalY < 0 || newLocalY >= mapColumns)
