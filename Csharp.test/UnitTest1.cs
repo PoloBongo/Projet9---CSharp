@@ -354,7 +354,7 @@ namespace Csharp.test
                 currentStamina = 300,
             };
 
-            entities.alliesList = new List<Allies> { allie1, allies2  };
+            entities.alliesList = new List<Allies> { allie1, allies2 };
 
             entities.alliesList[1].AddHealth(20);
             Assert.AreEqual(520, entities.alliesList[1].health);

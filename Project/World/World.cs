@@ -376,7 +376,7 @@ namespace MapGame
         private void HandleEncounter(Allies allies, Enemy enemy, Player p, int combatType)
         {
             // Combat entre le joueur et l'ennemi
-            fight.startCombat(allies.entitiesContainer, false, p, combatType);
+            fight.StartCombat(allies.entitiesContainer, false, p, combatType);
         }
 
         private void PlaceEnemiesRandomly(Map map, int positionX, int positionY)
@@ -409,7 +409,7 @@ namespace MapGame
 
                 if (randChance < chanceStartCombat1)
                 {
-                   fight.startCombat(allies.entitiesContainer, true, player, 1); // Passer en paramètre le type de combat
+                   fight.StartCombat(allies.entitiesContainer, true, player, 1); // Passer en paramètre le type de combat
                 }
             }
         }
@@ -417,7 +417,7 @@ namespace MapGame
         public void StartFortressBattle(Player player, Allies allies)
         {
             // Combat à la forteresse
-            fight.startCombat(allies.entitiesContainer, false, player, 3);
+            fight.StartCombat(allies.entitiesContainer, false, player, 3);
         }
 
         public List<EnemyMap> GetEnemyMaps()

@@ -42,7 +42,7 @@ public class Fight
     }
 
 
-    public void startCombat(EntityContainer entities, bool sanglier, Player player, int iaType)
+    public void StartCombat(EntityContainer entities, bool sanglier, Player player, int iaType)
     {
         string path = "../../../Entities/entity.json";
 
