@@ -51,18 +51,15 @@ public class Fight
         {
             ResetEnemyHealth(entities, sanglier, iaType);
 
+           
+
             if (sanglier)
             {
                 enemie = entities.enemiesList[3];
-            }
-
-            if (sanglier)
-            {
-                enemie = entities.EnemiesList[4];
                 player.SangliersTues++;
             }
 
-            AfficherEtatDesCombattants(allie, enemie);
+            ShowStatusOfFighters(allie, enemie);
 
             // IA easy
             if (iaType == 1)

@@ -40,13 +40,13 @@ namespace Project.Quest2
                 return;
             }
 
-            if (QuestAccepted && !QuestCompleted && player.SangliersTues < 5)
+            if (QuestAccepted && !QuestCompleted && player.SangliersTues < 3)
             {
-                Console.WriteLine($"{player.SangliersTues}/5 sangliers tués.");
+                Console.WriteLine($"{player.SangliersTues}/3 sangliers tués.");
                 return;
             }
 
-            if (player.SangliersTues >= 5)
+            if (player.SangliersTues >= 3)
             {
                 Console.WriteLine("Félicitations ! Vous avez tué suffisamment de sangliers pour aider le NPC.");
                 player.NBGold += 100;
@@ -77,7 +77,7 @@ namespace Project.Quest2
 Ah, vous voilà ! J'ai un problème qui requiert votre aide.
 Des sangliers sauvages ont envahi ma ferme et causent des ravages.
 Je dois les chasser pour protéger mes cultures, mais je ne suis pas équipé pour le faire.
-Vous, un chasseur habile, pourriez-vous tuer 5 sangliers pour moi ?
+Vous, un chasseur habile, pourriez-vous tuer 3 sangliers pour moi ?
 Cela aiderait grandement à sauver ma récolte.
 
 ";
