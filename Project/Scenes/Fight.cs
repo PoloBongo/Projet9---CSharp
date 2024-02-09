@@ -183,7 +183,7 @@ public class Fight
             }
         }
 
-        // tu loose s'il en trouve aucun
+        // Loose s'il en trouve aucun
         if (!foundAlliesToReplace)
         {
             if (p.NBAlcool > 0)
@@ -282,7 +282,7 @@ public class Fight
         allie.AddStamina(20);
     }
 
-    // récupère l'index choisi par le player
+    // Récupère l'index choisi par le player
     public int RunOptionsSwitch(List<string> options, ref EntityAbstract allie, EntityAbstract enemie)
     {
         ConsoleKey keyPressed;
@@ -355,7 +355,7 @@ public class Fight
 
     private void ChangeEnemy(EntityAbstract allie, ref EntityAbstract enemie)
     {
-        // l'ia va cahnger automatiquement d'enemie
+        // l'ia va changer automatiquement d'enemie
         EntityAbstract newEnemy = enemie;
         ShowStatusOfFighters(allie, newEnemy);
     }

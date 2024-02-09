@@ -98,7 +98,7 @@ public abstract class EntityAbstract
 
         Allies allies2 = new Allies
         {
-            name = "Monkey D.Luffy",
+            name = "Luffy",
             type = "Paramecia",
             maxhealth = 300,
             health = 300.0f,

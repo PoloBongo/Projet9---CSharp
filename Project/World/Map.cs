@@ -1,8 +1,6 @@
 ﻿using Project.Quest;
 using Project.Quest2;
 using Wood;
-using static Project.Quest.QuestNPC;
-using static Project.Quest2.QuestNPC2;
 
 namespace MapGame
 {
@@ -35,19 +33,14 @@ namespace MapGame
             QuestNPC2 = new QuestNPC2(6, 6, "Tuer 5 sangliers", this);
         }
 
-
-
         public bool IsWood(int x, int y)
-    {
-        if (x >= 0 && x < rows && y >= 0 && y < columns)
         {
-            return matrix[x, y] == '!'; 
+            if (x >= 0 && x < rows && y >= 0 && y < columns)
+            {
+                return matrix[x, y] == '!';
+            }
+            return false;
         }
-        return false;
-    }
-
-
-
 
         public void ClearWoodPiecePosition(int x, int y)
         {
@@ -59,16 +52,12 @@ namespace MapGame
             }
         }
 
-
-
-
-
         private void PlaceWoodPieces()
         {
             Random random = new Random();
-            int numberOfWoodPieces = 5; 
+            int numberOfWoodPieces = 5;
             int attempts = 0;
-            int maxAttempts = 100; 
+            int maxAttempts = 100;
 
             for (int i = 0; i < numberOfWoodPieces; i++)
             {
@@ -80,22 +69,14 @@ namespace MapGame
                     attempts++;
                     if (attempts > maxAttempts)
                     {
-                        return; 
+                        return;
                     }
                 }
                 while (IsWater(x, y) || IsEnemy(x, y));
 
                 WoodPieces.Add(new WoodPiece(x, y));
-
-
             }
         }
-
-
-
-
-
-
 
         public void DrawNPCs()
         {
@@ -111,8 +92,6 @@ namespace MapGame
                 matrix[QuestNPC2.PositionX, QuestNPC2.PositionY] = '?';
             }
         }
-
-
 
 
         public void InitializeCustomMap(char[,] layout)
@@ -202,8 +181,6 @@ namespace MapGame
             return matrix[x, y] == ']' || matrix[x, y] == '[' || matrix[x, y] == '―';
         }
 
-
-
         public bool CanMoveTo(int x, int y)
         {
             return IsGrass(x, y);
@@ -220,7 +197,7 @@ namespace MapGame
 
         public void DrawWoodPieces()
         {
-            for(int i = 0; i < WoodPieces.Count(); i++)
+            for (int i = 0; i < WoodPieces.Count(); i++)
             {
                 matrix[WoodPieces[i].PositionX, WoodPieces[i].PositionY] = '!';
             }
@@ -254,8 +231,6 @@ namespace MapGame
                 }
             }
         }
-
-
 
         public void ClearEnemyPosition(int x, int y)
         {
@@ -316,6 +291,5 @@ namespace MapGame
             }
             return false;
         }
-
     }
 }

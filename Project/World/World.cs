@@ -106,10 +106,10 @@ namespace MapGame
 
             if (isCenterMap)
             {
-                // Set le nombre de maisons à placer/créer
-                int numberOfHouses = random.Next(4, 6);
+                // Détermine le nombre de maisons à placer
+                int numberOfHouses = random.Next(3, 5);
 
-                // Créer chaque maison
+                // Crée chaque maison
                 for (int house = 0; house < numberOfHouses; house++)
                 {
                     int houseWidth = random.Next(1, 3) * 2 + 1;
@@ -120,42 +120,35 @@ namespace MapGame
                     do
                     {
                         spaceFound = true;
-                        // set des emplacements aléatoires pour les maisons
                         houseX = random.Next(1, 20 - houseWidth);
                         houseY = random.Next(1, 20 - houseHeight);
 
-                        // Vérifier si l'espace est libre et sans maisons adjacentes
                         for (int x = houseX - 1; x <= houseX + houseWidth && spaceFound; x++)
                             for (int y = houseY - 1; y <= houseY + houseHeight; y++)
                                 if (x >= 0 && x < 20 && y >= 0 && y < 20 && layout[x, y] != '.')
                                     spaceFound = false;
 
                     } while (!spaceFound);
-                    if(!(mapX == 10 && mapY == 10))
-                    { 
-                        // Construire la maison
+
+                    // Construire la maison uniquement sur la carte du village
+                    if (mapX == 1 && mapY == 1)
+                    {
                         for (int x = houseX; x < houseX + houseWidth; x++)
                             for (int y = houseY; y < houseY + houseHeight; y++)
-                                layout[x, y] = 'H'; // H représente un bâtiment
-                    }
-                    // Placer une porte au milieu d'un des côtés de la maison
-                    switch (random.Next(4))
-                    {
-                        case 0: // Porte en droite
-                            layout[houseX + houseWidth / 2, houseY] = ']';
-                            break;
-                        case 1: // Porte en gauche
-                            layout[houseX + houseWidth / 2, houseY + houseHeight - 1] = '[';
-                            break;
-                        case 2: // Porte à haut
-                            layout[houseX, houseY + houseHeight / 2] = '―';
-                            break;
-                        case 3: // Porte à bas
-                            layout[houseX + houseWidth - 1, houseY + houseHeight / 2] = '―';
-                            break;
+                                layout[x, y] = 'H'; // H pour maison
+
+                        // Placer une porte
+                        switch (random.Next(4))
+                        {
+                            case 0: layout[houseX + houseWidth / 2, houseY] = ']'; break;
+                            case 1: layout[houseX + houseWidth / 2, houseY + houseHeight - 1] = '['; break;
+                            case 2: layout[houseX, houseY + houseHeight / 2] = '―'; break;
+                            case 3: layout[houseX + houseWidth - 1, houseY + houseHeight / 2] = '―'; break;
+                        }
                     }
                 }
             }
+
 
             if (isSpecialMap)
             {
@@ -342,6 +335,7 @@ namespace MapGame
                 }
             }
         }
+
         public bool IsNextToWood(Player player)
         {
             if (player == null)
@@ -563,8 +557,6 @@ namespace MapGame
                         player.RemoveAlcool(1);
                         AddAllyJson(allie, "../../../Entities/entity.json", 20, "Stamina");
                     }
-                    break;
-                case 3:
                     break;
                 default:
                     break;
@@ -818,7 +810,6 @@ namespace MapGame
             }
         }
 
-        // Méthode pour dessiner un cadre autour de l'inventaire
         private void DrawBox(int x, int y, int width, int height)
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -840,10 +831,7 @@ namespace MapGame
             // Dessine la ligne inférieure
             Console.SetCursorPosition(x, y + height - 1);
             Console.Write(horizontalLine);
-
             Console.ResetColor();
         }
-
-
     }
 }

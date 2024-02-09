@@ -47,23 +47,20 @@ namespace InGame
 
 
             ";
-            string[] options = { "Jouer", "Crédits", "Shop", "Quitter" };
+            string[] options = { "Jouer", "Crédits", "Quitter" };
             Menu mainMenu = new Menu(prompt, options);
             int selectedIndex = mainMenu.Run();
 
             switch (selectedIndex)
             {
                 case 0:
-                    //NarrateStory();
+                    NarrateStory();
                     PlayGame();
                     break;
                 case 1:
                     Credits();
                     break;
                 case 2:
-                    Shopping();
-                    break;
-                case 3:
                     ExitGame();
                     break;
             }
@@ -86,7 +83,7 @@ namespace InGame
 
 
 
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine(art);
             Console.ResetColor();
 
@@ -169,10 +166,9 @@ namespace InGame
                 world.CheckForEncounter(player, allies, enemy);
                 world.CheckRandEnemy(player, allies);
                 Map currentMap = world.GetMapAt(player.WORLDX, player.WORLDY);
+                WoodCollector woodCollector = new WoodCollector(player.WORLDX, player.WORLDY, player.LOCALX, player.LOCALY, 0, currentMap, currentMap.WoodPieces);
+                woodCollector.UpdateWoodPieces(currentMap.WoodPieces);
 
-
-                List<WoodPiece> woodPiecesList = new List<WoodPiece>();
-                WoodCollector woodCollector = new WoodCollector(player.WORLDX, player.WORLDY, player.LOCALX, player.LOCALY, 0, currentMap, woodPiecesList);
 
                 currentMap.PrintMap();
                 world.DisplayInventoryAndTeam(player, entities);
@@ -215,17 +211,20 @@ namespace InGame
                         {
                             map.QuestNPC2.Interact2(player);
                         }
-
                         break;
                     case ConsoleKey.E: // Interaction pour ramasser du bois (touche E)
                         if (world.IsNextToWood(player))
                         {
+                            Console.BackgroundColor = ConsoleColor.DarkYellow;
+                            Console.ForegroundColor = ConsoleColor.Black;
                             Console.WriteLine("\tAppuyez sur 'E' pour ramasser le bois");
+                            Console.ResetColor();
+
                             var key = Console.ReadKey(true);
                             if (key.Key == ConsoleKey.E)
                             {
                                 // Collecter du bois via le collecteur de bois
-                                woodCollector.CollectWood(currentMap, true);
+                                woodCollector.CollectWood(currentMap, player);
                             }
                         }
                         break;
@@ -358,11 +357,6 @@ namespace InGame
 
             Console.ReadKey(true);
             RunMainMenu();
-        }
-
-        private void Shopping()
-        {
-            //Shop.Run(player);
         }
     }
 }

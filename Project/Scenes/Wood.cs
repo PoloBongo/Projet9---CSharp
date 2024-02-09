@@ -1,4 +1,5 @@
 ﻿
+using MapEntities;
 using MapGame;
 using Wood;
 
@@ -64,42 +65,37 @@ namespace Wood
             }
         }
 
-
-
-
- 
-
-        public void CollectWood(Map map, bool check)
+        public void CollectWood(Map map, Player player)
         {
             if (woodCollected < 5)
             {
-                woodCollected++;
-                Console.WriteLine($"Morceau de bois ramassé. Vous avez maintenant {woodCollected}/5.");
-                // Récupérer les coordonnées du morceau de bois
-                var woodPieceCoordinates = map.WoodPieces;
-                for (int i = 0; i < woodPieceCoordinates.Count(); i++)
+                for (int i = 0; i < map.WoodPieces.Count; i++)
                 {
-                    Console.WriteLine($"Suppression du morceau de bois de la carte : {woodPieceCoordinates[i].PositionX}");
-                    
-                    if (check)
+                    var woodPiece = map.WoodPieces[i];
+                    // Vérifier si le joueur est sur la même position que le morceau de bois
+                    if (player.LOCALX == woodPiece.PositionX && player.LOCALY == woodPiece.PositionY)
                     {
-
+                        woodCollected++;
+                        Console.WriteLine($"Morceau de bois ramassé. Vous avez maintenant {woodCollected}/5.");
 
                         // Remplacer le morceau de bois par de l'herbe sur la carte
-                        map.ClearWoodPiecePosition(woodPieceCoordinates[i].PositionX, woodPieceCoordinates[i].PositionY);
-//*                        Console.WriteLine($"Suppression du morceau de bois de la carte : {woodPieceCoordinates[i].PositionX}, {woodPieceCoordinates[i].PositionY}")
-//*                        break;
+                        map.ClearWoodPiecePosition(woodPiece.PositionX, woodPiece.PositionY);
+                        break; // Sortir de la boucle après avoir ramassé le morceau de bois
                     }
-                    break;
                 }
-
-
             }
             else
             {
                 Console.WriteLine("Vous avez déjà ramassé suffisamment de bois.");
             }
         }
-     }
+        public void UpdateWoodPieces(List<WoodPiece> woodPieces)
+        {
+            this.woodPieces = woodPieces;
+        }
+
+
+
+    }
 }
 

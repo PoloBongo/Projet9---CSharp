@@ -66,29 +66,30 @@ namespace Project.Quest
 
 
 
-            string questText = @"
- ██████╗ ██╗   ██╗███████╗████████╗███████╗███████╗
-██╔═══██╗██║   ██║██╔════╝╚══██╔══╝██╔════╝██╔════╝
-██║   ██║██║   ██║█████╗     ██║   █████╗  ███████╗
-██║▄▄ ██║██║   ██║██╔══╝     ██║   ██╔══╝  ╚════██║
-╚██████╔╝╚██████╔╝███████╗   ██║   ███████╗███████║
- ╚══▀▀═╝  ╚═════╝ ╚══════╝   ╚═╝   ╚══════╝╚══════╝
+            string questArt = @"
+         ██████╗ ██╗   ██╗███████╗████████╗███████╗███████╗
+        ██╔═══██╗██║   ██║██╔════╝╚══██╔══╝██╔════╝██╔════╝
+        ██║   ██║██║   ██║█████╗     ██║   █████╗  ███████╗
+        ██║▄▄ ██║██║   ██║██╔══╝     ██║   ██╔══╝  ╚════██║
+        ╚██████╔╝╚██████╔╝███████╗   ██║   ███████╗███████║
+         ╚══▀▀═╝  ╚═════╝ ╚══════╝   ╚═╝   ╚══════╝╚══════╝
                                                    
 
           
      O
     /|\
     / \
-
-Ah, vous voilà ! Je suis dans une situation délicate.
-Ma maison a été gravement endommagée lors d'une attaque inattendue d'un sanglier furieux.
-Je dois la réparer au plus vite pour protéger ma famille, mais il me manque des matériaux essentiels.
-Vous, un courageux pirate, pourriez-vous m'aider à trouver 5 morceaux de bois ?
-Ils seraient parfaits pour réparer les dégâts.
-
+";
+            string questText = @"
+    Ah, vous voilà ! Je suis dans une situation délicate.
+    Ma maison a été gravement endommagée lors d'une attaque inattendue d'un sanglier furieux.
+    Je dois la réparer au plus vite pour protéger ma famille, mais il me manque des matériaux essentiels.
+    Vous, un courageux pirate, pourriez-vous m'aider à trouver 5 morceaux de bois ?
+    Ils seraient parfaits pour réparer les dégâts.
 ";
 
-            string fullPrompt = questText + "\nAcceptez-vous la quête ?";
+
+            string fullPrompt = questArt + questText + "\n\t\tAcceptez -vous la quête ?";
             var menu = new Menu(fullPrompt, new string[] { "Oui", "Non" });
 
             int selectedIndex = menu.Run();
@@ -96,14 +97,29 @@ Ils seraient parfaits pour réparer les dégâts.
             if (selectedIndex == 0)
             {
                 QuestAccepted = true;
-                Console.WriteLine("Quête acceptée!");
-                Console.WriteLine("Bonne chance dans votre quête!");
-                Console.WriteLine("Appuyez sur n'importe quelle touche pour continuer...");
+                Console.BackgroundColor = ConsoleColor.DarkGreen;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine("\t\tQuête acceptée!");
+                Console.ResetColor();
+
+                Console.BackgroundColor = ConsoleColor.DarkYellow;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine("\t\tAppuyez sur une touche pour continuer...");
+                Console.ResetColor();
                 Console.ReadKey();
             }
             else
             {
-                Console.WriteLine("Quête refusée.");
+                Console.BackgroundColor = ConsoleColor.DarkRed;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine("\t\tQuête refusée.");
+                Console.ResetColor();
+
+                Console.BackgroundColor = ConsoleColor.DarkYellow;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine("\t\tAppuyez sur une touche pour continuer...");
+                Console.ResetColor();
+                Console.ReadKey();
             }
         }
 
@@ -127,7 +143,12 @@ Ils seraient parfaits pour réparer les dégâts.
             // Vérifier si le joueur est proche d'un NPC et si la touche F est enfoncée
             if (IsNear(player) && IsInteractionKeyPressed())
             {
+                Console.BackgroundColor = ConsoleColor.DarkYellow;
+                Console.ForegroundColor = ConsoleColor.Black;
                 Console.WriteLine("NPC de quête à proximité. Appuyez sur F pour interagir.");
+                Console.ResetColor();
+                Console.ReadKey();
+
                 // Interagir avec le NPC si la touche F est enfoncée
                 Console.WriteLine("Interagir avec le NPC de quête...");
                 Interact(woodCollector, player);
