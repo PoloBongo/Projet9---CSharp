@@ -4,7 +4,7 @@ using MapGame;
 using MenuPr;
 using Wood;
 
-namespace Project.Quest
+namespace Project.Quest2
 {
     public class QuestNPC2
     {
@@ -32,7 +32,7 @@ namespace Project.Quest
             this.map = map;
         }
 
-        public void Interact(Player player)
+        public void Interact2(Player player)
         {
             if (HasInteracted)
             {
@@ -101,16 +101,22 @@ Cela aiderait grandement à sauver ma récolte.
             }
         }
 
-        public void UpdatePlayerActions(Player player, Map map, WoodCollector woodCollector)
+        private bool IsInteractionKeyPressed()
         {
-            foreach (var questNpc in map.questNPCs)
+            return Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.F;
+        }
+
+
+        public void UpdatePlayerActions(Player player ,List<QuestNPC2> questNPCs)
+        {
+            // Vérifier si le joueur est proche d'un NPC et si la touche F est enfoncée
+            if (IsNear(player) && IsInteractionKeyPressed())
             {
-                if (questNpc.IsNear(player))
-                {
-                    Console.WriteLine("NPC de quête à proximité, déclenchement de l'interaction");
-                    questNpc.Interact(woodCollector, player); // Ajouter l'objet Player comme argument
-                    break;
-                }
+                Console.WriteLine("NPC de quête à proximité. Appuyez sur F pour interagir.");
+                // Interagir avec le NPC si la touche F est enfoncée
+                Console.WriteLine("Interagir avec le NPC de quête...");
+                Interact2( player);
+                return;
             }
         }
 

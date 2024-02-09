@@ -1,7 +1,4 @@
-﻿using InGame;
-using MapEntities;
-using Newtonsoft.Json;
-using System.Xml.Linq;
+﻿using MapEntities;
 using Newtonsoft.Json;
 using Project.Quest;
 using static Project.Quest.QuestNPC;
@@ -37,22 +34,14 @@ namespace MapGame
 
                 InitializeWorld();
 
-                // Initialisation des quêtes après avoir initialisé worldMaps
-                questNPCs = new List<QuestNPC>
-            {
-                new QuestNPC(1, 1, "Quest 1 Description", worldMaps[0, 2]),
-                new QuestNPC(2, 3, "Quest 2 Description", worldMaps[0, 2]),
-            };
             }
             worldMaps = new Map[worldSize, worldSize];
             npcs = new List<Npc>();
             EntityContainer = new EntityContainer();
             InitializeWorld();
         }
-        public List<QuestNPC> GetQuestNPCs()
-        {
-            return questNPCs;
-        }
+  
+
         private void InitializeWorld()
         {
             // Assurez-vous que worldMaps est initialisé correctement

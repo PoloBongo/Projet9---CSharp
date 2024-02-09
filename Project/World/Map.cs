@@ -1,6 +1,8 @@
 ﻿using Project.Quest;
+using Project.Quest2;
 using Wood;
 using static Project.Quest.QuestNPC;
+using static Project.Quest2.QuestNPC2;
 
 namespace MapGame
 {
@@ -16,8 +18,8 @@ namespace MapGame
         private int rows;
         private int columns;
 
-        public List<QuestNPC> questNPCs = new List<QuestNPC>();
-        public List<QuestNPC2> questNPCs2 = new List<QuestNPC2>();
+        public QuestNPC QuestNPC1 { get; private set; }
+        public QuestNPC2 QuestNPC2 { get; private set; }
 
         public List<WoodPiece> WoodPieces { get; private set; }
 
@@ -26,14 +28,16 @@ namespace MapGame
             this.rows = rows;
             this.columns = columns;
             matrix = new char[rows, columns];
-            CreateQuestNPCs();
             WoodPieces = new List<WoodPiece>();
             PlaceWoodPieces();
+
+            QuestNPC1 = new QuestNPC(2, 2, "Ramasser 5 morceaux de bois", this);
+            QuestNPC2 = new QuestNPC2(6, 6, "Tuer 5 sangliers", this);
         }
 
 
 
-         public bool IsWood(int x, int y)
+        public bool IsWood(int x, int y)
     {
         if (x >= 0 && x < rows && y >= 0 && y < columns)
         {
@@ -90,25 +94,24 @@ namespace MapGame
 
 
 
-        public void CreateQuestNPCs()
-        {
-            questNPCs.Add(new QuestNPC(2, 2, "Ramasser 5 morceaux de bois", this));
-            questNPCs2.Add(new QuestNPC2(3, 3, "Tuer 5 sangliers", this));
-        }
+
 
 
         public void DrawNPCs()
         {
-            // Parcourir chaque PNJ
-            foreach (var npc in questNPCs)
+            // Draw NPCs for quest 1
+            if (IsGrass(QuestNPC1.PositionX, QuestNPC1.PositionY))
             {
-                // Vérifier si la position du PNJ est sur de l'herbe
-                if (IsGrass(npc.PositionX, npc.PositionY))
-                {
-                    matrix[npc.PositionX, npc.PositionY] = '?'; // Placer le PNJ sur de l'herbe
-                }
+                matrix[QuestNPC1.PositionX, QuestNPC1.PositionY] = '?';
+            }
+
+            // Draw NPCs for quest 2
+            if (IsGrass(QuestNPC2.PositionX, QuestNPC2.PositionY))
+            {
+                matrix[QuestNPC2.PositionX, QuestNPC2.PositionY] = '?';
             }
         }
+
 
 
 

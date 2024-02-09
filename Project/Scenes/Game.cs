@@ -2,10 +2,10 @@
 using MapEntities;
 using MenuPr;
 using ShopDemo;
-using System.Numerics;
-using System;
+
 using Project.Quest;
 using Wood;
+using Project.Quest2;
 
 namespace InGame
 {
@@ -18,7 +18,7 @@ namespace InGame
         Shop shop = new Shop();
         const int mapRows = 20;
         const int mapColumns = 20;
-
+        private Map map;
 
         public void Start()
         {
@@ -153,7 +153,8 @@ namespace InGame
             World world = new World();
             EntityContainer entities = new EntityContainer();
             Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
-            List<QuestNPC> questNPCs = world.GetQuestNPCs();
+
+            Map map = new Map(mapRows, mapColumns); 
 
 
             string path = "../../../Entities/entity.json";
@@ -204,14 +205,17 @@ namespace InGame
                         openInfo(player, entities, allies);
                         break;
                     case ConsoleKey.F: // Interaction avec les PNJ (touche F)
-                        foreach (var questNpc in questNPCs)
+                        if (map.QuestNPC1.IsNear(player))
                         {
-                            if (questNpc.IsNear(player))
-                            {
-                                questNpc.Interact(woodCollector, player);
-                                break;
-                            }
+                            map.QuestNPC1.Interact(woodCollector, player);
                         }
+
+                        // Interaction avec le deuxième NPC de quête
+                        if (map.QuestNPC2.IsNear(player))
+                        {
+                            map.QuestNPC2.Interact2(player);
+                        }
+
                         break;
                     case ConsoleKey.E: // Interaction pour ramasser du bois (touche E)
                         if (world.IsNextToWood(player))

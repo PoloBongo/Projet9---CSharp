@@ -17,7 +17,7 @@ namespace Project.Quest
         private const ConsoleKey InteractionKey = ConsoleKey.F;
         private Map map;
 
-        public bool IsNear(Player player)
+         public bool IsNear(Player player)
         {
             if (Math.Abs(PositionX - player.LOCALX) <= 1 && Math.Abs(PositionY - player.LOCALY) <= 1)
             {
