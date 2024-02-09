@@ -1,4 +1,10 @@
-﻿namespace MapGame
+﻿using Project.Quest;
+using Project.Quest2;
+using Wood;
+using static Project.Quest.QuestNPC;
+using static Project.Quest2.QuestNPC2;
+
+namespace MapGame
 {
     public class Map
     {
@@ -12,13 +18,102 @@
         private int rows;
         private int columns;
 
+        public QuestNPC QuestNPC1 { get; private set; }
+        public QuestNPC2 QuestNPC2 { get; private set; }
+
+        public List<WoodPiece> WoodPieces { get; private set; }
 
         public Map(int rows, int columns)
         {
             this.rows = rows;
             this.columns = columns;
             matrix = new char[rows, columns];
+            WoodPieces = new List<WoodPiece>();
+            PlaceWoodPieces();
+
+            QuestNPC1 = new QuestNPC(2, 2, "Ramasser 5 morceaux de bois", this);
+            QuestNPC2 = new QuestNPC2(6, 6, "Tuer 5 sangliers", this);
         }
+
+
+
+        public bool IsWood(int x, int y)
+    {
+        if (x >= 0 && x < rows && y >= 0 && y < columns)
+        {
+            return matrix[x, y] == '!'; 
+        }
+        return false;
+    }
+
+
+
+
+        public void ClearWoodPiecePosition(int x, int y)
+        {
+            WoodPieces.RemoveAll(woodPiece => woodPiece.PositionX == x && woodPiece.PositionY == y);
+
+            if (matrix[x, y] == '!')
+            {
+                matrix[x, y] = '.';
+            }
+        }
+
+
+
+
+
+        private void PlaceWoodPieces()
+        {
+            Random random = new Random();
+            int numberOfWoodPieces = 5; 
+            int attempts = 0;
+            int maxAttempts = 100; 
+
+            for (int i = 0; i < numberOfWoodPieces; i++)
+            {
+                int x, y;
+                do
+                {
+                    x = random.Next(rows);
+                    y = random.Next(columns);
+                    attempts++;
+                    if (attempts > maxAttempts)
+                    {
+                        return; 
+                    }
+                }
+                while (IsWater(x, y) || IsEnemy(x, y));
+
+                WoodPieces.Add(new WoodPiece(x, y));
+
+
+            }
+        }
+
+
+
+
+
+
+
+        public void DrawNPCs()
+        {
+            // Draw NPCs for quest 1
+            if (IsGrass(QuestNPC1.PositionX, QuestNPC1.PositionY))
+            {
+                matrix[QuestNPC1.PositionX, QuestNPC1.PositionY] = '?';
+            }
+
+            // Draw NPCs for quest 2
+            if (IsGrass(QuestNPC2.PositionX, QuestNPC2.PositionY))
+            {
+                matrix[QuestNPC2.PositionX, QuestNPC2.PositionY] = '?';
+            }
+        }
+
+
+
 
         public void InitializeCustomMap(char[,] layout)
         {
@@ -39,6 +134,9 @@
 
         public void PrintMap()
         {
+            DrawNPCs();
+            DrawWoodPieces();
+
             for (int i = 0; i < rows; i++)
             {
                 for (int j = 0; j < columns; j++)
@@ -105,6 +203,7 @@
         }
 
 
+
         public bool CanMoveTo(int x, int y)
         {
             return IsGrass(x, y);
@@ -116,6 +215,14 @@
             {
                 ClearPlayerPosition(x, y);
                 matrix[x, y] = '@';
+            }
+        }
+
+        public void DrawWoodPieces()
+        {
+            for(int i = 0; i < WoodPieces.Count(); i++)
+            {
+                matrix[WoodPieces[i].PositionX, WoodPieces[i].PositionY] = '!';
             }
         }
 

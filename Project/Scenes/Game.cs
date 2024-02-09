@@ -3,6 +3,10 @@ using MapEntities;
 using MenuPr;
 using ShopDemo;
 
+using Project.Quest;
+using Wood;
+using Project.Quest2;
+
 namespace InGame
 {
     class Game
@@ -14,7 +18,7 @@ namespace InGame
         Shop shop = new Shop();
         const int mapRows = 20;
         const int mapColumns = 20;
-
+        private Map map;
 
         public void Start()
         {
@@ -43,7 +47,7 @@ namespace InGame
 
 
             ";
-            string[] options = { "Jouer", "Crédits","Shop", "Quitter" };
+            string[] options = { "Jouer", "Crédits", "Shop", "Quitter" };
             Menu mainMenu = new Menu(prompt, options);
             int selectedIndex = mainMenu.Run();
 
@@ -150,19 +154,26 @@ namespace InGame
             EntityContainer entities = new EntityContainer();
             Player player = new Player(1, 1, mapRows / 2, mapColumns / 2);
 
+            Map map = new Map(mapRows, mapColumns); 
+
 
             string path = "../../../Entities/entity.json";
             enemy.CreateEntity(path, entities);
             enemy.GetInfoEntity(path);
             allies.CreateEntity(path, entities);
             allies.GetInfoEntity(path);
-            
+
             while (true)
             {
                 Console.Clear();
                 world.CheckForEncounter(player, allies, enemy);
                 world.CheckRandEnemy(player, allies);
                 Map currentMap = world.GetMapAt(player.WORLDX, player.WORLDY);
+
+
+                List<WoodPiece> woodPiecesList = new List<WoodPiece>();
+                WoodCollector woodCollector = new WoodCollector(player.WORLDX, player.WORLDY, player.LOCALX, player.LOCALY, 0, currentMap, woodPiecesList);
+
                 currentMap.PrintMap();
                 world.DisplayInventoryAndTeam(player, entities);
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
@@ -193,7 +204,36 @@ namespace InGame
                     case ConsoleKey.I:
                         openInfo(player, entities, allies);
                         break;
+                    case ConsoleKey.F: // Interaction avec les PNJ (touche F)
+                        if (map.QuestNPC1.IsNear(player))
+                        {
+                            map.QuestNPC1.Interact(woodCollector, player);
+                        }
+
+                        // Interaction avec le deuxième NPC de quête
+                        if (map.QuestNPC2.IsNear(player))
+                        {
+                            map.QuestNPC2.Interact2(player);
+                        }
+
+                        break;
+                    case ConsoleKey.E: // Interaction pour ramasser du bois (touche E)
+                        if (world.IsNextToWood(player))
+                        {
+                            Console.WriteLine("\tAppuyez sur 'E' pour ramasser le bois");
+                            var key = Console.ReadKey(true);
+                            if (key.Key == ConsoleKey.E)
+                            {
+                                // Collecter du bois via le collecteur de bois
+                                woodCollector.CollectWood(currentMap, true);
+                            }
+                        }
+                        break;
                 }
+            
+
+
+
                 // Gérer le changement de carte si le joueur atteint les bords de la carte actuelle
                 if (newLocalX < 0 || newLocalX >= mapRows || newLocalY < 0 || newLocalY >= mapColumns)
                 {

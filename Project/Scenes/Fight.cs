@@ -51,9 +51,12 @@ public class Fight
         {
             ResetEnemyHealth(entities, sanglier, iaType);
 
+           
+
             if (sanglier)
             {
                 enemie = entities.enemiesList[3];
+                player.SangliersTues++;
             }
 
             ShowStatusOfFighters(allie, enemie);
@@ -350,7 +353,7 @@ public class Fight
     }
 
 
-    private void ChangeEnemy( EntityAbstract allie, ref EntityAbstract enemie)
+    private void ChangeEnemy(EntityAbstract allie, ref EntityAbstract enemie)
     {
         // l'ia va cahnger automatiquement d'enemie
         EntityAbstract newEnemy = enemie;

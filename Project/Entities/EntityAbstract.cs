@@ -80,7 +80,7 @@ public abstract class EntityAbstract
                     criticalChance = 1.3f,
                     level = 2
                 },
-                new EntitiesCapacities
+                 new EntitiesCapacities
                 {
                     name = "Great Ring of Fire: Horse of the Sun",
                     type = "Feu",

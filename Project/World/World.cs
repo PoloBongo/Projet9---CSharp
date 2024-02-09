@@ -1,5 +1,7 @@
 ﻿using MapEntities;
 using Newtonsoft.Json;
+using Project.Quest;
+using static Project.Quest.QuestNPC;
 
 namespace MapGame
 {
@@ -16,15 +18,39 @@ namespace MapGame
         Random random = new Random();
         List<string> alliesNames;
 
+        private List<QuestNPC> questNPCs;
+
+
+        public Player player;
+        public List<Npc> npcs;
+
+
         public World()
         {
+            {
+                worldMaps = new Map[worldSize, worldSize];
+                npcs = new List<Npc>();
+                EntityContainer = new EntityContainer();
+
+                InitializeWorld();
+
+            }
             worldMaps = new Map[worldSize, worldSize];
+            npcs = new List<Npc>();
             EntityContainer = new EntityContainer();
             InitializeWorld();
         }
+  
 
         private void InitializeWorld()
         {
+            // Assurez-vous que worldMaps est initialisé correctement
+            if (worldMaps == null)
+            {
+                Console.WriteLine("Erreur : le tableau worldMaps n'est pas initialisé.");
+                return;
+            }
+
             for (int i = 0; i < worldSize; i++)
             {
                 for (int j = 0; j < worldSize; j++)
@@ -316,6 +342,31 @@ namespace MapGame
                 }
             }
         }
+        public bool IsNextToWood(Player player)
+        {
+            if (player == null)
+            {
+                throw new ArgumentNullException(nameof(player));
+            }
+
+            Map currentMap = GetMapAt(player.WORLDX, player.WORLDY);
+            int playerLocalX = player.LOCALX;
+            int playerLocalY = player.LOCALY;
+
+            // Vérifier les cases autour de la position du joueur
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    if (currentMap.IsWood(playerLocalX + i, playerLocalY + j))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         public bool IsPlayerNextToDoor(Player player)
         {
             Map currentMap = GetMapAt(player.WORLDX, player.WORLDY);
@@ -620,21 +671,15 @@ namespace MapGame
 
             string inventory = @"
 
-
- ______                                            __                                   
-/      |                                          /  |                                  
-$$$$$$/  _______   __     __  ______   _______   _$$ |_     ______    ______   __    __ 
-  $$ |  /       \ /  \   /  |/      \ /       \ / $$   |   /      \  /      \ /  |  /  |
-  $$ |  $$$$$$$  |$$  \ /$$//$$$$$$  |$$$$$$$  |$$$$$$/   /$$$$$$  |/$$$$$$  |$$ |  $$ |
-  $$ |  $$ |  $$ | $$  /$$/ $$    $$ |$$ |  $$ |  $$ | __ $$ |  $$ |$$ |  $$/ $$ |  $$ |
- _$$ |_ $$ |  $$ |  $$ $$/  $$$$$$$$/ $$ |  $$ |  $$ |/  |$$ \__$$ |$$ |      $$ \__$$ |
-/ $$   |$$ |  $$ |   $$$/   $$       |$$ |  $$ |  $$  $$/ $$    $$/ $$ |      $$    $$ |
-$$$$$$/ $$/   $$/     $/     $$$$$$$/ $$/   $$/    $$$$/   $$$$$$/  $$/        $$$$$$$ |
-                                                                              /  \__$$ |
-                                                                              $$    $$/ 
-                                                                               $$$$$$/  
-
-                                                    
+██╗███╗   ██╗██╗   ██╗███████╗███╗   ██╗████████╗ ██████╗ ██████╗ ██╗   ██╗
+██║████╗  ██║██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝
+██║██╔██╗ ██║██║   ██║█████╗  ██╔██╗ ██║   ██║   ██║   ██║██████╔╝ ╚████╔╝ 
+██║██║╚██╗██║╚██╗ ██╔╝██╔══╝  ██║╚██╗██║   ██║   ██║   ██║██╔══██╗  ╚██╔╝  
+██║██║ ╚████║ ╚████╔╝ ███████╗██║ ╚████║   ██║   ╚██████╔╝██║  ██║   ██║   
+╚═╝╚═╝  ╚═══╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝   
+                                                                           
+                                                                           
+                                                                           
 
 
 
@@ -679,17 +724,16 @@ $$$$$$/ $$/   $$/     $/     $$$$$$$/ $$/   $$/    $$$$/   $$$$$$/  $$/        $
             string informations = @"
 
 
- ______             ______                                               __      __                               
-/      |           /      \                                             /  |    /  |                              
-$$$$$$/  _______  /$$$$$$  |______    ______   _____  ____    ______   _$$ |_   $$/   ______   _______    _______ 
-  $$ |  /       \ $$ |_ $$//      \  /      \ /     \/    \  /      \ / $$   |  /  | /      \ /       \  /       |
-  $$ |  $$$$$$$  |$$   |  /$$$$$$  |/$$$$$$  |$$$$$$ $$$$  | $$$$$$  |$$$$$$/   $$ |/$$$$$$  |$$$$$$$  |/$$$$$$$/ 
-  $$ |  $$ |  $$ |$$$$/   $$ |  $$ |$$ |  $$/ $$ | $$ | $$ | /    $$ |  $$ | __ $$ |$$ |  $$ |$$ |  $$ |$$      \ 
- _$$ |_ $$ |  $$ |$$ |    $$ \__$$ |$$ |      $$ | $$ | $$ |/$$$$$$$ |  $$ |/  |$$ |$$ \__$$ |$$ |  $$ | $$$$$$  |
-/ $$   |$$ |  $$ |$$ |    $$    $$/ $$ |      $$ | $$ | $$ |$$    $$ |  $$  $$/ $$ |$$    $$/ $$ |  $$ |/     $$/ 
-$$$$$$/ $$/   $$/ $$/      $$$$$$/  $$/       $$/  $$/  $$/  $$$$$$$/    $$$$/  $$/  $$$$$$/  $$/   $$/ $$$$$$$/  
 
-                                                    
+██╗███╗   ██╗███████╗ ██████╗ ██████╗ ███╗   ███╗ █████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
+██║████╗  ██║██╔════╝██╔═══██╗██╔══██╗████╗ ████║██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+██║██╔██╗ ██║█████╗  ██║   ██║██████╔╝██╔████╔██║███████║   ██║   ██║██║   ██║██╔██╗ ██║███████╗
+██║██║╚██╗██║██╔══╝  ██║   ██║██╔══██╗██║╚██╔╝██║██╔══██║   ██║   ██║██║   ██║██║╚██╗██║╚════██║
+██║██║ ╚████║██║     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║   ██║   ██║╚██████╔╝██║ ╚████║███████║
+╚═╝╚═╝  ╚═══╝╚═╝      ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+                                                                                                
+                                                                                                
+                                                                                                
 
 
 
@@ -799,5 +843,7 @@ $$$$$$/ $$/   $$/ $$/      $$$$$$/  $$/       $$/  $$/  $$/  $$$$$$$/    $$$$/  
 
             Console.ResetColor();
         }
+
+
     }
 }

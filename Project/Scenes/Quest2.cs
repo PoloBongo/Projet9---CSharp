@@ -1,11 +1,12 @@
-﻿using MapEntities;
+﻿using System;
+using MapEntities;
 using MapGame;
 using MenuPr;
 using Wood;
 
-namespace Project.Quest
+namespace Project.Quest2
 {
-    public class QuestNPC
+    public class QuestNPC2
     {
         public int PositionX { get; private set; }
         public int PositionY { get; private set; }
@@ -14,21 +15,15 @@ namespace Project.Quest
         public bool QuestCompleted { get; private set; }
         public bool HasInteracted { get; private set; }
 
-        private const ConsoleKey InteractionKey = ConsoleKey.F;
         private Map map;
 
-         public bool IsNear(Player player)
+        public bool IsNear(Player player)
         {
-            if (Math.Abs(PositionX - player.LOCALX) <= 1 && Math.Abs(PositionY - player.LOCALY) <= 1)
-            {
-                Console.WriteLine("NPC de quête à proximité. Appuyez sur F pour interagir.");
-                return true;
-            }
-            return false;
+            Console.WriteLine(PositionX);
+            return Math.Abs(PositionX - player.LOCALX) <= 1 && Math.Abs(PositionY - player.LOCALY) <= 1;
         }
 
-
-        public QuestNPC(int x, int y, string questText, Map map)
+        public QuestNPC2(int x, int y, string questText, Map map)
         {
             PositionX = x;
             PositionY = y;
@@ -37,8 +32,7 @@ namespace Project.Quest
             this.map = map;
         }
 
-
-        public void Interact(WoodCollector woodCollector, Player player)
+        public void Interact2(Player player)
         {
             if (HasInteracted)
             {
@@ -46,15 +40,15 @@ namespace Project.Quest
                 return;
             }
 
-            if (QuestAccepted && !QuestCompleted && woodCollector.WoodCollected < 5)
+            if (QuestAccepted && !QuestCompleted && player.SangliersTues < 3)
             {
-                Console.WriteLine($"{woodCollector.WoodCollected}/5 morceaux de bois ramassés.");
+                Console.WriteLine($"{player.SangliersTues}/3 sangliers tués.");
                 return;
             }
 
-            if (woodCollector.WoodCollected >= 5)
+            if (player.SangliersTues >= 3)
             {
-                Console.WriteLine("Félicitations ! Vous avez ramassé suffisamment de bois pour aider le NPC.");
+                Console.WriteLine("Félicitations ! Vous avez tué suffisamment de sangliers pour aider le NPC.");
                 player.NBGold += 100;
                 Console.WriteLine("Le NPC vous donne 100 pièces d'or pour votre aide.");
                 QuestCompleted = true; // Marquer la quête comme terminée
@@ -63,8 +57,6 @@ namespace Project.Quest
                 HasInteracted = true; // Marquer l'interaction avec le NPC
                 return;
             }
-
-
 
             string questText = @"
  ██████╗ ██╗   ██╗███████╗████████╗███████╗███████╗
@@ -78,13 +70,15 @@ namespace Project.Quest
           
      O
     /|\
-    / \
+    / \                                                                      
+   
 
-Ah, vous voilà ! Je suis dans une situation délicate.
-Ma maison a été gravement endommagée lors d'une attaque inattendue d'un sanglier furieux.
-Je dois la réparer au plus vite pour protéger ma famille, mais il me manque des matériaux essentiels.
-Vous, un courageux pirate, pourriez-vous m'aider à trouver 5 morceaux de bois ?
-Ils seraient parfaits pour réparer les dégâts.
+
+Ah, vous voilà ! J'ai un problème qui requiert votre aide.
+Des sangliers sauvages ont envahi ma ferme et causent des ravages.
+Je dois les chasser pour protéger mes cultures, mais je ne suis pas équipé pour le faire.
+Vous, un chasseur habile, pourriez-vous tuer 3 sangliers pour moi ?
+Cela aiderait grandement à sauver ma récolte.
 
 ";
 
@@ -107,22 +101,13 @@ Ils seraient parfaits pour réparer les dégâts.
             }
         }
 
-
-        public class Npc
-        {
-            public int PositionX { get; private set; }
-            public int PositionY { get; private set; }
-
-
-        }
-
         private bool IsInteractionKeyPressed()
         {
             return Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.F;
         }
 
 
-        public void UpdatePlayerActions(Player player, WoodCollector woodCollector, List<QuestNPC> questNPCs)
+        public void UpdatePlayerActions(Player player ,List<QuestNPC2> questNPCs)
         {
             // Vérifier si le joueur est proche d'un NPC et si la touche F est enfoncée
             if (IsNear(player) && IsInteractionKeyPressed())
@@ -130,11 +115,10 @@ Ils seraient parfaits pour réparer les dégâts.
                 Console.WriteLine("NPC de quête à proximité. Appuyez sur F pour interagir.");
                 // Interagir avec le NPC si la touche F est enfoncée
                 Console.WriteLine("Interagir avec le NPC de quête...");
-                Interact(woodCollector, player);
+                Interact2( player);
                 return;
             }
         }
 
     }
 }
-        
