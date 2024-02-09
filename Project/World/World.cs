@@ -67,7 +67,6 @@ namespace MapGame
                     }
                 }
             }
-            //InitializeEnemy();
         }
 
       
@@ -86,15 +85,14 @@ namespace MapGame
             if (!isCenterMap && !isSpecialMap)
             {
                 // Déterminer le nombre de lacs à créer
-                int numberOfLakes = random.Next(3, 5); // Entre 3 et 5 lacs
+                int numberOfLakes = random.Next(3, 5);
 
-                // Créer chaque lac
                 for (int lake = 0; lake < numberOfLakes; lake++)
                 {
-                    // Choisir un point de départ pour le lac
+
                     int lakeStartX = random.Next(3, 17);
                     int lakeStartY = random.Next(3, 17);
-                    // Déterminer la taille du lac
+                    
                     int lakeWidth = random.Next(5, 10);
                     int lakeHeight = random.Next(3, 9);
 
@@ -108,22 +106,21 @@ namespace MapGame
 
             if (isCenterMap)
             {
-                // Déterminer le nombre de maisons à créer
+                // Set le nombre de maisons à placer/créer
                 int numberOfHouses = random.Next(4, 6);
 
                 // Créer chaque maison
                 for (int house = 0; house < numberOfHouses; house++)
                 {
-                    // Choisir une taille impaire aléatoire pour la maison
-                    int houseWidth = random.Next(1, 3) * 2 + 1; // Donne un nombre impair entre 3 et 5
-                    int houseHeight = random.Next(1, 3) * 2 + 1; // Donne un nombre impair entre 3 et 5
+                    int houseWidth = random.Next(1, 3) * 2 + 1;
+                    int houseHeight = random.Next(1, 3) * 2 + 1;
 
-                    // Choisir un emplacement aléatoire pour la maison
                     int houseX, houseY;
                     bool spaceFound;
                     do
                     {
                         spaceFound = true;
+                        // set des emplacements aléatoires pour les maisons
                         houseX = random.Next(1, 20 - houseWidth);
                         houseY = random.Next(1, 20 - houseHeight);
 
@@ -134,12 +131,13 @@ namespace MapGame
                                     spaceFound = false;
 
                     } while (!spaceFound);
-
-                    // Construire la maison
-                    for (int x = houseX; x < houseX + houseWidth; x++)
-                        for (int y = houseY; y < houseY + houseHeight; y++)
-                            layout[x, y] = 'H'; // H représente un bâtiment
-
+                    if(!(mapX == 10 && mapY == 10))
+                    { 
+                        // Construire la maison
+                        for (int x = houseX; x < houseX + houseWidth; x++)
+                            for (int y = houseY; y < houseY + houseHeight; y++)
+                                layout[x, y] = 'H'; // H représente un bâtiment
+                    }
                     // Placer une porte au milieu d'un des côtés de la maison
                     switch (random.Next(4))
                     {
@@ -219,30 +217,8 @@ namespace MapGame
             }
 
             // Ajouter une porte à la forteresse
-            layout[startX + fortressWidth / 2, startY] = 'D'; // 'D' pour porte
-
-            // Placer des ennemis à l'intérieur de la forteresse
-            PlaceEnemiesInFortress(startX, startY, fortressWidth, fortressHeight, layout);
+            layout[startX + fortressWidth / 2, startY] = 'D';
         }
-
-        private void PlaceEnemiesInFortress(int startX, int startY, int width, int height, char[,] layout)
-        {
-            for (int i = 0; i < 5; i++) // Nombre d'ennemis
-            {
-                int x, y;
-                do
-                {
-                    x = random.Next(startX + 1, startX + width - 1);
-                    y = random.Next(startY + 1, startY + height - 1);
-                } while (layout[x, y] != ' '); // Modifier pour correspondre à l'espace vide
-
-               /* EnemyMap newEnemyMap = new EnemyMap(0, 2, x, y);
-                
-                enemyMaps.Add(newEnemyMap);*/
-            }
-        }
-
-
         private bool AdjacentToWater(char[,] layout, int x, int y)
         {
             for (int i = -1; i <= 1; i++)
@@ -411,8 +387,6 @@ namespace MapGame
                 {
                     if (enemyMaps[i].LOCALX == player.LOCALX && enemyMaps[i].WORLDX == player.WORLDX && enemyMaps[i].WORLDY == player.WORLDY && !enemyMaps[i].COMBATSTART)
                     {
-                        int randChance = random.Next(100);
-
                         HandleEncounter(allies, enemy, player, 2);
 
                         enemyMaps[i].COMBATSTART = true;
@@ -424,53 +398,27 @@ namespace MapGame
         private void HandleEncounter(Allies allies, Enemy enemy, Player p, int combatType)
         {
             // Combat entre le joueur et l'ennemi
-            fight.startCombat(allies.entitiesContainer, false, p, combatType);
+            fight.StartCombat(allies.entitiesContainer, false, p, combatType);
         }
-
-        /*private void InitializeEnemy()
-        {
-            // Générer un nombre aléatoire entre 0 et 99
-            int randChance = random.Next(100);
-            int chanceSpawnEnemy = 70; // Par exemple, 70% de chance de faire apparaître un ennemi lors de l'initialisation
-
-            // Vérifier si le nombre aléatoire est inférieur au seuil de pourcentage
-            if (randChance < chanceSpawnEnemy)
-            {
-                int enemyLocalX = random.Next(1, 19);
-                int enemyLocalY = random.Next(1, 19);
-
-                EnemyMap newEnemyMap = new EnemyMap(1, 1, enemyLocalX, enemyLocalY);
-                enemyMaps.Add(newEnemyMap);
-
-                Map centerMap = worldMaps[1, 1];
-                centerMap.PlaceEnemy(newEnemyMap.LOCALX, newEnemyMap.LOCALY);
-            }
-        }*/
 
         private void PlaceEnemiesRandomly(Map map, int positionX, int positionY)
         {
-            int chanceSpawnEnemy = 90; // Par exemple, 50% de chance de placer un ennemi aléatoire
+            
 
-            for (int i = 0; i < 3; i++) // Vous pouvez ajuster le nombre d'ennemis à placer
+            for (int i = 0; i < 3; i++)
             {
-                // Générer un nombre aléatoire entre 0 et 99 pour chaque ennemi
-                int randChance = random.Next(100);
-
-                // Vérifier si le nombre aléatoire est inférieur au seuil de pourcentage
-                if (randChance < chanceSpawnEnemy)
+                
+                
+                int x, y;
+                do
                 {
-                    int x, y;
-                    do
-                    {
-                        x = random.Next(20);
-                        y = random.Next(20);
-                    } while (map.IsWater(x, y) || map.IsPlayer(x, y) || map.matrix[x, y] == 'O');
+                    x = random.Next(20);
+                    y = random.Next(20);
+                } while (map.IsWater(x, y) || map.IsPlayer(x, y) || map.matrix[x, y] == 'O');
 
-                    EnemyMap newEnemyMap = new EnemyMap(positionX, positionY, x, y);
-                    enemyMaps.Add(newEnemyMap);
-                    map.PlaceEnemy(x, y);
-
-                }
+                EnemyMap newEnemyMap = new EnemyMap(positionX, positionY, x, y);
+                enemyMaps.Add(newEnemyMap);
+                map.PlaceEnemy(x, y);
             }
         }
         public void CheckRandEnemy(Player player, Allies allies)
@@ -478,20 +426,14 @@ namespace MapGame
             int randEnemy = random.Next(1, 19);
             if (randEnemy == player.LOCALX && !(player.WORLDX == 1 && player.WORLDY == 1))
             {
-                int randChance = random.Next(100);
-                int chanceStartCombat1 = 50;  // Par exemple, 50% de chance pour le premier type de combat
-
-                if (randChance < chanceStartCombat1)
-                {
-                   fight.startCombat(allies.entitiesContainer, true, player, 1); // Passer en paramètre le type de combat
-                }
+                fight.StartCombat(allies.entitiesContainer, true, player, 1); // Passer en paramètre le type de combat
             }
         }
 
         public void StartFortressBattle(Player player, Allies allies)
         {
             // Combat à la forteresse
-            fight.startCombat(allies.entitiesContainer, false, player, 3);
+            fight.StartCombat(allies.entitiesContainer, false, player, 3);
         }
 
         public List<EnemyMap> GetEnemyMaps()
@@ -525,7 +467,7 @@ namespace MapGame
             Console.SetCursorPosition(inventoryX, inventoryY++);
             Console.WriteLine(new string('-', 30));
 
-            if (entityContainer.AlliesList != null)
+            if (entityContainer.alliesList != null)
             {
                 // Affiche l'équipe des alliés
                 Console.SetCursorPosition(inventoryX, inventoryY++);
@@ -534,9 +476,9 @@ namespace MapGame
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.SetCursorPosition(inventoryX, inventoryY++);
 
-                for (int i = 0; i < entityContainer.AlliesList.Count; i++)
+                for (int i = 0; i < entityContainer.alliesList.Count; i++)
                 {
-                    var ally = entityContainer.AlliesList[i];
+                    var ally = entityContainer.alliesList[i];
                     if (ally != null)
                     {
                         UpdateInfoAllies(entityContainer, "../../../Entities/entity.json");
@@ -544,19 +486,19 @@ namespace MapGame
 
                         // Nom du personnage en couleur différente
                         Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.Write(ally._name);
+                        Console.Write(ally.name);
                         Console.ResetColor();
 
                         // HP en couleur différente
                         Console.Write(" - HP:");
                         Console.ForegroundColor = ConsoleColor.DarkRed;
-                        Console.Write(ally._health);
+                        Console.Write(ally.health);
                         Console.ResetColor();
 
                         // Stamina en couleur différente
                         Console.Write(" - Stamina:");
                         Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(ally._stamina);
+                        Console.WriteLine(ally.stamina);
                         Console.ResetColor();
 
                         inventoryY++;
@@ -583,8 +525,8 @@ namespace MapGame
                 case 0:
                     if (player.NBViande > 0)
                     {
-                        alliesNames = entityContainer.AlliesList
-                            .Select(a => a._name)
+                        alliesNames = entityContainer.alliesList
+                            .Select(a => a.name)
                             .ToList();
 
                         EntityAbstract newAllie = null;
@@ -592,7 +534,7 @@ namespace MapGame
                         {
                             selectedIndex = RunOptionsInventory(alliesNames, allie);
                             string selectedName = alliesNames[selectedIndex];
-                            newAllie = entityContainer.AlliesList.FirstOrDefault(a => a._name == selectedName);
+                            newAllie = entityContainer.alliesList.FirstOrDefault(a => a.name == selectedName);
                         } while (newAllie == null);
 
                         allie = newAllie;
@@ -604,8 +546,8 @@ namespace MapGame
                 case 1:
                     if (player.NBAlcool > 0)
                     {
-                        alliesNames = entityContainer.AlliesList
-                            .Select(a => a._name)
+                        alliesNames = entityContainer.alliesList
+                            .Select(a => a.name)
                             .ToList();
 
                         EntityAbstract newAllie = null;
@@ -613,7 +555,7 @@ namespace MapGame
                         {
                             selectedIndex = RunOptionsInventory(alliesNames, allie);
                             string selectedName = alliesNames[selectedIndex];
-                            newAllie = entityContainer.AlliesList.FirstOrDefault(a => a._name == selectedName);
+                            newAllie = entityContainer.alliesList.FirstOrDefault(a => a.name == selectedName);
                         } while (newAllie == null);
 
                         allie = newAllie;
@@ -659,16 +601,16 @@ namespace MapGame
 
             if (entity is Allies)
             {
-                var targetAllies = entities.AlliesList.FirstOrDefault(a => a._name.Equals(entity._name, StringComparison.OrdinalIgnoreCase));
+                var targetAllies = entities.alliesList.FirstOrDefault(a => a.name.Equals(entity.name, StringComparison.OrdinalIgnoreCase));
                 if (targetAllies != null)
                 {
                     if (type == "Health")
                     {
-                        targetAllies._health += countType;
+                        targetAllies.health += countType;
                     }
                     else if (type == "Stamina")
                     {
-                        targetAllies._stamina += countType;
+                        targetAllies.stamina += countType;
                     }
                 }
             }
@@ -678,6 +620,7 @@ namespace MapGame
             {
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Serialize(writer, entities);
+                writer.Close();
             }
         }
 
@@ -725,11 +668,38 @@ namespace MapGame
         private void DisplayOptionsInventory(List<string> options, int selectedIndex, EntityAbstract allie)
         {
             Console.Clear();
+
+            string inventory = @"
+
+
+ ______                                            __                                   
+/      |                                          /  |                                  
+$$$$$$/  _______   __     __  ______   _______   _$$ |_     ______    ______   __    __ 
+  $$ |  /       \ /  \   /  |/      \ /       \ / $$   |   /      \  /      \ /  |  /  |
+  $$ |  $$$$$$$  |$$  \ /$$//$$$$$$  |$$$$$$$  |$$$$$$/   /$$$$$$  |/$$$$$$  |$$ |  $$ |
+  $$ |  $$ |  $$ | $$  /$$/ $$    $$ |$$ |  $$ |  $$ | __ $$ |  $$ |$$ |  $$/ $$ |  $$ |
+ _$$ |_ $$ |  $$ |  $$ $$/  $$$$$$$$/ $$ |  $$ |  $$ |/  |$$ \__$$ |$$ |      $$ \__$$ |
+/ $$   |$$ |  $$ |   $$$/   $$       |$$ |  $$ |  $$  $$/ $$    $$/ $$ |      $$    $$ |
+$$$$$$/ $$/   $$/     $/     $$$$$$$/ $$/   $$/    $$$$/   $$$$$$/  $$/        $$$$$$$ |
+                                                                              /  \__$$ |
+                                                                              $$    $$/ 
+                                                                               $$$$$$/  
+
+                                                    
+
+
+
+            ";
+
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(inventory);
+            Console.ResetColor();
+
             int inventoryX = 10;
-            int inventoryY = 10;
+            int inventoryY = 20;
 
             // Créez un cadre pour l'inventaire
-            DrawBox(inventoryX - 2, inventoryY - 1, 30, 15);
+            DrawBox(inventoryX - 2, inventoryY - 5, 30, 15);
 
             // Titre de l'inventaire
             Console.SetCursorPosition(inventoryX, inventoryY++);
@@ -756,9 +726,33 @@ namespace MapGame
         private void DisplayOptionsInfo(List<string> options, int selectedIndex, EntityContainer entities)
         {
             Console.Clear();
+
+            string informations = @"
+
+
+ ______             ______                                               __      __                               
+/      |           /      \                                             /  |    /  |                              
+$$$$$$/  _______  /$$$$$$  |______    ______   _____  ____    ______   _$$ |_   $$/   ______   _______    _______ 
+  $$ |  /       \ $$ |_ $$//      \  /      \ /     \/    \  /      \ / $$   |  /  | /      \ /       \  /       |
+  $$ |  $$$$$$$  |$$   |  /$$$$$$  |/$$$$$$  |$$$$$$ $$$$  | $$$$$$  |$$$$$$/   $$ |/$$$$$$  |$$$$$$$  |/$$$$$$$/ 
+  $$ |  $$ |  $$ |$$$$/   $$ |  $$ |$$ |  $$/ $$ | $$ | $$ | /    $$ |  $$ | __ $$ |$$ |  $$ |$$ |  $$ |$$      \ 
+ _$$ |_ $$ |  $$ |$$ |    $$ \__$$ |$$ |      $$ | $$ | $$ |/$$$$$$$ |  $$ |/  |$$ |$$ \__$$ |$$ |  $$ | $$$$$$  |
+/ $$   |$$ |  $$ |$$ |    $$    $$/ $$ |      $$ | $$ | $$ |$$    $$ |  $$  $$/ $$ |$$    $$/ $$ |  $$ |/     $$/ 
+$$$$$$/ $$/   $$/ $$/      $$$$$$/  $$/       $$/  $$/  $$/  $$$$$$$/    $$$$/  $$/  $$$$$$/  $$/   $$/ $$$$$$$/  
+
+                                                    
+
+
+
+            ";
+
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(informations);
+            Console.ResetColor();
+
             entities = JsonConvert.DeserializeObject<EntityContainer>(File.ReadAllText("../../../Entities/entity.json"));
             int inventoryX = 10;
-            int inventoryY = 10;
+            int inventoryY = 15;
 
             // Titre de l'inventaire
             Console.SetCursorPosition(inventoryX, inventoryY++);
@@ -766,18 +760,18 @@ namespace MapGame
             Console.WriteLine("\t     Informations\n");
 
             Console.WriteLine("Persoonage :\n");
-            for(int i = 0; i < entities.AlliesList.Count(); i++)
+            for (int i = 0; i < entities.alliesList.Count(); i++)
             {
-                Console.WriteLine($"{i+1}. {entities.AlliesList[i]._name} - Level : {entities.AlliesList[i]._level}");
-                for (int j = 0; j < entities.AlliesList[i]._ListCapacities.Count(); j++)
+                Console.WriteLine($"{i + 1}. {entities.alliesList[i].name} - Level : {entities.alliesList[i].level}");
+                for (int j = 0; j < entities.alliesList[i].listCapacities.Count(); j++)
                 {
-                    if (entities.AlliesList[i]._level >= entities.AlliesList[i]._ListCapacities[j]._level)
+                    if (entities.alliesList[i].level >= entities.alliesList[i].listCapacities[j].level)
                     {
-                        Console.WriteLine($"Attaque débloqué : {entities.AlliesList[i]._ListCapacities[j]._name}");
+                        Console.WriteLine($"Attaque débloqué : {entities.alliesList[i].listCapacities[j].name}");
                     }
-                    else if (entities.AlliesList[i]._level < entities.AlliesList[i]._ListCapacities[j]._level)
+                    else if (entities.alliesList[i].level < entities.alliesList[i].listCapacities[j].level)
                     {
-                        Console.WriteLine($"Attaque à débloqué : {entities.AlliesList[i]._ListCapacities[j]._name} - Level requis : {entities.AlliesList[i]._ListCapacities[j]._level}");
+                        Console.WriteLine($"Attaque à débloqué : {entities.alliesList[i].listCapacities[j].name} - Level requis : {entities.alliesList[i].listCapacities[j].level}");
                     }
                 }
                 Console.WriteLine("\n");
@@ -812,20 +806,20 @@ namespace MapGame
                 string json = reader.ReadToEnd();
                 var entities = JsonConvert.DeserializeObject<EntityContainer>(json);
 
-                foreach (var ally in entities.AlliesList)
+                foreach (var ally in entities.alliesList)
                 {
-                    var targetAlly = entityContainer.AlliesList.FirstOrDefault(a => a._name.Equals(ally._name, StringComparison.OrdinalIgnoreCase));
+                    var targetAlly = entityContainer.alliesList.FirstOrDefault(a => a.name.Equals(ally.name, StringComparison.OrdinalIgnoreCase));
                     if (targetAlly != null)
                     {
-                        if (ally._health < 0)
+                        if (ally.health < 0)
                         {
-                            ally._health = 0.0f;
+                            ally.health = 0.0f;
                         }
                         else
                         {
-                            targetAlly._health = ally._health;
+                            targetAlly.health = ally.health;
                         }
-                        targetAlly._stamina = ally._stamina;
+                        targetAlly.stamina = ally.stamina;
                     }
                 }
             }

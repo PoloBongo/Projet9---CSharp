@@ -55,112 +55,112 @@ namespace Csharp.test
             var entities = new EntityContainer();
             Allies allie = new Allies
             {
-                _name = "Ace",
-                _type = "Logia",
-                _blocked = 0,
-                _currentBlocked = 0,
-                _maxhealth = 300,
-                _health = 300.0f,
-                _stamina = 200.0f,
-                _maxStamina = 200,
-                _speed = 40,
-                _resistanceFeu = 2.0f,
-                _resistanceEau = 0.5f,
-                _resistanceVent = 0.75f,
-                _resistancePhysique = 1.5f,
-                _boostDamage = 1.0f,
-                _level = 1,
-                _ListCapacities = new List<EntitiesCapacities>
+                name = "Ace",
+                type = "Logia",
+                blocked = 0,
+                currentBlocked = 0,
+                maxhealth = 300,
+                health = 300.0f,
+                stamina = 200.0f,
+                maxStamina = 200,
+                speed = 40,
+                resistanceFeu = 2.0f,
+                resistanceEau = 0.5f,
+                resistanceVent = 0.75f,
+                resistancePhysique = 1.5f,
+                boostDamage = 1.0f,
+                level = 1,
+                listCapacities = new List<EntitiesCapacities>
             {
                 new EntitiesCapacities
                 {
-                    _name = "Chopped",
-                    _type = "Physique",
-                    _damage = 20.0f,
-                    _stamina = 10.0f,
-                    _speed = 5,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.4f,
-                    _level = 0
+                    name = "Chopped",
+                    type = "Physique",
+                    damage = 20.0f,
+                    stamina = 10.0f,
+                    speed = 5,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.4f,
+                    level = 0
                 },
                  new EntitiesCapacities
                 {
-                    _name = "Fire Punch",
-                    _type = "Feu",
-                    _damage = 40.0f,
-                    _stamina = 10.0f,
-                    _speed = 5,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.3f,
-                    _level = 0
+                    name = "Fire Punch",
+                    type = "Feu",
+                    damage = 40.0f,
+                    stamina = 10.0f,
+                    speed = 5,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.3f,
+                    level = 0
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Great Ring of Fire: Horse of the Sun",
-                    _type = "Feu",
-                    _damage = 80.0f,
-                     _stamina = 10.0f,
-                    _speed = 5,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.2f,
-                    _level = 0
+                    name = "Great Ring of Fire: Horse of the Sun",
+                    type = "Feu",
+                    damage = 80.0f,
+                    stamina = 10.0f,
+                    speed = 5,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.2f,
+                    level = 0
                 }
             },
-                _currentLevel = 1,
-                _currentStamina = 200,
+                currentLevel = 1,
+                currentStamina = 200,
             };
             Enemy enemie = new Enemy
             {
-                _name = "Marine",
-                _type = "Humain",
-                _difficultyIA = "Normal",
-                _blocked = 0,
-                _currentBlocked = 0,
-                _maxhealth = 500,
-                _health = 500.0f,
-                _stamina = 300.0f,
-                _maxStamina = 300,
-                _speed = 50,
-                _resistanceFeu = 0.5f,
-                _resistanceEau = 0.5f,
-                _resistanceVent = 0.5f,
-                _resistancePhysique = 0.75f,
-                _boostDamage = 1.0f,
-                _level = 1,
-                _ListCapacities = new List<EntitiesCapacities>
+                name = "Marine",
+                type = "Humain",
+                difficultyIA = "Normal",
+                blocked = 0,
+                currentBlocked = 0,
+                maxhealth = 500,
+                health = 500.0f,
+                stamina = 300.0f,
+                maxStamina = 300,
+                speed = 50,
+                resistanceFeu = 0.5f,
+                resistanceEau = 0.5f,
+                resistanceVent = 0.5f,
+                resistancePhysique = 0.75f,
+                boostDamage = 1.0f,
+                level = 1,
+                listCapacities = new List<EntitiesCapacities>
                     {
                         new EntitiesCapacities
                         {
-                            _name = "Punch",
-                            _type = "Physique",
-                            _damage = 5.0f,
-                            _stamina = 20.0f,
-                            _speed = 20,
-                            _boostDamage = 1.0f,
-                            _criticalChance = 1.2f,
-                            _level = 0
+                            name = "Punch",
+                            type = "Physique",
+                            damage = 5.0f,
+                            stamina = 20.0f,
+                            speed = 20,
+                            boostDamage = 1.0f,
+                            criticalChance = 1.2f,
+                            level = 0
                         },
                         new EntitiesCapacities
                         {
-                            _name = "Epee",
-                            _type = "Physique",
-                            _damage = 20.0f,
-                            _stamina = 20.0f,
-                            _speed = 20,
-                            _boostDamage = 1.0f,
-                            _criticalChance = 1.2f,
-                            _level = 0
+                            name = "Epee",
+                            type = "Physique",
+                            damage = 20.0f,
+                            stamina = 20.0f,
+                            speed = 20,
+                            boostDamage = 1.0f,
+                            criticalChance = 1.2f,
+                            level = 0
                         }
                     },
-                _currentLevel = 1,
-                _currentStamina = 300,
+                currentLevel = 1,
+                currentStamina = 300,
             };
 
-            entities.AlliesList = new List<Allies> { allie };
-            entities.EnemiesList = new List<Enemy> { enemie };
+            entities.alliesList = new List<Allies> { allie };
+            entities.enemiesList = new List<Enemy> { enemie };
 
-            Assert.IsNotNull(entities.AlliesList);
-            Assert.IsNotNull(entities.EnemiesList);
+            Assert.IsNotNull(entities.alliesList);
+            Assert.IsNotNull(entities.enemiesList);
 
         }
         [Test]
@@ -168,63 +168,63 @@ namespace Csharp.test
         {
             Allies allie = new Allies
             {
-                _name = "Ace",
-                _type = "Logia",
-                _blocked = 0,
-                _currentBlocked = 0,
-                _maxhealth = 300,
-                _health = 300.0f,
-                _stamina = 200.0f,
-                _maxStamina = 200,
-                _speed = 40,
-                _resistanceFeu = 2.0f,
-                _resistanceEau = 0.5f,
-                _resistanceVent = 0.75f,
-                _resistancePhysique = 1.5f,
-                _boostDamage = 1.0f,
-                _level = 1,
-                _ListCapacities = new List<EntitiesCapacities>
+                name = "Ace",
+                type = "Logia",
+                blocked = 0,
+                currentBlocked = 0,
+                maxhealth = 300,
+                health = 300.0f,
+                stamina = 200.0f,
+                maxStamina = 200,
+                speed = 40,
+                resistanceFeu = 2.0f,
+                resistanceEau = 0.5f,
+                resistanceVent = 0.75f,
+                resistancePhysique = 1.5f,
+                boostDamage = 1.0f,
+                level = 1,
+                listCapacities = new List<EntitiesCapacities>
             {
                 new EntitiesCapacities
                 {
-                    _name = "Chopped",
-                    _type = "Physique",
-                    _damage = 20.0f,
-                    _stamina = 10.0f,
-                    _speed = 5,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.4f,
-                    _level = 0
+                    name = "Chopped",
+                    type = "Physique",
+                    damage = 20.0f,
+                    stamina = 10.0f,
+                    speed = 5,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.4f,
+                    level = 0
                 },
                  new EntitiesCapacities
                 {
-                    _name = "Fire Punch",
-                    _type = "Feu",
-                    _damage = 40.0f,
-                    _stamina = 10.0f,
-                    _speed = 5,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.3f,
-                    _level = 0
+                    name = "Fire Punch",
+                    type = "Feu",
+                    damage = 40.0f,
+                    stamina = 10.0f,
+                    speed = 5,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.3f,
+                    level = 0
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Great Ring of Fire: Horse of the Sun",
-                    _type = "Feu",
-                    _damage = 80.0f,
-                     _stamina = 10.0f,
-                    _speed = 5,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.2f,
-                    _level = 0
+                    name = "Great Ring of Fire: Horse of the Sun",
+                    type = "Feu",
+                    damage = 80.0f,
+                    stamina = 10.0f,
+                    speed = 5,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.2f,
+                    level = 0
                 }
             },
-                _currentLevel = 1,
-                _currentStamina = 200,
+                currentLevel = 1,
+                currentStamina = 200,
             };
 
             allie.TakeDamage(20);
-            Assert.AreEqual(280, allie._health);
+            Assert.AreEqual(280, allie.health);
         }
         [Test]
         public void VerifyIfGetHealth()
@@ -232,132 +232,132 @@ namespace Csharp.test
             var entities = new EntityContainer();
             Allies allie1 = new Allies
             {
-                _name = "Ace",
-                _type = "Logia",
-                _blocked = 0,
-                _currentBlocked = 0,
-                _maxhealth = 300,
-                _health = 300.0f,
-                _stamina = 200.0f,
-                _maxStamina = 200,
-                _speed = 40,
-                _resistanceFeu = 2.0f,
-                _resistanceEau = 0.5f,
-                _resistanceVent = 0.75f,
-                _resistancePhysique = 1.5f,
-                _boostDamage = 1.0f,
-                _level = 1,
-                _ListCapacities = new List<EntitiesCapacities>
+                name = "Ace",
+                type = "Logia",
+                blocked = 0,
+                currentBlocked = 0,
+                maxhealth = 300,
+                health = 300.0f,
+                stamina = 200.0f,
+                maxStamina = 200,
+                speed = 40,
+                resistanceFeu = 2.0f,
+                resistanceEau = 0.5f,
+                resistanceVent = 0.75f,
+                resistancePhysique = 1.5f,
+                boostDamage = 1.0f,
+                level = 1,
+                listCapacities = new List<EntitiesCapacities>
             {
                 new EntitiesCapacities
                 {
-                    _name = "Chopped",
-                    _type = "Physique",
-                    _damage = 20.0f,
-                    _stamina = 10.0f,
-                    _speed = 5,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.4f,
-                    _level = 0
+                    name = "Chopped",
+                    type = "Physique",
+                    damage = 20.0f,
+                    stamina = 10.0f,
+                    speed = 5,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.4f,
+                    level = 0
                 },
                  new EntitiesCapacities
                 {
-                    _name = "Fire Punch",
-                    _type = "Feu",
-                    _damage = 40.0f,
-                    _stamina = 10.0f,
-                    _speed = 5,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.3f,
-                    _level = 0
+                    name = "Fire Punch",
+                    type = "Feu",
+                    damage = 40.0f,
+                    stamina = 10.0f,
+                    speed = 5,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.3f,
+                    level = 0
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Great Ring of Fire: Horse of the Sun",
-                    _type = "Feu",
-                    _damage = 80.0f,
-                     _stamina = 10.0f,
-                    _speed = 5,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.2f,
-                    _level = 0
+                    name = "Great Ring of Fire: Horse of the Sun",
+                    type = "Feu",
+                    damage = 80.0f,
+                    stamina = 10.0f,
+                    speed = 5,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.2f,
+                    level = 0
                 }
             },
-                _currentLevel = 1,
-                _currentStamina = 200,
+                currentLevel = 1,
+                currentStamina = 200,
             };
             Allies allies2 = new Allies
             {
-                _name = "Monkey D.Luffy",
-                _type = "Paramecia",
-                _blocked = 0,
-                _currentBlocked = 0,
-                _maxhealth = 500,
-                _health = 500.0f,
-                _stamina = 300.0f,
-                _maxStamina = 300,
-                _speed = 50,
-                _resistanceFeu = 1.5f,
-                _resistanceEau = 0.5f,
-                _resistanceVent = 1.25f,
-                _resistancePhysique = 2.0f,
-                _boostDamage = 1.0f,
-                _level = 1,
-                _ListCapacities = new List<EntitiesCapacities>
+                name = "Monkey D.Luffy",
+                type = "Paramecia",
+                blocked = 0,
+                currentBlocked = 0,
+                maxhealth = 500,
+                health = 500.0f,
+                stamina = 300.0f,
+                maxStamina = 300,
+                speed = 50,
+                resistanceFeu = 1.5f,
+                resistanceEau = 0.5f,
+                resistanceVent = 1.25f,
+                resistancePhysique = 2.0f,
+                boostDamage = 1.0f,
+                level = 1,
+                listCapacities = new List<EntitiesCapacities>
             {
                 new EntitiesCapacities
                 {
-                    _name = "Jet Pistol",
-                    _type = "Physique",
-                    _damage = 20.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.4f,
-                    _level = 0
+                    name = "Jet Pistol",
+                    type = "Physique",
+                    damage = 20.0f,
+                    stamina = 20.0f,
+                    speed = 20,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.4f,
+                    level = 0
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Red Hawk",
-                    _type = "Physique",
-                    _damage = 50.0f,
-                    _stamina = 100.0f,
-                    _speed = 70,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.2f,
-                    _level = 2
+                    name = "Red Hawk",
+                    type = "Physique",
+                    damage = 50.0f,
+                    stamina = 100.0f,
+                    speed = 70,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.2f,
+                    level = 2
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Gear 5",
-                    _type = "Physique",
-                    _damage = 60.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.3f,
-                    _level = 3
+                    name = "Gear 5",
+                    type = "Physique",
+                    damage = 60.0f,
+                    stamina = 20.0f,
+                    speed = 20,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.3f,
+                    level = 3
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Haki",
-                    _type = "Physique",
-                    _damage = 70.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.3f,
-                    _level = 5
+                    name = "Haki",
+                    type = "Physique",
+                    damage = 70.0f,
+                    stamina = 20.0f,
+                    speed = 20,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.3f,
+                    level = 5
                 }
             },
-                _currentLevel = 1,
-                _currentStamina = 300,
+                currentLevel = 1,
+                currentStamina = 300,
             };
 
-            entities.AlliesList = new List<Allies> { allie1, allies2  };
+            entities.alliesList = new List<Allies> { allie1, allies2 };
 
-            entities.AlliesList[1].AddHealth(20);
-            Assert.AreEqual(520, entities.AlliesList[1]._health);
+            entities.alliesList[1].AddHealth(20);
+            Assert.AreEqual(520, entities.alliesList[1].health);
         }
     }
 }

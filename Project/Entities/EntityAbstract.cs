@@ -1,35 +1,34 @@
 ﻿
 using MapEntities;
 using Newtonsoft.Json;
+using System.IO;
+using System.IO.Pipes;
 
 public abstract class EntityAbstract
 {
-    public string _name;
-    public string _type;
-    public int _index;
-    public int _blocked;
-    public int _currentBlocked;
-    public int _maxhealth;
-    public float _health;
-    public float _stamina;
-    public int _maxStamina;
-    public float _currentStamina;
-    public int _speed;
-    public float _resistanceFeu;
-    public float _resistanceEau;
-    public float _resistanceVent;
-    public float _resistancePhysique;
-    public float _boostDamage;
-    public int _level;
-    public int _experience;
-    public int _maxExerience;
+    public string name;
+    public string type;
+    public int maxhealth;
+    public float health;
+    public float stamina;
+    public int maxStamina;
+    public float currentStamina;
+    public int speed;
+    public float resistanceFeu;
+    public float resistanceEau;
+    public float resistanceVent;
+    public float resistancePhysique;
+    public float boostDamage;
+    public int level;
+    public int experience;
+    public int maxExerience;
     public bool gameReset = false;
     public bool gameStart = true;
 
-    public List<EntitiesCapacities> _ListCapacities { get; set; }
+    public List<EntitiesCapacities> listCapacities { get; set; }
     public EntityContainer entitiesContainer;
 
-    public int _currentLevel { get; set; }
+    public int currentLevel { get; set; }
 
     public abstract void DisplayDetails();
     public abstract void AddHealth(int add);
@@ -44,448 +43,366 @@ public abstract class EntityAbstract
     {
         Allies allies = new Allies
         {
-            _name = "Ace",
-            _type = "Logia",
-            _index = 0,
-            _blocked = 0,
-            _currentBlocked = 0,
-            _maxhealth = 300,
-            _health = 300.0f,
-            _stamina = 200.0f,
-            _maxStamina = 200,
-            _speed = 40,
-            _resistanceFeu = 2.0f,
-            _resistanceEau = 0.5f,
-            _resistanceVent = 0.75f,
-            _resistancePhysique = 1.5f,
-            _boostDamage = 1.0f,
-            _level = 1,
-            _ListCapacities = new List<EntitiesCapacities>
+            name = "Ace",
+            type = "Logia",
+            maxhealth = 300,
+            health = 300.0f,
+            stamina = 200.0f,
+            maxStamina = 200,
+            speed = 40,
+            resistanceFeu = 2.0f,
+            resistanceEau = 0.5f,
+            resistanceVent = 0.75f,
+            resistancePhysique = 1.5f,
+            boostDamage = 1.0f,
+            level = 1,
+            listCapacities = new List<EntitiesCapacities>
             {
                 new EntitiesCapacities
                 {
-                    _name = "Chopped",
-                    _type = "Physique",
-                    _damage = 20.0f,
-                    _stamina = 10.0f,
-                    _speed = 5,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.4f,
-                    _level = 0
+                    name = "Chopped",
+                    type = "Physique",
+                    damage = 20.0f,
+                    stamina = 10.0f,
+                    speed = 5,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.4f,
+                    level = 0
                 },
                  new EntitiesCapacities
                 {
-                    _name = "Fire Punch",
-                    _type = "Feu",
-                    _damage = 40.0f,
-                    _stamina = 10.0f,
-                    _speed = 5,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.3f,
-                    _level = 2
+                    name = "Fire Punch",
+                    type = "Feu",
+                    damage = 40.0f,
+                    stamina = 10.0f,
+                    speed = 5,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.3f,
+                    level = 2
                 },
                  new EntitiesCapacities
                 {
-                    _name = "Great Ring of Fire: Horse of the Sun",
-                    _type = "Feu",
-                    _damage = 80.0f,
-                     _stamina = 10.0f,
-                    _speed = 5,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.2f,
-                    _level = 3
+                    name = "Great Ring of Fire: Horse of the Sun",
+                    type = "Feu",
+                    damage = 80.0f,
+                    stamina = 10.0f,
+                    speed = 5,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.2f,
+                    level = 3
                 }
             },
-            _currentLevel = 1,
-            _currentStamina = 200,
+            currentLevel = 1,
+            currentStamina = 200,
         };
 
         Allies allies2 = new Allies
         {
-            _name = "Monkey D.Luffy",
-            _type = "Paramecia",
-            _index = 1,
-            _blocked = 0,
-            _currentBlocked = 0,
-            _maxhealth = 500,
-            _health = 300.0f,
-            _stamina = 300.0f,
-            _maxStamina = 300,
-            _speed = 50,
-            _resistanceFeu = 1.5f,
-            _resistanceEau = 0.5f,
-            _resistanceVent = 1.25f,
-            _resistancePhysique = 2.0f,
-            _boostDamage = 1.0f,
-            _level = 1,
-            _ListCapacities = new List<EntitiesCapacities>
+            name = "Monkey D.Luffy",
+            type = "Paramecia",
+            maxhealth = 300,
+            health = 300.0f,
+            stamina = 300.0f,
+            maxStamina = 300,
+            speed = 50,
+            resistanceFeu = 1.5f,
+            resistanceEau = 0.5f,
+            resistanceVent = 1.25f,
+            resistancePhysique = 2.0f,
+            boostDamage = 1.0f,
+            level = 1,
+            listCapacities = new List<EntitiesCapacities>
             {
                 new EntitiesCapacities
                 {
-                    _name = "Jet Pistol",
-                    _type = "Physique",
-                    _damage = 20.0f,
-                    _stamina = 10.0f,
-                    _speed = 20,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.4f,
-                    _level = 0
+                    name = "Jet Pistol",
+                    type = "Physique",
+                    damage = 20.0f,
+                    stamina = 10.0f,
+                    speed = 20,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.4f,
+                    level = 0
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Red Hawk",
-                    _type = "Physique",
-                    _damage = 50.0f,
-                    _stamina = 100.0f,
-                    _speed = 70,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.2f,
-                    _level = 2
+                    name = "Red Hawk",
+                    type = "Physique",
+                    damage = 50.0f,
+                    stamina = 100.0f,
+                    speed = 70,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.2f,
+                    level = 2
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Gear 5",
-                    _type = "Physique",
-                    _damage = 60.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.3f,
-                    _level = 3
+                    name = "Gear 5",
+                    type = "Physique",
+                    damage = 60.0f,
+                    stamina = 20.0f,
+                    speed = 20,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.3f,
+                    level = 3
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Haki",
-                    _type = "Physique",
-                    _damage = 70.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.3f,
-                    _level = 5
+                    name = "Haki",
+                    type = "Physique",
+                    damage = 70.0f,
+                    stamina = 20.0f,
+                    speed = 20,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.3f,
+                    level = 5
                 }
             },
-            _currentLevel = 1,
-            _currentStamina = 300,
+            currentLevel = 1,
+            currentStamina = 300,
         };
 
         Allies allies3 = new Allies
         {
-            _name = "Jimbey",
-            _type = "Logia",
-            _index = 2,
-            _blocked = 0,
-            _currentBlocked = 0,
-            _maxhealth = 500,
-            _health = 300.0f,
-            _stamina = 300.0f,
-            _maxStamina = 300,
-            _speed = 50,
-            _resistanceFeu = 0.5f,
-            _resistanceEau = 2.0f,
-            _resistanceVent = 0.75f,
-            _resistancePhysique = 1.0f,
-            _boostDamage = 1.0f,
-            _level = 1,
-            _ListCapacities = new List<EntitiesCapacities>
+            name = "Jimbey",
+            type = "Logia",
+            maxhealth = 400,
+            health = 400.0f,
+            stamina = 300.0f,
+            maxStamina = 300,
+            speed = 50,
+            resistanceFeu = 0.5f,
+            resistanceEau = 2.0f,
+            resistanceVent = 0.75f,
+            resistancePhysique = 1.0f,
+            boostDamage = 1.0f,
+            level = 1,
+            listCapacities = new List<EntitiesCapacities>
             {
                 new EntitiesCapacities
                 {
-                    _name = "Fish-Man Karate",
-                    _type = "Physique",
-                    _damage = 20.0f,
-                    _stamina = 10.0f,
-                    _speed = 20,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.2f,
-                    _level = 0
+                    name = "Fish-Man Karate",
+                    type = "Physique",
+                    damage = 20.0f,
+                    stamina = 10.0f,
+                    speed = 20,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.2f,
+                    level = 0
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Water Shot",
-                    _type = "Eau",
-                    _damage = 30.0f,
-                    _stamina = 100.0f,
-                    _speed = 70,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.2f,
-                    _level = 1
+                    name = "Water Shot",
+                    type = "Eau",
+                    damage = 30.0f,
+                    stamina = 100.0f,
+                    speed = 70,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.2f,
+                    level = 1
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Heart of Water",
-                    _type = "Eau",
-                    _damage = 50.0f,
-                    _stamina = 100.0f,
-                    _speed = 70,
-                    _boostDamage = 1.0f,
-                    _criticalChance = 1.2f,
-                    _level = 4
+                    name = "Heart of Water",
+                    type = "Eau",
+                    damage = 50.0f,
+                    stamina = 100.0f,
+                    speed = 70,
+                    boostDamage = 1.0f,
+                    criticalChance = 1.2f,
+                    level = 4
                 }
             },
-            _currentLevel = 1,
-            _currentStamina = 300,
+            currentLevel = 1,
+            currentStamina = 300,
         };
 
         Enemy enemy = new Enemy
         {
-            _name = "Marine",
-            _type = "Humain",
-            _difficultyIA = "Normal",
-            _blocked = 0,
-            _currentBlocked = 0,
-            _maxhealth = 500,
-            _health = 500.0f,
-            _stamina = 300.0f,
-            _maxStamina = 300,
-            _speed = 50,
-            _resistanceFeu = 0.5f,
-            _resistanceEau = 0.5f,
-            _resistanceVent = 0.5f,
-            _resistancePhysique = 0.75f,
-            _boostDamage = 1.0f,
-            _level = 1,
-            _ListCapacities = new List<EntitiesCapacities>
+            name = "Marine",
+            type = "Humain",
+            difficultyIA = "Normal",
+            maxhealth = 500,
+            health = 500.0f,
+            stamina = 300.0f,
+            maxStamina = 300,
+            speed = 50,
+            resistanceFeu = 0.5f,
+            resistanceEau = 0.5f,
+            resistanceVent = 0.5f,
+            resistancePhysique = 0.75f,
+            boostDamage = 1.0f,
+            level = 1,
+            listCapacities = new List<EntitiesCapacities>
                     {
                         new EntitiesCapacities
                         {
-                            _name = "Punch",
-                            _type = "Physique",
-                            _damage = 5.0f,
-                            _stamina = 20.0f,
-                            _speed = 20,
-                            _boostDamage = 1.0f,
-                            _criticalChance = 1.2f,
-                            _level = 0
+                            name = "Punch",
+                            type = "Physique",
+                            damage = 5.0f,
+                            stamina = 20.0f,
+                            speed = 20,
+                            boostDamage = 1.0f,
+                            criticalChance = 1.2f,
+                            level = 0
                         },
                         new EntitiesCapacities
                         {
-                            _name = "Epee",
-                            _type = "Physique",
-                            _damage = 20.0f,
-                            _stamina = 20.0f,
-                            _speed = 20,
-                            _boostDamage = 1.0f,
-                            _criticalChance = 1.2f,
-                            _level = 0
+                            name = "Epee",
+                            type = "Physique",
+                            damage = 20.0f,
+                            stamina = 20.0f,
+                            speed = 20,
+                            boostDamage = 1.0f,
+                            criticalChance = 1.2f,
+                            level = 0
                         }
                     },
-            _currentLevel = 1,
-            _currentStamina = 300,
+            currentLevel = 1,
+            currentStamina = 300,
         };
 
         Enemy enemy2 = new Enemy
         {
-            _name = "Amarial Sengoku",
-            _type = "Zoan",
-            _difficultyIA = "Dificil",
-            _blocked = 0,
-            _currentBlocked = 0,
-            _maxhealth = 500,
-            _health = 500.0f,
-            _stamina = 300.0f,
-            _maxStamina = 300,
-            _speed = 50,
-            _resistanceFeu = 1.5f,
-            _resistanceEau = 1.5f,
-            _resistanceVent = 1.5f,
-            _resistancePhysique = 1.5f,
-            _boostDamage = 1.0f,
-            _level = 1,
-            _ListCapacities = new List<EntitiesCapacities>
-                    {
-                        new EntitiesCapacities
-                        {
-                            _name = "Geyser of Purification",
-                            _type = "Eau",
-                            _damage = 30.0f,
-                            _stamina = 20.0f,
-                            _speed = 20,
-                            _criticalChance = 1.2f,
-                            _level = 0
-                        },
-                        new EntitiesCapacities
-                        {
-                            _name = "Buddhist Inferno",
-                            _type = "Feu",
-                            _damage = 30.0f,
-                            _stamina = 20.0f,
-                            _speed = 20,
-                            _criticalChance = 1.2f,
-                            _level = 0
-                        },
-                        new EntitiesCapacities
-                        {
-                            _name = "Haki",
-                            _type = "Vent",
-                            _damage = 50.0f,
-                            _stamina = 20.0f,
-                            _speed = 20,
-                            _criticalChance = 1.2f,
-                            _level = 0
-                        },
-                        new EntitiesCapacities
-                        {
-                            _name = "Daibutsu",
-                            _type = "Physique",
-                            _damage = 100.0f,
-                            _stamina = 100.0f,
-                            _speed = 70,
-                            _criticalChance = 1.2f,
-                            _level = 0
-                        }
-                    },
-            _currentLevel = 1,
-            _currentStamina = 300,
+            name = "Kobby",
+            type = "Paramecia",
+            difficultyIA = "Hard",
+            maxhealth = 500,
+            health = 500.0f,
+            stamina = 300.0f,
+            maxStamina = 300,
+            speed = 50,
+            resistanceFeu = 0.75f,
+            resistanceEau = 0.75f,
+            resistanceVent = 0.75f,
+            resistancePhysique = 1.25f,
+            boostDamage = 1.0f,
+            level = 1,
+            listCapacities = new List<EntitiesCapacities>
+            {
+                new EntitiesCapacities
+                {
+                    name = "Six Powers",
+                    type = "Physique",
+                    damage = 20.0f,
+                    stamina = 20.0f,
+                    speed = 20,
+                    criticalChance = 1.2f,
+                    level = 0
+                },
+                new EntitiesCapacities
+                {
+                    name = "Honesty Impact",
+                    type = "Eau",
+                    damage = 50.0f,
+                    stamina = 100.0f,
+                    speed = 70,
+                    criticalChance = 1.2f,
+                    level = 0
+                }
+            },
+            currentLevel = 1,
+            currentStamina = 300,
         };
 
         Enemy enemy3 = new Enemy
         {
-            _name = "Kobby",
-            _type = "Paramecia",
-            _difficultyIA = "Hard",
-            _blocked = 0,
-            _currentBlocked = 0,
-            _maxhealth = 500,
-            _health = 500.0f,
-            _stamina = 300.0f,
-            _maxStamina = 300,
-            _speed = 50,
-            _resistanceFeu = 0.75f,
-            _resistanceEau = 0.75f,
-            _resistanceVent = 0.75f,
-            _resistancePhysique = 1.25f,
-            _boostDamage = 1.0f,
-            _level = 1,
-            _ListCapacities = new List<EntitiesCapacities>
+            name = "Doflamingo",
+            type = "Paramecia",
+            difficultyIA = "Hard",
+            maxhealth = 500,
+            health = 500.0f,
+            stamina = 300.0f,
+            maxStamina = 300,
+            speed = 50,
+            resistanceFeu = 1.10f,
+            resistanceEau = 1.10f,
+            resistanceVent = 2.0f,
+            resistancePhysique = 1.5f,
+            boostDamage = 1.0f,
+            level = 1,
+            listCapacities = new List<EntitiesCapacities>
             {
                 new EntitiesCapacities
                 {
-                    _name = "Six Powers",
-                    _type = "Physique",
-                    _damage = 20.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _criticalChance = 1.2f,
-                    _level = 0
+                    name = "Ball of yarn",
+                    type = "Vent",
+                    damage = 40.0f,
+                    stamina = 20.0f,
+                    speed = 20,
+                    criticalChance = 1.2f,
+                    level = 0
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Honesty Impact",
-                    _type = "Eau",
-                    _damage = 50.0f,
-                    _stamina = 100.0f,
-                    _speed = 70,
-                    _criticalChance = 1.2f,
-                    _level = 0
+                    name = "Bird Cage",
+                    type = "Vent",
+                    damage = 70.0f,
+                    stamina = 100.0f,
+                    speed = 70,
+                    criticalChance = 1.2f,
+                    level = 0
                 }
             },
-            _currentLevel = 1,
-            _currentStamina = 300,
+            currentLevel = 1,
+            currentStamina = 300,
         };
 
         Enemy enemy4 = new Enemy
         {
-            _name = "Doflamingo",
-            _type = "Paramecia",
-            _difficultyIA = "Hard",
-            _blocked = 0,
-            _currentBlocked = 0,
-            _maxhealth = 500,
-            _health = 500.0f,
-            _stamina = 300.0f,
-            _maxStamina = 300,
-            _speed = 50,
-            _resistanceFeu = 1.10f,
-            _resistanceEau = 1.10f,
-            _resistanceVent = 2.0f,
-            _resistancePhysique = 1.5f,
-            _boostDamage = 1.0f,
-            _level = 1,
-            _ListCapacities = new List<EntitiesCapacities>
+            name = "Sanglier",
+            type = "Humain",
+            difficultyIA = "Normal",
+            maxhealth = 100,
+            health = 100.0f,
+            stamina = 300.0f,
+            maxStamina = 300,
+            speed = 50,
+            resistanceFeu = 1.0f,
+            resistanceEau = 1.0f,
+            resistanceVent = 1.0f,
+            resistancePhysique = 1.0f,
+            boostDamage = 1.0f,
+            level = 1,
+            listCapacities = new List<EntitiesCapacities>
             {
                 new EntitiesCapacities
                 {
-                    _name = "Ball of yarn",
-                    _type = "Vent",
-                    _damage = 40.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _criticalChance = 1.2f,
-                    _level = 0
+                    name = "Morsure",
+                    type = "Physique",
+                    damage = 5.0f,
+                    stamina = 20.0f,
+                    speed = 20,
+                    criticalChance = 1.2f,
+                    level = 0
                 },
                 new EntitiesCapacities
                 {
-                    _name = "Bird Cage",
-                    _type = "Vent",
-                    _damage = 70.0f,
-                    _stamina = 100.0f,
-                    _speed = 70,
-                    _criticalChance = 1.2f,
-                    _level = 0
+                    name = "Charge",
+                    type = "Physique",
+                    damage = 10.0f,
+                    stamina = 100.0f,
+                    speed = 70,
+                    criticalChance = 1.4f,
+                    level = 0
                 }
             },
-            _currentLevel = 1,
-            _currentStamina = 300,
-        };
-
-        Enemy enemy5 = new Enemy
-        {
-            _name = "Sanglier",
-            _type = "Humain",
-            _difficultyIA = "Normal",
-            _blocked = 0,
-            _currentBlocked = 0,
-            _maxhealth = 100,
-            _health = 100.0f,
-            _stamina = 300.0f,
-            _maxStamina = 300,
-            _speed = 50,
-            _resistanceFeu = 1.0f,
-            _resistanceEau = 1.0f,
-            _resistanceVent = 1.0f,
-            _resistancePhysique = 1.0f,
-            _boostDamage = 1.0f,
-            _level = 1,
-            _ListCapacities = new List<EntitiesCapacities>
-            {
-                new EntitiesCapacities
-                {
-                    _name = "Morsure",
-                    _type = "Physique",
-                    _damage = 5.0f,
-                    _stamina = 20.0f,
-                    _speed = 20,
-                    _criticalChance = 1.2f,
-                    _level = 0
-                },
-                new EntitiesCapacities
-                {
-                    _name = "Charge",
-                    _type = "Physique",
-                    _damage = 10.0f,
-                    _stamina = 100.0f,
-                    _speed = 70,
-                    _criticalChance = 1.4f,
-                    _level = 0
-                }
-            },
-            _currentLevel = 1,
-            _currentStamina = 300,
+            currentLevel = 1,
+            currentStamina = 300,
         };
 
         entitiesContainer = new EntityContainer
         {
-            AlliesList = new List<Allies> { allies, allies2, allies3 },
-            EnemiesList = new List<Enemy> { enemy, enemy, enemy3, enemy4, enemy5 },
+            alliesList = new List<Allies> { allies, allies2, allies3 },
+            enemiesList = new List<Enemy> { enemy, enemy2, enemy3, enemy4 },
         };
 
         // Check le nb d'allié pour l'hud
-        foreach (var addAllies in entitiesContainer.AlliesList)
+        foreach (var addAllies in entitiesContainer.alliesList)
         {
-            if (!entities.AlliesList.Any(noDoublons => noDoublons._name == addAllies._name))
+            if (!entities.alliesList.Any(noDoublons => noDoublons.name == addAllies.name))
             {
-                entities.AlliesList.Add(addAllies);
+                entities.alliesList.Add(addAllies);
             }
         }
 
@@ -529,9 +446,9 @@ public abstract class EntityAbstract
         string json = File.ReadAllText(path);
         EntityContainer entities = JsonConvert.DeserializeObject<EntityContainer>(json);
 
-        foreach (var ally in entities.AlliesList)
+        foreach (var ally in entities.alliesList)
         {
-            ally._currentLevel = ally._level;
+            ally.currentLevel = ally.level;
         }
 
         return entities;
@@ -542,76 +459,48 @@ public abstract class EntityAbstract
         string json = File.ReadAllText(path);
         EntityContainer entities = JsonConvert.DeserializeObject<EntityContainer>(json);
 
-        foreach (var ally in entities.AlliesList)
+        foreach (var ally in entities.alliesList)
         {
-            ally._currentStamina = ally._stamina;
+            ally.currentStamina = ally.stamina;
         }
 
         return entities;
     }
-
-    public EntityContainer GetInfoEntityUpdateBlocked(string path)
-    {
-        string json = File.ReadAllText(path);
-        EntityContainer entities = JsonConvert.DeserializeObject<EntityContainer>(json);
-
-        foreach (var ally in entities.AlliesList)
-        {
-            ally._currentBlocked = ally._blocked;
-        }
-
-        return entities;
-    }
-
 
     public void UpdateJsonLevel(EntityContainer entities, string path)
     {
-        var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(this._name, StringComparison.OrdinalIgnoreCase));
+        var targetAlliesUpdate = entities.alliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
 
         if (targetAlliesUpdate != null)
         {
-            targetAlliesUpdate._currentLevel = _level;
+            targetAlliesUpdate.currentLevel = level;
         }
 
         // Maj du JSON avec la modif du level
-        string updatedJson = JsonConvert.SerializeObject(entities);
-        File.WriteAllText(path, updatedJson);
+        using (StreamWriter writer = File.CreateText(path))
+        {
+            string updatedJson = JsonConvert.SerializeObject(entities);
+            writer.Write(updatedJson);
+            writer.Close();
+        }
     }
 
     public void UpdateJsonStamina(EntityContainer entities, string path)
     {
-        var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(this._name, StringComparison.OrdinalIgnoreCase));
+        var targetAlliesUpdate = entities.alliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
 
         if (targetAlliesUpdate != null)
         {
-            targetAlliesUpdate._currentStamina = _stamina;
+            targetAlliesUpdate.currentStamina = stamina;
         }
 
         using (StreamWriter writer = File.CreateText(path))
         {
             string updatedJson = JsonConvert.SerializeObject(entities);
             writer.Write(updatedJson);
+            writer.Close();
         }
-    }
-
-
-
-
-    public void UpdateJsonBlocked(EntityContainer entities, string path, int value)
-    {
-        var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(this._name, StringComparison.OrdinalIgnoreCase));
-
-        if (targetAlliesUpdate != null)
-        {
-            targetAlliesUpdate._currentBlocked = value;
-        }
-
-        // Maj du JSON avec la modif du blocked
-        using (StreamWriter writer = File.CreateText(path))
-        {
-            string updatedJson = JsonConvert.SerializeObject(entities);
-            writer.Write(updatedJson);
-        }
+        
     }
 
 }

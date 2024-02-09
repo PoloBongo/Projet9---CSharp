@@ -7,7 +7,7 @@ public class EnemyMap
     private int LocalY;
     private int WorldX;
     private int WorldY;
-    private bool CombatStart;
+    private bool combatStart;
 
     public EnemyMap(int worldX, int worldY, int localX, int localY)
     {
@@ -47,7 +47,7 @@ public class EnemyMap
 
     public bool COMBATSTART
     {
-        get => CombatStart;
-        set => CombatStart = value;
+        get => combatStart;
+        set => combatStart = value;
     }
 }

@@ -1,75 +1,72 @@
 ﻿
 using MapEntities;
-using Newtonsoft.Json;
-using System;
-using System.IO;
 
 public class Allies : EntityAbstract
 {
     public override void DisplayDetails()
     {
-        Console.WriteLine($"Name : {_name} Health: {_health}, Stamina: {_stamina}, Speed: {_speed}, Level: {_level} - {_experience} / {_maxExerience}");
+        Console.WriteLine($"Name : {name} Health: {health}, Stamina: {stamina}, Speed: {speed}, Level: {level} - {experience} / {maxExerience}");
     }
 
     public override void AddHealth(int add)
     {
-        _health += add;
+        health += add;
     }
 
     public override void TakeDamage(float damage)
     {
-        _health -= damage;
+        health -= damage;
     }
 
     public override void AddStamina(int add)
     {
-        _stamina += add;
+        stamina += add;
     }
 
     public override void LessStamina(float less)
     {
         string path = "../../../Entities/entity.json";
-        _stamina -= less;
+        stamina -= less;
         var entities = GetInfoEntityUpdateLevel(path);
-        var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(this._name, StringComparison.OrdinalIgnoreCase));
+        var targetAlliesUpdate = entities.alliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
 
         if (targetAlliesUpdate != null)
         {
-            targetAlliesUpdate._stamina = _stamina;
+            targetAlliesUpdate.stamina = stamina;
             UpdateJsonStamina(entities, path);
         }
     }
     public override void AddExperience(int add)
     {
-        _experience += add;
+        experience += add;
         AddLevel();
     }
 
     public override void AddLevel()
     {
         string path = "../../../Entities/entity.json";
-        if (_experience >= _maxExerience)
+        if (experience >= maxExerience)
         {
-            int tmp = _experience - _maxExerience;
-            _experience = 0;
-            _experience = tmp;
-            _level++;
-            _maxExerience = 100 * _level;
+            int tmp = experience - maxExerience;
+            experience = 0;
+            experience = tmp;
+            level++;
+            maxExerience = 100 * level;
 
             Console.BackgroundColor = ConsoleColor.DarkCyan;
             Console.ForegroundColor = ConsoleColor.Black;
-            Console.WriteLine($"LEVEL UP {_level} : {_experience}/{_maxExerience} ");
+            Console.WriteLine($"LEVEL UP {level} : {experience}/{maxExerience} ");
             Console.ResetColor();
 
             var entities = GetInfoEntityUpdateLevel(path);
-            var targetAlliesUpdate = entities.AlliesList.FirstOrDefault(a => a._name.Equals(this._name, StringComparison.OrdinalIgnoreCase));
+            var targetAlliesUpdate = entities.alliesList.FirstOrDefault(a => a.name.Equals(this.name, StringComparison.OrdinalIgnoreCase));
                 
             if (targetAlliesUpdate != null)
             {
-                targetAlliesUpdate._level = _level;
+                targetAlliesUpdate.level = level;
                 UpdateJsonLevel(entities, path);
             }
         }
     }
-    public override void Loot(Player p){}
+    public override void Loot(Player player){}
 }
